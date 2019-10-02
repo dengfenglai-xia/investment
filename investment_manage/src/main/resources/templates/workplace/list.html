@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="layui-card l_shadow" style="margin-bottom: 15px;">
+            <div class="layui-row ">
+                <div class="information">
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">管理工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.totalNum} + ' 个'" ></div>
+                    </div>
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">可招商工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.enableNum} + ' 个'"  ></div>
+                    </div>
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">在租工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.rentNum} + ' 个'"  ></div>
+                    </div>
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">空置工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.vacantNum} + ' 个'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">招商状态： </label>
+                    <div class="layui-input-inline layui-form sear_rad">
+                        <input type="radio" name="state" value="ALL" title="全部" lay-filter="state-select" checked="">
+                        <input type="radio" name="state" value="VACANT" title="空置" lay-filter="state-select" >
+                        <input type="radio" name="state" value="RENTING" title="在租" lay-filter="state-select" >
+                        <input type="radio" name="state" value="SOON" title="即将到期" lay-filter="state-select" th:checked="${state eq '2'}">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="keyword" autocomplete="off"  placeholder="请输入项目/楼宇/楼层/工位号" class="w_seartext" style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">工位列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="editor">编辑</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script type="text/html" id="state">
+    {{#  if(d.state === '0' ){ }}
+    <span style="color:#C2C5D6;">不对外招租</span>
+    {{#  } else if(d.state === '1'){ }}
+    <span style="color:#44B549;">在租</span>
+    {{#  } else if(d.state === '2'){ }}
+    <span style="color:#FEB97A;">即将到期</span>
+    {{#  } else if(d.state === '3'){ }}
+    <span style="color:#69BFD3;">空置</span>
+    {{#  } else{ }}
+    <span style="color:#DE7B9E;">到期未处理</span>
+    {{#  } }}
+</script>
+<script th:inline="javascript">
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate,
+            admin = layui.admin,
+            form = layui.form;
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'workplace/queryWorkplaceList',
+            where: {
+                state:$("input[name='state']:checked").val()
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    fixed: 'left',
+                    unresize: true,
+                    templet: '#orderNum',
+                    width: 60
+                },{
+                    field: 'projectName',
+                    title: '项目名称',
+                    fixed: 'left',
+                    width: 150
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称',
+                    fixed: 'left',
+                    width: 150
+                }, {
+                    field: 'floorNo',
+                    title: '楼层',
+                    width: 80
+                },{
+                    field: 'placeId',
+                    title: '工位ID',
+                    hide:true
+                }, {
+                    field: 'roomNo-placeNo',
+                    title: '房间 - 工位号',templet:function(d){
+                        return  d.roomNo + ' - ' + d.placeNo;
+                    },
+                    width: 120
+                }, {
+                    field: 'bottomPrice',
+                    title: '租金底价（元/月）',
+                    width: 150
+                }, {
+                    field: 'state',
+                    title: '招商状态',
+                    templet: '#state',
+                    width: 150
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width:230,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('radio(state-select)', function(data){
+            var state = data.value;
+            table.reload('dataList', {
+                where: {
+                    state:  state,
+                    keyword: $.trim($("#keyword").val())
+                }
+            });
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    state:  $("input[name='state']:checked").val(),
+                    keyword: $.trim($("#keyword").val())
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#keyword').val('');
+            $("input[name='state']").get(0).checked = true;
+            form.render('radio');
+            $(".search").click();
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin:true,
+                title: '<b>新增工位</b>',
+                content: URL + 'workplace/toAddWorkplace',
+                area: ['100%', '100%']
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.placeId;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin:true,
+                    title: '<b>工位详情</b>',
+                    content: URL + 'workplace/queryWorkplaceDetail/' + id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'editor') {
+                layer.open({
+                    type: 2,
+                    maxmin:true,
+                    title: '<b>编辑工位</b>',
+                    content: URL+'workplace/toEditorWorkplace/'+id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'workplace/deleteWorkplace',
+                        data: {"placeId": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                setTimeout(function () {
+                                    table.reload('dataList');
+                                }, 1000);
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row ">
+        <div class="layui-col-md12">
+            <div class="layui-card l_shadow">
+                <div class="w_deltab">
+                    <ul>
+                        <a th:href="@{'/queryContractDetail/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>合同信息</li>
+                        </a>
+                        <a th:href="@{'/queryBills/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }" >
+                            <li>合同账单</li>
+                        </a>
+                        <a th:href="@{'/queryForwardDetail/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>结转明细</li>
+                        </a>
+                        <a th:href="@{'/queryContractHistoryList/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li class="delactive">合同轨迹</li>
+                        </a>
+                        <a th:href="@{'/queryContractFiles/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>相关文件</li>
+                        </a>
+                        <a th:href="@{'/queryAuditRecordList/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>审核记录</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="w_part">
+                            <div class="layui-col-xs12">
+                                <table class="layui-table">
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>合同编号</th>
+                                        <th>操作时间</th>
+                                        <th>操作人</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:if="${contractList.size() == 0}">
+                                        <td th:colspan="5">无数据</td>
+                                    </tr>
+                                    <tr th:if="${contractList.size() > 0}" th:each="obj:${contractList}">
+                                        <td th:text="${objStat.count}"></td>
+                                        <td th:text="${obj.contractCode}"></td>
+                                        <td th:text="${#dates.format(obj.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td th:text="${obj.operator}"></td>
+                                        <td>
+                                            <a th:contractCode="${obj.contractCode}" th:version="${obj.version}" class="tab_hous show" style="cursor: pointer">查看</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            table = layui.table;
+    });
+
+    $('body').on('click', '.show', function () {
+        var contractCode = $(this).attr("contractCode");
+        var version = $(this).attr("version");
+        layer.open({
+                type: 2,
+                title: '<b>历史合同详情</b>',
+                content: URL + 'queryContractDetail/'+contractCode+'/'+version+ '/5',
+                area: ['95%', '95%']
+        });
+    });
+
+    $('body').on('click', '.w_deltab li', function () {
+        $(this).addClass('delactive').siblings().removeClass('delactive');
+    })
+</script>
+</body>
+
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="layui-card l_shadow" style="margin-bottom: 15px;">
+            <div class="layui-row ">
+                <div class="information">
+                    <div class="w_colxs_5 w_bor" style="width: 33%;">
+                        <div class="information_list">应付：</div>
+                        <div class="information_list"><span class="w_fs_28" th:text="${shouldAmt}"></span>元</div>
+                    </div>
+                    <div class="w_colxs_5 w_bor" style="width: 33%;">
+                        <div class="information_list">已付：</div>
+                        <div class="information_list"><span class="w_fs_28" th:text="${finishAmt}"></span>元</div>
+                    </div>
+                    <div class="w_colxs_5 w_bor" style="width: 33%;">
+                        <div class="information_list">未付：</div>
+                        <div class="information_list"><span class="w_fs_28" th:text="${residualAmt}"></span>元</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="keyword" autocomplete="off" placeholder="楼宇名称/客户名称/合同编号/账单编号" class="w_seartext"
+                           style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">合同类别 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="contractType" lay-verify="required" lay-search lay-filter="type-select">
+                            <option value="">请选择合同类别</option>
+                            <option value="房源合同">房源合同</option>
+                            <option value="房源协议">房源协议</option>
+                            <option value="工位合同">工位合同</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left" style="text-align: left;">付款时间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="startDate" class="layui-input l_time laydate-item w_timeinp"
+                               autocomplete="off" placeholder="请选择开始时间">
+                        <p class="btw">至</p>
+                        <input type="text" id="endDate" class="layui-input l_time laydate-item w_timeinp"
+                               autocomplete="off" placeholder="请选择结束时间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist search">
+                <a class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist reset">
+                <a class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist confirm">
+                <a class="layui-btn layui-btn-normal"><i class="layui-icon">&#x1005;</i>批量确认</a>
+            </div>
+            <div class="w_searlist settle" style="display: none;">
+                <a class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe65e;</i>批量付款</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="w_htstate layui-form l_shadow">
+            <div class="htstate_left">
+                账单状态&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="state" value="0" title="待确认" lay-filter="state-select" checked="">
+                <input type="radio" name="state" value="1" title="未付款" lay-filter="state-select">
+                <input type="radio" name="state" value="2" title="部分付款" lay-filter="state-select">
+                <input type="radio" name="state" value="3" title="全部付款" lay-filter="state-select">
+            </div>
+        </div>
+        <!--搜索end-->
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">付款账单列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table = '';
+    var form = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        form = layui.form;
+        var laydate = layui.laydate;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'queryFinanceBillsList',
+            where: {
+                state: $("input[name='state']:checked").val(),
+                billType: '2'
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    type: 'checkbox', fixed: 'left',
+                    width: 60
+                },
+                    {
+                        field: 'orderNum',
+                        title: '序号',
+                        fixed: 'left',
+                        unresize: true,
+                        templet: '#orderNum',
+                        width: 60
+                    }, {
+                    field: 'customerName',
+                    fixed: 'left',
+                    title: '客户名称',
+                    width: 200
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称',
+                    width: 200
+                }, {
+                    field: 'roomNos',
+                    title: '签约房间',
+                    width: 150
+                }, {
+                    field: 'contractType',
+                    title: '合同类别',
+                    width: 120
+                }, {
+                    field: 'contractCode',
+                    title: '合同编号',
+                    hide: true
+                }, {
+                    field: 'version',
+                    title: '版本号',
+                    hide: true
+                }, {
+                    field: 'billCode',
+                    title: '账单编号',
+                    width: 180
+                }, {
+                    field: 'shouldDealDate',
+                    title: '应付时间',
+                    width: 120
+                }, {
+                    field: 'shouldAmt',
+                    width: 150,
+                    title: '应付金额（元）', templet: function (d) {
+                        return number_format(d.costAmt + d.feeLateAmt - d.freeAmt, 2);
+                    }
+                }, {
+                    field: 'state',
+                    width: 120,
+                    title: '账单状态', templet: function (d) {
+                        return d.confirmState == '1' ? '<span style="color: orange">待确认</span>' : '<span style="color: green">已确认</span>';
+                    }
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 200,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            }
+            , page: true
+        });
+
+        form.on('radio(state-select)', function (data) {
+            var val = data.value;
+            if (val == 0) {
+                $(".confirm").show();
+                $(".settle").hide();
+            } else {
+                if (val != 3) {
+                    $(".settle").show();
+                } else {
+                    $(".settle").hide();
+                }
+                $(".confirm").hide();
+            }
+            table.reload('dataList', {
+                where: {
+                    startDate: $.trim($("#startDate").val()),
+                    endDate: $.trim($("#endDate").val()),
+                    contractType: $("#contractType").val(),
+                    state: val,
+                    keyword: $.trim($("#keyword").val())
+                }
+            });
+        });
+
+        form.on('select(type-select)', function(data){
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    startDate: $.trim($("#startDate").val()),
+                    endDate: $.trim($("#endDate").val()),
+                    contractType: val,
+                    state: val,
+                    keyword: $.trim($("#keyword").val())
+                }
+            });
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    startDate: $.trim($("#startDate").val()),
+                    endDate: $.trim($("#endDate").val()),
+                    contractType: $("#contractType").val(),
+                    state: $("input[name='state']:checked").val(),
+                    keyword: $.trim($("#keyword").val())
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $("#contractType").val('');
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#keyword').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        var billCodeArr = []; // 定义checkbox选中id集合
+        $('.confirm').on('click', function () {
+            billCodeArr.splice(0, billCodeArr.length); // 清空数组
+            var data = table.checkStatus('dataList').data;
+            if (data.length == 0) {
+                layer.msg("请选择勾选确认账单项");
+                return;
+            }
+            $.each(data, function (i, val) {
+                billCodeArr.push(val.billCode);
+            });
+            $.ajax({
+                url: URL + "updateConfirmBillsBatch",
+                type: "POST",
+                data: {
+                    billCodeArr: billCodeArr
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            // $("input[name='state']").get(1).checked = true;
+                            // form.render();
+                            table.reload('dataList', {
+                                where: {
+                                    startDate: $.trim($("#startDate").val()),
+                                    endDate: $.trim($("#endDate").val()),
+                                    contractType: $("#contractType").val(),
+                                    state: $("input[name='state']:checked").val(),
+                                    keyword: $.trim($("#keyword").val())
+                                }
+                            });
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        $('.settle').on('click', function () {
+            billCodeArr.splice(0, billCodeArr.length); // 清空数组
+            var data = table.checkStatus('dataList').data;
+            if (data.length == 0) {
+                layer.msg("请选择勾选结算账单项");
+                return;
+            }
+            $.each(data, function (i, val) {
+                billCodeArr.push(val.billCode);
+            });
+            $.ajax({
+                url: URL + "updateSettleBillsBatch",
+                type: "POST",
+                data: {
+                    billCodeArr: billCodeArr
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            $("input[name='state']").get(3).checked = true;
+                            form.render();
+                            table.reload('dataList', {
+                                where: {
+                                    startDate: $.trim($("#startDate").val()),
+                                    endDate: $.trim($("#endDate").val()),
+                                    contractType: $("#contractType").val(),
+                                    state: $("input[name='state']:checked").val(),
+                                    keyword: $.trim($("#keyword").val())
+                                }
+                            });
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var contractCode = data.contractCode;
+            var version = data.version;
+            var billCode = data.billCode;
+            var state = $("input[name='state']:checked").val();
+            var url = '';
+            if (state == '0') {
+                url = URL + 'queryPaymentConfirmBillsDetail?contractCode=' + contractCode + '&version=' + version + '&billCode=' + billCode;
+            } else if (state == '1' || state == '2') {
+                url = URL + 'queryPaymentSettleBillsDetail?contractCode=' + contractCode + '&version=' + version + '&billCode=' + billCode;
+            } else {
+                url = URL + 'queryPaymentFinishBillsDetail?contractCode=' + contractCode + '&version=' + version + '&billCode=' + billCode;
+            }
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>付款详情 </b>',
+                    content: url,
+                    area: ['100%', '100%']
+                });
+            };
+        });
+
+        //时间选择器
+        lay('.laydate-item').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+            });
+        });
+
+    });
+</script>
+</body>
+
+</html>

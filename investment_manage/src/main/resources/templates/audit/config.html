@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="">
+    <div class="layui-tab-itempart_list">
+        <div class="layui-col-xs4">
+            <div class="exam ">
+                <div class="layui-card-header">
+                    <div class="tab-tit l_inptd">
+                        审核项<span style="color:#1E9FFF" id="companyName"></span>
+                    </div>
+                </div>
+                <div class="layui-card-body bg_2 layui-form exambox">
+                    <div class="w_examtit">
+                        <div class="layui-col-xs8">
+                            审核项
+                        </div>
+                        <div class="layui-col-xs4">
+                            <!--审核开关-->
+                            操作
+                        </div>
+                    </div>
+                    <div class="w_exam_list select-item" th:each="obj:${itemList}" th:name="${obj.name}" th:sign="${obj.sign}">
+                        <div class="layui-col-xs8" th:text="${obj.name}"></div>
+                        <div class="layui-col-xs4">
+                            <!--<input type="checkbox" th:id="${obj.id}" lay-skin="switch" lay-filter="switch-select" lay-text="开启|关闭" th:checked="${obj.switchFlag eq '1'}">-->
+                            <a class="layui-btn layui-btn-normal layui-btn-xs">查看流程 <i class="layui-icon">&#xe623;</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs8">
+            <div class="tab_boxs l_shadow">
+                <div class="layui-row">
+                    <div class="layui-col-md12">
+                        <div class="clear"></div>
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <div class="tab-tit l_inptd">
+                                    审核流程<span style="color:#1E9FFF" id="name">【新建合同】</span>
+                                </div>
+                                <div class="tab-tit-btn">
+                                    <input type="button" value="添加审核人" class="layui-btn layui-btn-normal btn table_but_xz add" />
+                                </div>
+                            </div>
+                            <div class="layui-card-body">
+                                <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                                <script type="text/html" id="operation">
+                                    <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">移除</a>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script type="text/html" id="company-open">
+    <div class="w_addpart layui-form">
+        <div class="layui-col-xs12 l_po">
+            <label class="layui-form-label w_label ">选择公司：</label>
+            <div class="layui-input-block">
+                <select name="type" id="company" lay-verify="required" lay-search>
+                    <option value="">请选择公司</option>
+                    <option th:each="obj:${companyList}" th:value="${obj.companyCode}" th:text="${obj.company}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>
+<script type="text/html" id="auditor-open">
+    <div class="w_hosue_open">
+        <div class="w_dwcx">
+            <div class="searchbox" style="padding: 0;">
+                <div class="w_searlist">
+                    <div class="layui-form">
+                        <div class="layui-input-inline">
+                            <select id="deptId" name="deptName" lay-filter="dept-select" lay-verify="required" lay-search>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="w_searlist">
+                    <div class="layui-form">
+                        <div class="layui-input-inline">
+                            <select id="jobId" name="jobName" lay-filter="job-select" lay-verify="required" lay-search>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="w_rybox layui-form l_m_10">
+                <table class="layui-hide" id="auditorList" lay-filter="auditorList"></table>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type" style="padding: 0;">
+                <button class="layui-btn layui-btn-normal add-user" >确定</button>
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="dept-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择部门</option>
+    {{each list as obj index}}
+    <option value="{{obj.deptId}}">{{obj.deptName}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无部门信息</option>
+    {{/if}}
+</script>
+
+<script id="job-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择职务</option>
+    {{each list as obj index}}
+    <option value="{{obj.jobId}}">{{obj.jobName}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无职务信息</option>
+    {{/if}}
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var table = layui.table;
+        var form = layui.form;
+
+        var sign = 'new';
+        table.render({
+            elem: '#dataList',
+            url: URL + 'queryAuditProcessList',
+            where: {
+                companyCode: '[[${companyCode}]]',
+                sign: sign
+            },
+            cols: [
+                [{
+                    field: 'id',
+                    title: 'ID',
+                    hide: true
+                }, {
+                    field: 'auditor',
+                    title: '审核人'
+                },{
+                    field: 'deptName',
+                    title: '部门'
+                },{
+                    field: 'jobName',
+                    title: '职务'
+                },{
+                    field: 'orderNum',
+                    title: '顺序',
+                    templet: '#orderNum',
+                },  {
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            }
+        });
+
+        form.on('switch(switch-select)', function (data) {
+            var obj = data.elem;
+            var switchFlag = "";
+            if(obj.checked){
+                switchFlag = "1";
+            }else{
+                switchFlag = "2";
+            }
+            var id = obj.getAttribute("id");
+            $.ajax({
+                url: URL + "updateAuditItem",
+                type:"POST",
+                data: {
+                    id: id,
+                    switchFlag: switchFlag
+                },
+                dataType:"json",
+                success:function(data){
+                    if(data.success){
+                        console.log("开/关成功")
+                    }else{
+                        console.log("开/关异常")
+                    }
+                }
+            });
+        });
+
+        $('body').on('click', '.add', function () {
+            layer.open({
+                type: 1,
+                title: '选择审核人',
+                content: $('#auditor-open').html(),
+                area: ['80%', '90%'],
+                skin: 'opens',
+                maxmin: false,
+                success: function () {
+                    form.render();
+                    table.render({
+                        elem: '#auditorList'
+                        , url: URL + 'queryUserList'
+                        , where:{
+                            companyCode: '[[${companyCode}]]'
+                        }
+                        ,request: {
+                            pageName: 'pageNum', //页码的参数名称，默认：page
+                            limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                        }
+                        , defaultToolbar: false
+                        , cols: [
+                            [
+                                {type:'radio'}
+                                , {field: 'userId', title: '用户ID', hide: true}
+                                , {field: 'realName', title: '姓名'}
+                                , {field: 'deptName', title: '部门'}
+                                , {field: 'jobName', title: '职务'}
+                            ]
+                        ], parseData: function (res) {
+                            return {
+                                "code": 0, //解析接口状态
+                                "msg": "查询成功", //解析提示文本
+                                "count": res.data.total, //解析数据长度
+                                "data": res.data.list //解析数据列表
+                            };
+                        },
+                        page: true
+                    });
+
+                    $.ajax({
+                        url: URL + "queryDeptBaseList",
+                        type: "POST",
+                        data: {
+                            companyCode: '[[${companyCode}]]'
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            var html = template('dept-templete', data);
+                            $('#deptId').html(html);
+                            form.render('select');
+                        }
+                    });
+
+                    $.ajax({
+                        url: URL + "queryJobBaseList",
+                        type: "POST",
+                        data: {
+                            companyCode: '[[${companyCode}]]'
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            var html = template('job-templete', data);
+                            $('#jobId').html(html);
+                            form.render('select');
+                        }
+                    });
+                }
+            });
+        })
+
+        form.on('select(dept-select)', function(data){
+            var id = data.value;
+            table.reload('auditorList', {
+                where: {
+                    companyCode: '[[${companyCode}]]',
+                    deptId: id
+                }
+            });
+        });
+
+        form.on('select(job-select)', function(data){
+            var id = data.value;
+            table.reload('auditorList', {
+                where: {
+                    companyCode: '[[${companyCode}]]',
+                    jobId: id
+                }
+            });
+        });
+
+        $('body').on('click', '.select-item', function () {
+            var name = $(this).attr("name");
+            $("#name").text('【' + name + '】');
+
+            sign = $(this).attr("sign");
+            table.reload('dataList', {
+                where: {
+                    sign: sign
+                }
+            });
+        })
+
+        $('body').on('click', '.add-user', function () {
+            var checkStatus = table.checkStatus('auditorList');
+            var data = checkStatus.data;
+            if(data.length === 0) return layer.msg('请选择审核人');
+            var userId = data[0].userId;
+            $.ajax({
+                url: URL + "insertAuditProcess",
+                type:"POST",
+                data: {
+                    companyCode:'[[${companyCode}]]',
+                    userId: userId,
+                    sign: sign
+                },
+                dataType:"json",
+                success:function(data){
+                    layer.closeAll();
+                    if(data.success){
+                        layer.msg(data.msg);
+                        table.reload('dataList', {
+                            where: {
+                                sign: sign
+                            }
+                        });
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        })
+
+        //监听工具行事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.id;
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否移除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'deleteAuditProcess',
+                        data: {"id": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.closeAll();
+                                layer.msg("移除成功");
+                                table.reload('dataList');
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        $('body').on('click', '.exambox .w_exam_list', function () {
+            $(this).addClass('exam_active').siblings().removeClass('exam_active');
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            layer.closeAll(); //关闭弹层
+        })
+
+        //数据表格点击一行选中
+        $(document).on("click",".layui-table-body table.layui-table tbody tr",function(){
+            var obj = event ? event.target : event.srcElement;
+            var tag = obj.tagName;
+            var radio = $(this).find("td div.laytable-cell-radio div.layui-form-radio I");
+            if(radio.length!=0){
+                if(tag == 'DIV') {
+                    radio.click();
+                }
+            }
+
+        });
+        $(document).on("click","td div.laytable-cell-radio div.layui-form-radio",function(e){
+            e.stopPropagation();
+        });
+    });
+</script>
+</body>
+</html>

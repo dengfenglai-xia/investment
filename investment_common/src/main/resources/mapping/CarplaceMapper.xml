@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.CarplaceMapper">
+
+    <sql id="Base_Column_List">
+		c.place_id,
+		c.place_no,
+		c.floor_id,
+		c.floor_no,
+		c.building_id,
+		c.building_name,
+		c.project_id,
+		c.project_name,
+		c.whether_open,
+		c.bottom_price,
+		c.state,
+		c.company_code,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryCarplaceList" resultType="carplace">
+        select
+        <include refid="Base_Column_List"/>
+        from carplace c
+        where c.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="buildingId != null">
+            and c.building_id = #{buildingId}
+        </if>
+        <if test="whetherOpen != null and whetherOpen != '' ">
+            and c.whether_open = #{whetherOpen}
+        </if>
+        <if test="states != null and states != '' ">
+            and c.state in
+            <foreach collection="states" item="state" index="index" open="(" close=")" separator=",">
+                #{state}
+            </foreach>
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            c.project_name like concat('%',#{keyword},'%')
+            or
+            c.building_name like concat('%',#{keyword},'%')
+            or
+            c.floor_no like concat('%',#{keyword},'%')
+            )
+        </if>
+        order by
+        c.project_id desc,
+        c.building_id desc,
+        cast( c.floor_no as signed ),
+        c.place_no
+    </select>
+
+    <select id="queryCarplaceCount" resultType="int">
+        select
+        ifnull(count(*),0) num
+        from carplace c
+        where c.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="buildingId != null">
+            and c.building_id = #{buildingId}
+        </if>
+        <if test="states != null and states != '' ">
+            and c.state in
+            <foreach collection="states" item="state" index="index" open="(" close=")" separator=",">
+                #{state}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="queryCarplaceDetailByPrimarykey" resultType="carplace">
+        select
+        <include refid="Base_Column_List"/>
+        from carplace c
+        where
+        c.place_id = #{placeId}
+    </select>
+
+    <select id="queryCarplaceDetail" resultType="carplace">
+        select
+        <include refid="Base_Column_List"/>
+        from carplace c
+        where c.del_flag = '0'
+        <if test="placeId != null ">
+            and c.place_id = #{placeId}
+        </if>
+    </select>
+
+    <insert id="insertCarplace">
+        insert into carplace
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="placeId != null ">
+                place_id,
+            </if>
+            <if test="placeNo != null and placeNo != '' ">
+                place_no,
+            </if>
+            <if test="floorId != null ">
+                floor_id,
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no,
+            </if>
+            <if test="buildingId != null ">
+                building_id,
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="whetherOpen != null and whetherOpen != '' ">
+                whether_open,
+            </if>
+            <if test="bottomPrice != null ">
+                bottom_price,
+            </if>
+            <if test="state != null and state != '' ">
+                state,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="placeId != null ">
+                #{placeId},
+            </if>
+            <if test="placeNo != null and placeNo != '' ">
+                #{placeNo},
+            </if>
+            <if test="floorId != null ">
+                #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="whetherOpen != null and whetherOpen != '' ">
+                #{whetherOpen},
+            </if>
+            <if test="bottomPrice != null ">
+                #{bottomPrice},
+            </if>
+            <if test="state != null and state != '' ">
+                #{state},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertCarplaceBatch">
+        insert into carplace
+        (
+        place_no,
+        floor_id,
+        floor_no,
+        building_id,
+        building_name,
+        project_id,
+        project_name,
+        whether_open,
+        bottom_price,
+        state,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.placeNo},
+            #{item.floorId},
+            #{item.floorNo},
+            #{item.buildingId},
+            #{item.buildingName },
+            #{item.projectId},
+            #{item.projectName},
+            #{item.whetherOpen},
+            #{item.bottomPrice},
+            #{item.state},
+            #{item.createUserId},
+            #{item.createTime},
+            #{item.updateUserId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateCarplace">
+        update carplace
+        <set>
+            <if test="placeNo != null and placeNo != '' ">
+                place_no = #{placeNo},
+            </if>
+            <if test="floorId != null ">
+                floor_id = #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no = #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                building_id = #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name = #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                project_id = #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name = #{projectName},
+            </if>
+            <if test="whetherOpen != null and whetherOpen != '' ">
+                whether_open = #{whetherOpen},
+            </if>
+            <if test="bottomPrice != null ">
+                bottom_price = #{bottomPrice},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        place_id = #{placeId}
+    </update>
+
+    <delete id="deleteCarplaceByPrimarykey">
+		delete
+		from
+			carplace
+		where
+			place_id = #{placeId}
+	</delete>
+
+</mapper>

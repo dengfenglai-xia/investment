@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">开始月份 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="startDate" th:value="${startDate}" autocomplete="off"
+                               class="layui-input l_time laydate-item w_timeinp" placeholder="请输入开始日期">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">截止月份 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="endDate" th:value="${endDate}" autocomplete="off"
+                               class="layui-input l_time laydate-item w_timeinp" placeholder="请输入结束日期">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">项目名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="projectId" lay-verify="required" lay-filter="project_select">
+                            <option value="">请选择项目</option>
+                            <option th:each="obj:${projectList}" th:value="${obj.projectId}" th:text="${obj.projectName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">楼宇名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="buildingId" lay-verify="required">
+                            <option value="">请选择楼宇</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">客户名称 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="customerName" autocomplete="off" class="layui-input" placeholder="请输入客户名称">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar" title="押金统计表">
+                                <div class="tab-tit l_inptd">押金统计表</div>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script id="building-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择楼宇</option>
+    {{each list as obj index}}
+    <option value="{{obj.buildingId}}">{{obj.buildingName}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无楼宇信息</option>
+    {{/if}}
+</script>
+<script>
+    var table = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var layer = layui.layer;
+
+        table.render({
+            elem: '#dataList',
+            title: '押金统计表',
+            toolbar: '#toolbar',
+            defaultToolbar: ['exports'],
+            url: URL + 'queryDepositBillsInfo',
+            where: {
+                startDate: $("#startDate").val(),
+                endDate: $("#endDate").val()
+            },
+            // totalRow: true,
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    fixed: 'left',
+                    unresize: true,
+                    width: 60
+                }, {
+                    field: 'customerName',
+                    width: 200,
+                    title: '公司名称'
+                }, {
+                    field: 'costName',
+                    width: 200,
+                    title: '押金类型'
+                }, {
+                    field: 'payTime',
+                    title: '缴费日期'
+                }, {
+                    field: 'costAmt',
+                    width: 200,
+                    title: '金额', templet: function (d) {
+                        return number_format(d.costAmt, 2);
+                    }
+                }, {
+                    field: 'state',
+                    title: '状态'
+                }, {
+                    field: 'returnTime',
+                    title: '退款时间'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            }
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    startDate: $("#startDate").val(),
+                    endDate: $("#endDate").val(),
+                    projectId: $("#projectId").val(),
+                    buildingId: $("#buildingId").val(),
+                    customerName: $("#customerName").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#projectId').val('');
+            $('#buildingId').val('');
+            $('#customerName').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        form.on('select(project_select)', function (data) {
+            var id = data.value;
+            if (id != '') {
+                $.ajax({
+                    url: URL + "building/queryBuildingBaseList",
+                    type: "POST",
+                    data: {
+                        projectId: id
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var html = template('building-templete', data);
+                        $('#buildingId').html(html);
+                        form.render('select');
+                    }
+                });
+            } else {
+                $('#buildingId').html('<option value="">请选择楼宇</option>');
+                form.render('select');
+            }
+        });
+
+        //时间选择器
+        lay('.laydate-item').each(function () {
+            laydate.render({
+                elem: this
+                , type: 'month'
+                , trigger: 'click'
+            });
+        });
+
+    });
+</script>
+</body>
+
+</html>

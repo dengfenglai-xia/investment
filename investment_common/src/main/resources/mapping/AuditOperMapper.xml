@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.AuditOperMapper">
+
+    <sql id="Base_Column_List">
+		a.id,
+		a.sign,
+		a.code,
+		a.version,
+		a.user_id,
+		a.sort,
+		a.audit_opinion,
+		a.audit_date,
+		a.audit_state,
+		a.lighten_up
+	</sql>
+
+    <sql id="Link_Column_List">
+		left join contract c on a.code = c.contract_code and a.version = c.version
+		left join customer cu on c.customer_id = cu.customer_id
+		left join user u on c.create_user_id = u.user_id
+	</sql>
+
+    <select id="queryAuditOperList" resultType="auditOper">
+        select
+        case c.oper_type
+        when 'new' then '新建合同'
+        when 'change' then '变更合同'
+        when 'return' then '退租合同'
+        when 'renew' then '续租合同'
+        else '无'
+        end oper_type,
+        cu.customer_name,
+        u.real_name submitter,
+        c.update_time subtime,
+        date_format(c.update_time,'%Y-%m-%d') subtimeStr,
+        <include refid="Base_Column_List"/>
+        from audit_oper a
+        <include refid="Link_Column_List"/>
+        <where>
+            <if test="sign != null and sign != '' ">
+                and a.sign = #{sign}
+            </if>
+            <if test="userId != null ">
+                and a.user_id = #{userId}
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                and a.audit_state = #{auditState}
+            </if>
+            <if test="lightenUp != null and lightenUp != '' ">
+                and a.lighten_up = #{lightenUp}
+            </if>
+            <if test="dealState != null and dealState == '1'.toString() ">
+                and a.audit_state = '1'
+            </if>
+            <if test="dealState != null and dealState == '2'.toString() ">
+                and a.audit_state != '1'
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+    <select id="queryAuditRecordList" resultType="auditOper">
+        select
+        u.real_name auditor,
+        j.job_name,
+        <include refid="Base_Column_List"/>
+        from audit_oper a
+        left join user u on a.user_id = u.user_id
+        left join job j on u.job_id = j.job_id
+        where a.code = #{code} and a.version = #{version}
+    </select>
+
+    <select id="queryMaxSort" resultType="int">
+		select
+			ifnull(max(sort),0)
+		from audit_oper
+		where code = #{code}
+		and version = #{version}
+	</select>
+
+    <select id="queryAuditOperDetailByPrimarykey" resultType="auditOper">
+        select
+        <include refid="Base_Column_List"/>,
+        m.id matter_id
+        from audit_oper a
+        left join matter m on a.id = m.link_id
+        where
+        a.id = #{id}
+    </select>
+
+    <select id="queryAuditOperDetail" resultType="auditOper">
+        select
+        <include refid="Base_Column_List"/>
+        from audit_oper a
+        where a.code = #{code}
+        and a.version = #{version}
+    </select>
+
+    <insert id="insertAuditOper" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into audit_oper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sign != null and sign != '' ">
+                sign,
+            </if>
+            <if test="code != null and code != '' ">
+                code,
+            </if>
+            <if test="version != null ">
+                version,
+            </if>
+            <if test="userId != null ">
+                user_id,
+            </if>
+            <if test="sort != null ">
+                sort,
+            </if>
+            <if test="auditOpinion != null and auditOpinion != '' ">
+                audit_opinion,
+            </if>
+            <if test="auditDate != null and auditDate != '' ">
+                audit_date,
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                audit_state,
+            </if>
+            <if test="lightenUp != null and lightenUp != '' ">
+                lighten_up,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sign != null and sign != '' ">
+                #{sign},
+            </if>
+            <if test="code != null and code != '' ">
+                #{code},
+            </if>
+            <if test="version != null ">
+                #{version},
+            </if>
+            <if test="userId != null ">
+                #{userId},
+            </if>
+            <if test="sort != null ">
+                #{sort},
+            </if>
+            <if test="auditOpinion != null and auditOpinion != '' ">
+                #{auditOpinion},
+            </if>
+            <if test="auditDate != null and auditDate != '' ">
+                #{auditDate},
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                #{auditState},
+            </if>
+            <if test="lightenUp != null and lightenUp != '' ">
+                #{lightenUp},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateAuditOper">
+        update audit_oper
+        <set>
+            <if test="sign != null and sign != '' ">
+                sign = #{sign},
+            </if>
+            <if test="code != null and code != '' ">
+                code = #{code},
+            </if>
+            <if test="version != null ">
+                version = #{version},
+            </if>
+            <if test="userId != null ">
+                user_id = #{userId},
+            </if>
+            <if test="sort != null ">
+                sort = #{sort},
+            </if>
+            <if test="auditOpinion != null and auditOpinion != '' ">
+                audit_opinion = #{auditOpinion},
+            </if>
+            <if test="auditDate != null and auditDate != '' ">
+                audit_date = #{auditDate},
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                audit_state = #{auditState},
+            </if>
+            <if test="lightenUp != null and lightenUp != '' ">
+                lighten_up = #{lightenUp},
+            </if>
+        </set>
+        where id = #{id}
+        <if test="code != null and code != '' ">
+            and code = #{code}
+        </if>
+        <if test="version != null ">
+            and version = #{version}
+        </if>
+    </update>
+
+    <delete id="deleteAuditOperByPrimarykey">
+		delete
+		from
+			audit_oper
+		where
+			id = #{id}
+	</delete>
+
+</mapper>

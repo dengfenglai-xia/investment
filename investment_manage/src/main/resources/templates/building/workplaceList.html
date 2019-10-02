@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div>
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="layui-card l_shadow" style="margin-bottom: 15px;">
+            <div class="layui-row ">
+                <div class="information">
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">管理工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.totalNum} + ' 个'" ></div>
+                    </div>
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">可招商工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.enableNum} + ' 个'"  ></div>
+                    </div>
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">在租工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.rentNum} + ' 个'"  ></div>
+                    </div>
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">空置工位</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.vacantNum} + ' 个'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">类别： </label>
+                    <div class="layui-input-inline layui-form sear_rad">
+                        <input type="radio" name="type" value="1" title="房源">
+                        <input type="radio" name="type" value="2" title="工位" checked="">
+                        <input type="radio" name="type" value="3" title="车位">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="keyword" autocomplete="off"  placeholder="请输入项目名称/楼宇名称" class="w_seartext"
+                           style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-col-md12">
+                        <div class="clear"></div>
+                        <div class="layui-card">
+                            <div class="layui-card-body">
+                                <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                                <script type="text/html" id="toolbar">
+                                    <div class="tab-tit l_inptd">楼宇列表</div>
+                                </script>
+                                <script type="text/html" id="operation">
+                                    <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                    <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="edit">编辑</a>
+                                    <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                                    <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="import">导入</a>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--导入弹窗start-->
+<div class="dr dr-shade"></div>
+<div class="dr-box">
+    <div class="dr-tit">
+        导入
+    </div>
+    <div class="dr-body">
+        <form id="uploadForm">
+            <input type="hidden" id="buildingId" name="buildingId">
+            <div class="laylists w_scb">
+                <input type="file" name="file" class="web_file_1 myfile"
+                       accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <input type="button" value="选择附件" class="layui-btn web_inp_s ffil layui-btn-normal chooseBtn">
+            </div>
+        </form>
+        <div class="laylists" style="cursor:pointer;">
+            <a class="web_cor_1" th:href="@{/building/download}">
+                <input type="button" value="下载导入模板" class="layui-btn xzfjw web_inp_s">
+            </a>
+        </div>
+        <div class="butorde1">
+            <input type="button" value="上传" class="minbut1 site-demo-active uploadFile" data-type="loading">
+            <input type="button" value="取消" class="minbut2 cancel">
+        </div>
+    </div>
+</div>
+<!--导入弹窗end-->
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            form = layui.form,
+            table = layui.table,
+            upload = layui.upload;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'building/queryBuildingList/2',
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    fixed: 'left',
+                    unresize: true,
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'buildingId',
+                    title: '楼宇ID',
+                    hide: true
+                },{
+                    field: 'projectName',
+                    title: '所属项目',
+                    fixed: 'left',
+                    width:150
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称',
+                    fixed: 'left',
+                    width:150
+                },  {
+                    field: 'totalNum',
+                    title: '管理工位数',
+                    width:100
+                }, {
+                    field: 'enableNum',
+                    title: '可招商工位数',
+                    width:120
+                }, {
+                    field: 'rentNum',
+                    title: '在租工位数',
+                    width:100
+                }, {
+                    field: 'vacantNum',
+                    title: '空置工位数',
+                    width:100
+                }
+                // , {
+                //     field: 'avgPrice',
+                //     title: '在租均价（元/月）'
+                // }, {
+                //     field: 'contractNum',
+                //     title: '签约合同'
+                // }, {
+                //     field: 'customerNum',
+                //     title: '签约企业数'
+                // }
+                , {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 300,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>新增楼宇</b>',
+                content: URL + 'building/toAddBuilding',
+                area: ['100%', '100%']
+            });
+        });
+
+        form.on('radio', function (data) {
+            location.href = URL + 'building/toBuildingList/' + data.value;
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    keyword: $.trim($("#keyword").val())
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#keyword').val('');
+            $(".search").click();
+            form.render();
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.buildingId;
+            if (obj.event === 'show') {
+                location.href = URL + 'building/queryBuildingDetail/' + id;
+            } ;
+
+            if (obj.event === 'edit') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>编辑</b>',
+                    content: URL + 'building/toEditBuilding/' + id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'building/deleteBuilding',
+                        data: {"buildingId": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                setTimeout(function () {
+                                    table.reload('dataList');
+                                }, 1000);
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+
+            if (obj.event === 'import') {
+                $('#buildingId').val(id);
+                $('.dr-shade').show();
+                $('.dr-box').show()
+            }
+            ;
+        });
+    });
+
+    $('body').on('click', '.cancel', function () {
+        $('.dr-shade').hide();
+        $('.dr-box').hide()
+    });
+
+    $('body').on('change', '.myfile', function () {
+        //获取文件的value值
+        var file = $(".myfile").val();
+        //获取文件名+扩展名
+        var fileName = file.split("\\").pop();
+        //获取文件的扩展名
+        var fileExt = file.substr(file.indexOf("."));
+        $(".chooseBtn").val(fileName);
+        if (fileExt != '.xls' && fileExt != '.xlsx') {
+            layer.msg('导入文件格式不正确', {offset: '100px'});
+        }
+    });
+
+    $(".uploadFile").click(function () {
+        //获取文件的value值
+        var file = $(".myfile").val();
+        //获取文件的扩展名
+        var fileExt = file.substr(file.indexOf("."));
+        if (file == '') {
+            layer.msg('请选择导入文件');
+            return false;
+        } else {
+            if (fileExt != '.xls' && fileExt != '.xlsx') {
+                layer.msg('导入文件格式不正确', {offset: '100px'});
+                return false;
+            }
+        }
+        layer.closeAll();
+        layer.load(1);
+        setTimeout(function () {
+            var formData = new FormData($("#uploadForm")[0]);
+            $.ajax({
+                url: URL + 'building/importInfo',
+                type: 'POST',
+                data: formData,
+                dataType: "json",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    layer.closeAll('loading');
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        $('.dr-shade').hide();
+                        $('.dr-box').hide()
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            location.href = URL + 'building/queryBuildingDetail/' + $('#buildingId').val();
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg, {time: 5000});
+                    }
+                }
+            });
+        }, 2000);
+    });
+</script>
+</body>
+</html>

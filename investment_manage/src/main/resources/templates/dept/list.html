@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="clear"></div>
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="tab-tit l_inptd">
+                        部门列表
+                    </div>
+                    <div class="tab-tit-btn">
+                        <input type="button" value="新增" class="layui-btn layui-btn-normal table_but_xz pop-up" data-type="add"/>
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                    <script type="text/html" id="operation">
+                        <a class="layui-btn layui-btn-xs l_web_but_xg" lay-event="edit">修改</a>
+                        <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        table = layui.table;
+        var laydate = layui.laydate,
+            admin = layui.admin;
+        table.render({
+            elem: '#dataList',
+            url: URL + 'queryDeptList',
+            where: {
+                companyCode: '[[${companyCode}]]'
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            defaultToolbar: false,
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    unresize: true,
+                    fixed: 'left',
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'deptId',
+                    title: 'ID',
+                    hide: true
+
+                }, {
+                    field: 'deptName',
+                    title: '部门名称'
+                }, {
+                    field: 'remarks',
+                    title: '描述信息'
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#operation',
+                    width: 220
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                layer.open({
+                    type: 2,
+                    title: '修改',
+                    content: URL + 'toUpdateDept/' + data.deptId,
+                    maxmin: false,
+                    skin: 'opens',
+                    shadeClose: true,
+                    area: ['450px', '300px']
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确认是否删除？', {
+                    skin: 'sancu',
+                    closeBtn: 0,
+                    area: ['200px', 'auto'],
+                    title: '提示信息'
+                }, function (index) {
+                    $.ajax({
+                        url: URL + "deleteDept",
+                        data: {
+                            deptId: data.deptId
+                        },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                setTimeout(function () {
+                                    layer.closeAll();
+                                    table.reload('dataList');
+                                }, 1000);
+                            } else {
+                                layer.msg(data.msg, {icon: 5});
+                            }
+                        }
+                    });
+                });
+            };
+        });
+
+        //新增
+        var $ = layui.$, active = {
+            add: function () {
+                layer.open({
+                    type: 2,
+                    title: '新增',
+                    content: URL + 'toAddDept',
+                    maxmin: false,
+                    skin: 'opens',
+                    shadeClose: true,
+                    area: ['450px', '300px']
+                });
+            }
+        };
+
+        $('.pop-up').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+
+</html>

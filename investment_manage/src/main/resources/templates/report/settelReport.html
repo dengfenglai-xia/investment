@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">年份 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="year" th:value="${year}" autocomplete="off"
+                               class="layui-input l_time laydate-item w_timeinp" placeholder="请输入开始日期">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">收支类型</label>
+                    <div class="layui-input-inline">
+                        <select id="billType" lay-search>
+                            <option value="" selected>全部</option>
+                            <option value="1">收入</option>
+                            <option value="2">支出</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">项目名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="projectId" lay-verify="required" lay-filter="project_select">
+                            <option value="">请选择项目</option>
+                            <option th:each="obj:${projectList}" th:value="${obj.projectId}" th:text="${obj.projectName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">楼宇名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="buildingId" lay-verify="required">
+                            <option value="">请选择楼宇</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">费用类型： </label>
+                    <div class="layui-input-inline layui-form sear_rad">
+                        <input type="checkbox" name="feeType" th:each="feeType:${feeTypeList}" th:value="${feeType}"
+                               th:title="${feeType}" lay-skin="primary" checked="">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar" title="现金流水统计">
+                                <div class="tab-tit l_inptd">现金流水统计</div>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script id="building-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择楼宇</option>
+    {{each list as obj index}}
+    <option value="{{obj.buildingId}}">{{obj.buildingName}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无楼宇信息</option>
+    {{/if}}
+</script>
+<script>
+    var table = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var layer = layui.layer;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            title: '收支流水表',
+            defaultToolbar: ['filter','exports'],
+            url: URL + 'querySettelReport',
+            where: {
+                year: $("#year").val()
+            },
+            cols: [
+                [{
+                    field: 'feeType',
+                    title: '费用类型 \\ 月份',
+                    fixed: 'left',
+                    width: 150
+                }, {
+                    field: 'billType',
+                    title: '收支类型',
+                    width: 150
+                }, {
+                    field: 'janAmt',
+                    title: '1月份', templet: function (d) {
+                        return number_format(d.janAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'febAmt',
+                    title: '2月份', templet: function (d) {
+                        return number_format(d.febAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'marAmt',
+                    title: '3月份', templet: function (d) {
+                        return number_format(d.marAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'aprAmt',
+                    title: '4月份', templet: function (d) {
+                        return number_format(d.aprAmt, 2);
+                    },
+                    width: 120
+                },{
+                    field: 'mayAmt',
+                    totalRow: true,
+                    title: '5月份', templet: function (d) {
+                        return number_format(d.mayAmt, 2);
+                    },
+                    width: 120
+                },{
+                    field: 'junAmt',
+                    title: '6月份', templet: function (d) {
+                        return number_format(d.junAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'julAmt',
+                    title: '7月份', templet: function (d) {
+                        return number_format(d.julAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'augAmt',
+                    title: '8月份', templet: function (d) {
+                        return number_format(d.augAmt, 2);
+                    },
+                    width: 120
+                },{
+                    field: 'sepAmt',
+                    title: '9月份', templet: function (d) {
+                        return number_format(d.sepAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'octAmt',
+                    title: '10月份', templet: function (d) {
+                        return number_format(d.octAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'novAmt',
+                    title: '11月份', templet: function (d) {
+                        return number_format(d.novAmt, 2);
+                    },
+                    width: 120
+                }, {
+                    field: 'decAmt',
+                    title: '12月份', templet: function (d) {
+                        return number_format(d.decAmt, 2);
+                    },
+                    width: 120
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            }
+        });
+
+        $('.search').on('click', function () {
+            var feeType = getCheckVal();
+            var year = $("#year").val();
+            if(feeType == ''){
+                layer.msg("费用类别不能为空");
+                return;
+            }
+            if(year == ''){
+                layer.msg("请选择年份");
+                return;
+            }
+            table.reload('dataList', {
+                where: {
+                    feeType:feeType,
+                    billType: $("#billType").val(),
+                    year: year,
+                    projectId: $("#projectId").val(),
+                    buildingId: $("#buildingId").val(),
+                    customerName: $("#customerName").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            location.reload();
+        });
+
+        form.on('select(project_select)', function (data) {
+            var id = data.value;
+            if (id != '') {
+                $.ajax({
+                    url: URL + "building/queryBuildingBaseList",
+                    type: "POST",
+                    data: {
+                        projectId: id
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var html = template('building-templete', data);
+                        $('#buildingId').html(html);
+                        form.render('select');
+                    }
+                });
+            } else {
+                $('#buildingId').html('<option value="">请选择楼宇</option>');
+                form.render('select');
+            }
+        });
+
+        //时间选择器
+        lay('.laydate-item').each(function () {
+            laydate.render({
+                elem: this
+                , type: 'year'
+                , trigger: 'click'
+            });
+        });
+
+        function getCheckVal(){
+            var str = "";
+            $("input[name='feeType']:checked").each(function (index, item) {
+                str += $(this).val()+',';
+            });
+            return str;
+        }
+
+    });
+</script>
+</body>
+
+</html>

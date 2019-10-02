@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<style type="text/css">
+    .w_floor {
+        width: 100%;
+        height: 30px;
+        padding: 0px 25px;
+        box-sizing: border-box;
+    }
+
+    .w_housing_content {
+        width: 100%;
+        height: auto;
+        padding: 10px 0 0 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .wflo_list {
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+    }
+
+    .wf_tit {
+        font-size: 16px;
+        float: left;
+        line-height: 30px;
+        font-weight:bold;
+        color: #999999;
+    }
+
+    .wf_state {
+        width: auto;
+        float: right;
+    }
+
+    .wste_tit {
+        float: left;
+        line-height: 30px;
+        margin-right: 10px;
+        font-weight:bold;
+        color: #999999;
+    }
+
+    .wste_ul {
+        float: right;
+        line-height: 30px;
+    }
+
+    .wste_ul li {
+        float: left;
+        padding-right: 20px;
+    }
+
+    .wste_st {
+        width: 14px;
+        height: 14px;
+        float: left;
+        margin-top: 8px;
+        margin-right: 10px;
+    }
+
+    .wste_1 {
+        background-color: #de7b9e;
+    }
+
+    .wste_2 {
+        background-color: #feb97a;
+    }
+
+    .wste_3 {
+        background-color: #44b549;
+    }
+
+    .wste_4 {
+        background-color: #c2c5d6;
+    }
+
+    .wste_5 {
+        background-color: #69bfd3;
+    }
+
+    .w_flotip {
+        float: left;
+        width: 120px;
+        height: 76px;
+        line-height: 76px;
+    }
+
+    .w_flmj {
+        color: #999999;
+        float: right;
+        margin-right: 10px;
+    }
+
+    .w_stes {
+        width: 200px;
+        height: 76px;
+        border: 1px solid #FFFFFF;
+        border-radius: 5px;
+        float: left;
+        /*margin-bottom: 10px;*/
+        /*margin-right: 5px;*/
+        padding-top: 10px;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .w_khnum {
+        float: right;
+    }
+
+    .act_num {
+        font-weight:bold;
+        color: #999999;
+    }
+
+    .pr_10 {
+        padding-right: 10px;
+    }
+
+    .w_hosr {
+        float: right;
+        width: calc(100% - 120px);
+    }
+</style>
+<body>
+<div class="layui-fluid l_find_top">
+    <div class="layui-row ">
+        <div class="layui-col-md12">
+            <!--上部-->
+            <div class="layui-card l_shadow">
+                <div class="layui-row  layui-form-item">
+                    <div class="information">
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">管理面积</div>
+                            <div class="information_list w_fwbt"
+                                 th:text="${#numbers.formatDecimal(obj.totalArea, 1, 2)} + ' ㎡'"></div>
+                            <div class="information_list" th:text="'房源数量：' + ${obj.totalNum} + ' 间'"></div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">可招商面积</div>
+                            <div class="information_list w_fwbt"
+                                 th:text="${#numbers.formatDecimal(obj.enableArea, 1, 2)} + ' ㎡'"></div>
+                            <div class="information_list" th:text="'房源数量：' + ${obj.enableNum} + ' 间'"></div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">在租面积</div>
+                            <div class="information_list w_fwbt"
+                                 th:text="${#numbers.formatDecimal(obj.rentArea, 1, 2)} + ' ㎡'"></div>
+                            <div class="information_list" th:text="'房源数量：' + ${obj.rentNum} + ' 间'"></div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">空置面积</div>
+                            <div class="information_list w_fwbt"
+                                 th:text="${#numbers.formatDecimal(obj.vacantArea, 1, 2)} + ' ㎡'"></div>
+                            <div class="information_list" th:text="'房源数量：' + ${obj.vacantNum} + ' 间'"></div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">在租均价</div>
+                            <div class="information_list w_fwbt" th:text="${obj.avgPrice} + ' 元㎡·天'"></div>
+                            <div class="information_list">- -</div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">出租率</div>
+                            <div class="information_list w_fwbt"
+                                 th:text="${#numbers.formatDecimal(obj.rentRate, 1, 2)} + ' %'"></div>
+                            <div class="information_list">- -</div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">签约合同</div>
+                            <div class="information_list w_fwbt" th:text="${obj.contractNum} + ' 份'"></div>
+                            <div class="information_list">- -</div>
+                        </div>
+                        <div class="layui-col-sm3 w_bor">
+                            <div class="information_list w_fw">签约企业</div>
+                            <div class="information_list w_fwbt" th:text="${obj.customerNum} + ' 家'"></div>
+                            <div class="information_list">- -</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--上部end-->
+            <!--中部-->
+            <form id="searchForm" method="get" th:action='@{/room/queryRoomSumList}' class="layui-card l_shadow">
+                <div class="searchbox">
+                    <div class="w_searlist">
+                        <div class="layui-form">
+                            <label class="layui-form-label layui-form-label-left">楼宇：</label>
+                            <div class="layui-input-inline">
+                                <select name="buildingId" lay-verify="required" lay-search lay-filter="building-select">
+                                    <option th:each="obj:${buildingList}" th:value="${obj.buildingId}" th:text="${obj.buildingName}" th:selected="${obj.buildingId eq room.buildingId}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w_searlist">
+                        <div class="layui-form">
+                            <label class="layui-form-label layui-form-label-left">招商状态：</label>
+                            <div class="layui-input-inline">
+                                <select id="state" name="state" lay-verify="required" lay-search  lay-filter="state-select">
+                                    <option value="">请选择招商状态</option>
+                                    <option value="0" th:selected="${room.state eq '0'}">不对外招租</option>
+                                    <option value="1" th:selected="${room.state eq '1'}">在租</option>
+                                    <option value="2" th:selected="${room.state eq '2'}">即将到期</option>
+                                    <option value="3" th:selected="${room.state eq '3'}">空置</option>
+                                    <option value="4" th:selected="${room.state eq '4'}">到期未处理</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w_searlist">
+                        <div class="layui-inline">
+                            <label class="layui-form-label layui-form-label-left "
+                                   style="text-align: left;">起租时间 </label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="startDateRange" name="startDateRange"
+                                       class="layui-input l_time laydate-control w_timeinp_l"
+                                       th:value="${startDateRange}" autocomplete="off" placeholder="请选择起租时间区间">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w_searlist">
+                        <div class="layui-inline">
+                            <label class="layui-form-label layui-form-label-left "
+                                   style="text-align: left;">到期时间 </label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="endDateRange" name="endDateRange"
+                                       class="layui-input l_time laydate-control w_timeinp_l"
+                                       th:value="${endDateRange}" autocomplete="off" placeholder="请选择到期时间区间">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w_searlist">
+                        <div class="layui-form">
+                            <label class="layui-form-label layui-form-label-left">招商面积（㎡）：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="startArea" name="startArea" th:value="${room.startArea}"
+                                       class="layui-input w_charinp" autocomplete="off" placeholder="起始面积"
+                                       style="width: 100px;">
+                                <p class="btw">~</p>
+                                <input type="text" id="endArea" name="endArea" th:value="${room.endArea}"
+                                       class="layui-input w_charinp" autocomplete="off" placeholder="截止面积"
+                                       style="width: 100px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w_searlist">
+                        <label class="layui-form-label layui-form-label-left " style="text-align: left;">客户名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="keyword" name="keyword" th:value="${room.keyword}"
+                                   placeholder="请输入客户名称" autocomplete="off" class="w_seartext">
+                        </div>
+                    </div>
+                    <div class="w_searlist">
+                        <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+                    </div>
+                    <div class="w_searlist">
+                        <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </form>
+            <!--中部end-->
+            <!--下部-->
+            <div class="layui-card l_shadow">
+                <div class="layui-col-md12">
+                    <div class="z_housing l_listblock">
+                        <div class="w_floor">
+                            <span class="wf_tit">楼层 / 总面积</span>
+                            <div class="wf_state">
+                                <span class="wste_tit">招商状态：</span>
+                                <ul class="wste_ul">
+                                    <li>
+                                        <span class="wste_st wste_1"></span>
+                                        到期未处理
+                                    </li>
+                                    <li>
+                                        <span class="wste_st wste_2"></span>
+                                        即将到期
+                                    </li>
+                                    <li>
+                                        <span class="wste_st wste_3"></span>
+                                        出租中
+                                    </li>
+                                    <li>
+                                        <span class="wste_st wste_4"></span>
+                                        不对外招商
+                                    </li>
+                                    <li>
+                                        <span class="wste_st wste_5"></span>
+                                        空置
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="w_housing_content" th:each="obj:${roomSumList}">
+                            <ul class="wflo_list">
+                                <li class="w_flotip">
+                                    <span class="w_flnum act_num" th:text="${obj.floorNo} + ' 层 / ' + ${#numbers.formatDecimal(obj.totalArea, 1, 2)} + ' ㎡'  "></span>
+                                </li>
+                                <div class="w_hosr">
+                                    <li class="w_stes room" th:roomId="${item.roomId}" th:state="${item.state}" th:each="item:${obj.roomList}">
+                                        <div class="z_p0 pr_10" th:text="${item.roomNo} + '室（' + ${#numbers.formatDecimal(item.buildArea, 0, 2)} +' ㎡）' "></div>
+                                        <div class="z_p1" th:if="${item.customerName != null}" th:text="${item.customerName}"></div>
+                                        <div class="z_p1" th:if="${item.endDate != null}" th:text="${item.endDate} + ' 到期'"></div>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--下部end-->
+        </div>
+    </div>
+</div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            table = layui.table;
+        var form = layui.form;
+
+        form.on('select(building-select)', function (data) {
+            $("#searchForm").submit();
+        });
+
+        form.on('select(state-select)', function (data) {
+            $("#searchForm").submit();
+        });
+
+        $('.search').on('click', function () {
+            $("#searchForm").submit();
+        });
+
+        $('.reset').on('click', function () {
+            $('#state').val('');
+            $('#startArea').val('');
+            $('#endArea').val('');
+            $('#startDateRange').val('');
+            $('#endDateRange').val('');
+            $('#keyword').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        $('body').on('click', '.room', function () {
+            var roomId = $(this).attr('roomId');
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>房源详情</b>',
+                content: URL + 'room/queryRoomDetail/' + roomId,
+                area: ['100%', '100%']
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                range: '~'
+            });
+        });
+
+        // 设置不用状态的颜色
+        $("ul li").each(function () {
+            var state = $(this).attr("state");
+            if (state == '0') {
+                $(this).addClass("wste_4");
+            } else if (state == '1') {
+                $(this).addClass("wste_3");
+            } else if (state == '2') {
+                $(this).addClass("wste_2");
+            } else if (state == '3') {
+                $(this).addClass("wste_5");
+            } else if (state == '4') {
+                $(this).addClass("wste_1");
+            }
+        });
+    });
+</script>
+</body>
+</html>

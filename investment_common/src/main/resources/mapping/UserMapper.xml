@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.UserMapper">
+
+    <sql id="Base_Column_List">
+		u.user_id,
+		u.user_code,
+		u.user_name,
+        u.account_type,
+        u.user_type,
+		u.password,
+		u.salt,
+		u.real_name,
+		u.sex,
+		u.phone,
+		u.email,
+        u.address,
+        u.company_code,
+		u.company,
+		u.state,
+		u.end_date,
+		u.dept_id,
+		u.job_id,
+		u.role_id,
+		u.create_user_id,
+		u.create_time,
+		u.update_user_id,
+		u.update_time,
+		u.remarks,
+		u.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+        left join user u1 on u.create_user_id = u1.user_id
+        left join dept d on u.dept_id = d.dept_id
+        left join job j on u.job_id = j.job_id
+        left join role r on u.role_id = r.role_id
+    </sql>
+
+    <select id="queryUserList" resultType="user">
+        select
+        u1.real_name creator,
+        d.dept_name,
+        j.job_name,
+        r.role_name,
+        <include refid="Base_Column_List"/>
+        from user u
+        <include refid="Link_Column_List"/>
+        where u.del_flag = '0'
+        <if test="realName != null and realName != '' ">
+            and u.real_name like concat('%',#{realName},'%')
+        </if>
+        <if test="company != null and company != '' ">
+            and u.company like concat('%',#{company},'%')
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and u.company_code = #{companyCode}
+        </if>
+        <if test="userType != null and userType != '' ">
+            and u.user_type = #{userType}
+        </if>
+        <if test="accountType != null and accountType != '' ">
+            and u.account_type = #{accountType}
+        </if>
+        <if test="state != null and state != '' ">
+            and u.state = #{state}
+        </if>
+        <if test="roleId != null">
+            and u.role_id = #{roleId}
+        </if>
+        <if test="jobId != null">
+            and u.job_id = #{jobId}
+        </if>
+        <if test="deptId != null">
+            and u.dept_id = #{deptId}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            u.real_name like concat('%',#{keyword},'%')
+            or
+            u.phone like concat('%',#{keyword},'%')
+            )
+        </if>
+        order by u.user_id desc
+    </select>
+
+    <select id="queryUserCount" resultType="int">
+        select
+        count(*) num
+        from user
+        where del_flag = '0'
+        <if test="accountType != null and accountType != '' ">
+            and account_type = #{accountType}
+        </if>
+    </select>
+
+    <select id="queryUserDetailByPrimarykey" resultType="user">
+        select
+        d.dept_name,
+        j.job_name,
+        r.role_name,
+        <include refid="Base_Column_List"/>
+        from user u
+        left join dept d on u.dept_id = d.dept_id
+        left join job j on u.job_id = j.job_id
+        left join role r on u.role_id = r.role_id
+        where  u.user_id = #{userId}
+    </select>
+
+    <select id="queryUserDetail" resultType="user">
+        select
+        <include refid="Base_Column_List"/>
+        from user u
+        where u.del_flag = '0'
+        <if test="userName != null and userName != '' ">
+            and u.user_name = #{userName}
+        </if>
+    </select>
+
+    <insert id="insertUser">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != '' ">
+                user_code,
+            </if>
+            <if test="userName != null and userName != '' ">
+                user_name,
+            </if>
+            <if test="userType != null and userType != '' ">
+                user_type,
+            </if>
+            <if test="accountType != null and accountType != '' ">
+                account_type,
+            </if>
+            <if test="password != null and password != '' ">
+                password,
+            </if>
+            <if test="salt != null and salt != '' ">
+                salt,
+            </if>
+            <if test="realName != null and realName != '' ">
+                real_name,
+            </if>
+            <if test="sex != null and sex != '' ">
+                sex,
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone,
+            </if>
+            <if test="email != null and email != '' ">
+                email,
+            </if>
+            <if test="address != null and address != '' ">
+                address,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="company != null and company != '' ">
+                company,
+            </if>
+            <if test="state != null and state != '' ">
+                state,
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date,
+            </if>
+            <if test="deptId != null">
+                dept_id,
+            </if>
+            <if test="jobId != null">
+                job_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != '' ">
+                #{userCode},
+            </if>
+            <if test="userName != null and userName != '' ">
+                #{userName},
+            </if>
+            <if test="userType != null and userType != '' ">
+                #{userType},
+            </if>
+            <if test="accountType != null and accountType != '' ">
+                #{accountType},
+            </if>
+            <if test="password != null and password != '' ">
+                #{password},
+            </if>
+            <if test="salt != null and salt != '' ">
+                #{salt},
+            </if>
+            <if test="realName != null and realName != '' ">
+                #{realName},
+            </if>
+            <if test="sex != null and sex != '' ">
+                #{sex},
+            </if>
+            <if test="phone != null and phone != '' ">
+                #{phone},
+            </if>
+            <if test="email != null and email != '' ">
+                #{email},
+            </if>
+            <if test="address != null and address != '' ">
+                #{address},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="company != null and company != '' ">
+                #{company},
+            </if>
+            <if test="state != null and state != '' ">
+                #{state},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                #{endDate},
+            </if>
+            <if test="deptId != null">
+                #{deptId},
+            </if>
+            <if test="jobId != null">
+                #{jobId},
+            </if>
+            <if test="roleId != null">
+                #{roleId},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="userCode != null and userCode != '' ">
+                user_code = #{userCode},
+            </if>
+            <if test="userName != null and userName != '' ">
+                user_name = #{userName},
+            </if>
+            <if test="sex != null and sex != '' ">
+                sex = #{sex},
+            </if>
+            <if test="userType != null and userType != '' ">
+                user_type = #{userType},
+            </if>
+            <if test="accountType != null and accountType != '' ">
+                account_type = #{accountType},
+            </if>
+            <if test="password != null and password != '' ">
+                password = #{password},
+            </if>
+            <if test="salt != null and salt != '' ">
+                salt = #{salt},
+            </if>
+            <if test="realName != null and realName != '' ">
+                real_name = #{realName},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != '' ">
+                email = #{email},
+            </if>
+            <if test="address != null and address != '' ">
+                address = #{address},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date = #{endDate},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="deptId != null">
+                dept_id = #{deptId},
+            </if>
+            <if test="company != null and company != '' ">
+                company = #{company},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code = #{companyCode},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        user_id = #{userId}
+    </update>
+
+    <delete id="deleteUserByPrimarykey">
+		delete
+		from
+			user
+		where
+			user_id = #{userId}
+	</delete>
+
+</mapper>

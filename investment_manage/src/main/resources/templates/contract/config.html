@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="clear"></div>
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="tab-tit l_inptd">
+                        合同配置项
+                    </div>
+                    <div class="tab-tit" style="margin-left: 20px;">
+                        <a class="layui-btn layui-btn-warm import"><i class="layui-icon">&#xe681;</i>上传合同模板</a>
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table">
+                        <thead>
+                        <tr>
+                            <th style="width: 150px;">序号</th>
+                            <th style="text-align: left;width: 150px;">名称</th>
+                            <th style="text-align: left">标识</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr  th:each="obj:${CONTRACT_FIELD_MAP}">
+                            <td style="width: 150px;" th:text="${objStat.count}"></td>
+                            <td style="text-align: left;width: 150px;"  th:text="${obj.value}"></td>
+                            <td style="text-align: left;"  th:text="${obj.key}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--导入弹窗start-->
+<div class="dr dr-shade"></div>
+<div class="dr-box">
+    <div class="dr-tit">
+        上传合同附件
+    </div>
+    <div class="dr-body">
+        <form id="uploadForm">
+            <div class="laylists w_scb">
+                <input type="file" name="file" class="web_file_1 myfile" >
+                <input type="button" value="选择附件" class="layui-btn web_inp_s ffil layui-btn-normal chooseBtn">
+            </div>
+        </form>
+        <div class="butorde1">
+            <input type="button" value="上传" class="minbut1 site-demo-active uploadFile" data-type="loading">
+            <input type="button" value="取消" class="minbut2 cancel">
+        </div>
+    </div>
+</div>
+<!--导入弹窗end-->
+<script th:replace="common/common-js::js"></script>
+<script>
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        table = layui.table;
+        var laydate = layui.laydate,
+            admin = layui.admin,
+            form = layui.form;
+
+        $('.import').on('click', function () {
+            $('.dr-shade').show();
+            $('.dr-box').show()
+        });
+
+        $('body').on('click', '.cancel', function () {
+            $('.dr-shade').hide();
+            $('.dr-box').hide()
+        });
+
+        $('body').on('change', '.myfile', function () {
+            //获取文件的value值
+            var file = $(".myfile").val();
+            //获取文件名+扩展名
+            var fileName = file.split("\\").pop();
+            //获取文件的扩展名
+            var fileExt = file.substr(file.indexOf("."));
+            $(".chooseBtn").val(fileName);
+            if (fileExt != '.doc' && fileExt != '.docx') {
+                layer.msg('文件格式不正确', {offset: '100px'});
+            }
+        });
+
+        $(".uploadFile").click(function () {
+            //获取文件的value值
+            var file = $(".myfile").val();
+            //获取文件的扩展名
+            var fileExt = file.substr(file.indexOf("."));
+            if (file == '') {
+                layer.msg('请选择导入文件');
+                return false;
+            } else {
+                if (fileExt != '.doc' && fileExt != '.docx') {
+                    layer.msg('导入文件格式不正确', {offset: '100px'});
+                    return false;
+                }
+            }
+            layer.closeAll();
+            layer.load(1);
+            setTimeout(function () {
+                var formData = new FormData($("#uploadForm")[0]);
+                $.ajax({
+                    url: URL + 'uploadContractTemplate',
+                    type: 'POST',
+                    data: formData,
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        layer.closeAll('loading');
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            $('.dr-shade').hide();
+                            $('.dr-box').hide()
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            }, 2000);
+        });
+    });
+
+    $('body').on('click', '.sc', function () {
+        $('.dr-box').hide();
+        $('.jdt-box').show()
+    })
+
+    $('body').on('click', '.dy', function () {
+        $('.dr').show();
+        $('.dr-box').show()
+    })
+
+    $('body').on('click', '.drqx', function () {
+        $('.dr').hide();
+        $('.dr-box').hide()
+    })
+</script>
+</body>
+</html>

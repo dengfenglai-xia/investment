@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.CustomerMapper">
+
+    <sql id="Base_Column_List">
+		c.customer_id,
+		c.customer_name,
+		c.company_code,
+		c.customer_type,
+		c.contacts_card,
+		c.state,
+		c.overdue_num,
+		c.contacts,
+		c.phone,
+		c.work_unit,
+		c.industry,
+		c.channel_source,
+		c.source_name,
+		c.email,
+		c.zip_code,
+		c.link_address,
+		c.cedit_code,
+		c.open_bank,
+		c.account,
+		c.unified_code,
+		c.business_reg_no,
+		c.organ_code,
+		c.legal_person,
+		c.reg_capital,
+		c.business_state,
+		c.company_type,
+		c.reg_office,
+		c.pass_date,
+		c.build_date,
+		c.business_term,
+		c.people_scale,
+		c.reg_address,
+		c.business_scope,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+		left join contract co on c.customer_id = co.customer_id
+		left join contract_room cr on co.contract_code = cr.contract_code and co.version = cr.version
+	</sql>
+
+    <select id="queryCustomerList" resultType="customer">
+        select
+        c.customer_id,
+        c.customer_name,
+        c.customer_type,
+        c.industry
+        from customer c
+        where c.del_flag = '0'
+        and c.company_code = #{companyCode}
+        <if test="customerType != null and customerType != '' ">
+            and c.customer_type = #{customerType}
+        </if>
+        <if test="state != null and state != '' ">
+            and c.state = #{state}
+        </if>
+        <if test="industry != null and industry != '' ">
+            and c.industry = #{industry}
+        </if>
+        <if test="startArea != null and endArea != null">
+            and total_area between #{startArea} and #{endArea}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            c.customer_name like concat('%',#{keyword},'%')
+            or
+            c.contacts like concat('%',#{keyword},'%')
+            )
+        </if>
+        order by c.customer_id desc
+    </select>
+
+    <select id="queryCustomerBaseList" resultType="customer">
+        select
+        customer_id,
+        customer_name
+        from customer
+        where del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and company_code = #{companyCode}
+        </if>
+        <if test="customerType != null and customerType != '' ">
+            and customer_type = #{customerType}
+        </if>
+    </select>
+
+    <select id="queryCustomerDetailByPrimarykey" resultType="customer">
+        select
+        <include refid="Base_Column_List"/>
+        from customer c
+        where
+        c.customer_id = #{customerId}
+    </select>
+
+    <select id="queryCustomerDetail" resultType="customer">
+        select
+        <include refid="Base_Column_List"/>
+        from customer c
+        where c.del_flag = '0'
+        <if test="customerId != null">
+            c.customer_id = #{customerId}
+        </if>
+    </select>
+
+    <insert id="insertCustomer" useGeneratedKeys="true" keyProperty="customerId" keyColumn="customer_id">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerId != null ">
+                customer_id,
+            </if>
+            <if test="customerType != null and customerType != '' ">
+                customer_type,
+            </if>
+            <if test="customerName != null and customerName != '' ">
+                customer_name,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="contactsCard != null and contactsCard != '' ">
+                contacts_card,
+            </if>
+            <if test="state != null and state != '' ">
+                state,
+            </if>
+            <if test="overdueNum != null ">
+                overdue_num,
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts,
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone,
+            </if>
+            <if test="workUnit != null and workUnit != '' ">
+                work_unit,
+            </if>
+            <if test="industry != null and industry != '' ">
+                industry,
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                channel_source,
+            </if>
+            <if test="sourceName != null and sourceName != '' ">
+                source_name,
+            </if>
+            <if test="email != null and email != '' ">
+                email,
+            </if>
+            <if test="zipCode != null and zipCode != '' ">
+                zip_code,
+            </if>
+            <if test="linkAddress != null and linkAddress != '' ">
+                link_address,
+            </if>
+            <if test="ceditCode != null and ceditCode != '' ">
+                cedit_code,
+            </if>
+            <if test="openBank != null and openBank != '' ">
+                open_bank,
+            </if>
+            <if test="account != null and account != '' ">
+                account,
+            </if>
+            <if test="unifiedCode != null and unifiedCode != '' ">
+                unified_code,
+            </if>
+            <if test="businessRegNo != null and businessRegNo != '' ">
+                business_reg_no,
+            </if>
+            <if test="organCode != null and organCode != '' ">
+                organ_code,
+            </if>
+            <if test="legalPerson != null and legalPerson != '' ">
+                legal_person,
+            </if>
+            <if test="regCapital != null and regCapital != '' ">
+                reg_capital,
+            </if>
+            <if test="businessState != null and businessState != '' ">
+                business_state,
+            </if>
+            <if test="companyType != null and companyType != '' ">
+                company_type,
+            </if>
+            <if test="regOffice != null and regOffice != '' ">
+                reg_office,
+            </if>
+            <if test="passDate != null and passDate != '' ">
+                pass_date,
+            </if>
+            <if test="buildDate != null and buildDate != '' ">
+                build_date,
+            </if>
+            <if test="businessTerm != null and businessTerm != '' ">
+                business_term,
+            </if>
+            <if test="peopleScale != null and peopleScale != '' ">
+                people_scale,
+            </if>
+            <if test="regAddress != null and regAddress != '' ">
+                reg_address,
+            </if>
+            <if test="businessScope != null and businessScope != '' ">
+                business_scope,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerId != null ">
+                #{customerId},
+            </if>
+            <if test="customerType != null and customerType != '' ">
+                #{customerType},
+            </if>
+            <if test="customerName != null and customerName != '' ">
+                #{customerName},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="contactsCard != null and contactsCard != '' ">
+                #{contactsCard},
+            </if>
+            <if test="state != null and state != '' ">
+                #{state},
+            </if>
+            <if test="overdueNum != null ">
+                #{overdueNum},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                #{phone},
+            </if>
+            <if test="workUnit != null and workUnit != '' ">
+                #{workUnit},
+            </if>
+            <if test="industry != null and industry != '' ">
+                #{industry},
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                #{channelSource},
+            </if>
+            <if test="sourceName != null and sourceName != '' ">
+                #{sourceName},
+            </if>
+            <if test="email != null and email != '' ">
+                #{email},
+            </if>
+            <if test="zipCode != null and zipCode != '' ">
+                #{zipCode},
+            </if>
+            <if test="linkAddress != null and linkAddress != '' ">
+                #{linkAddress},
+            </if>
+            <if test="ceditCode != null and ceditCode != '' ">
+                #{ceditCode},
+            </if>
+            <if test="openBank != null and openBank != '' ">
+                #{openBank},
+            </if>
+            <if test="account != null and account != '' ">
+                #{account},
+            </if>
+            <if test="unifiedCode != null and unifiedCode != '' ">
+                #{unifiedCode},
+            </if>
+            <if test="businessRegNo != null and businessRegNo != '' ">
+                #{businessRegNo},
+            </if>
+            <if test="organCode != null and organCode != '' ">
+                #{organCode},
+            </if>
+            <if test="legalPerson != null and legalPerson != '' ">
+                #{legalPerson},
+            </if>
+            <if test="regCapital != null and regCapital != '' ">
+                #{regCapital},
+            </if>
+            <if test="businessState != null and businessState != '' ">
+                #{businessState},
+            </if>
+            <if test="companyType != null and companyType != '' ">
+                #{companyType},
+            </if>
+            <if test="regOffice != null and regOffice != '' ">
+                #{regOffice},
+            </if>
+            <if test="passDate != null and passDate != '' ">
+                #{passDate},
+            </if>
+            <if test="buildDate != null and buildDate != '' ">
+                #{buildDate},
+            </if>
+            <if test="businessTerm != null and businessTerm != '' ">
+                #{businessTerm},
+            </if>
+            <if test="peopleScale != null and peopleScale != '' ">
+                #{peopleScale},
+            </if>
+            <if test="regAddress != null and regAddress != '' ">
+                #{regAddress},
+            </if>
+            <if test="businessScope != null and businessScope != '' ">
+                #{businessScope},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateCustomer">
+        update customer
+        <set>
+            <if test="customerType != null and CUSTOMERType != '' ">
+                customer_type = #{customerType},
+            </if>
+            <if test="customerName != null and customerName != '' ">
+                customer_name = #{customerName},
+            </if>
+            <if test="contactsCard != null and contactsCard != '' ">
+                contacts_card = #{contactsCard},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts = #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="workUnit != null and workUnit != '' ">
+                work_unit = #{workUnit},
+            </if>
+            <if test="industry != null and industry != '' ">
+                industry = #{industry},
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                channel_source = #{channelSource},
+            </if>
+            <if test="sourceName != null and sourceName != '' ">
+                source_name = #{sourceName},
+            </if>
+            <if test="email != null and email != '' ">
+                email = #{email},
+            </if>
+            <if test="zipCode != null and zipCode != '' ">
+                zip_code = #{zipCode},
+            </if>
+            <if test="linkAddress != null and linkAddress != '' ">
+                link_address = #{linkAddress},
+            </if>
+            <if test="ceditCode != null and ceditCode != '' ">
+                cedit_code = #{ceditCode},
+            </if>
+            <if test="openBank != null and openBank != '' ">
+                open_bank = #{openBank},
+            </if>
+            <if test="account != null and account != '' ">
+                account = #{account},
+            </if>
+            <if test="unifiedCode != null and unifiedCode != '' ">
+                unified_code = #{unifiedCode},
+            </if>
+            <if test="businessRegNo != null and businessRegNo != '' ">
+                business_reg_no = #{businessRegNo},
+            </if>
+            <if test="organCode != null and organCode != '' ">
+                organ_code = #{organCode},
+            </if>
+            <if test="legalPerson != null and legalPerson != '' ">
+                legal_person = #{legalPerson},
+            </if>
+            <if test="regCapital != null and regCapital != '' ">
+                reg_capital = #{regCapital},
+            </if>
+            <if test="businessState != null and businessState != '' ">
+                business_state = #{businessState},
+            </if>
+            <if test="companyType != null and companyType != '' ">
+                company_type = #{companyType},
+            </if>
+            <if test="regOffice != null and regOffice != '' ">
+                reg_office = #{regOffice},
+            </if>
+            <if test="passDate != null and passDate != '' ">
+                pass_date = #{passDate},
+            </if>
+            <if test="buildDate != null and buildDate != '' ">
+                build_date = #{buildDate},
+            </if>
+            <if test="businessTerm != null and businessTerm != '' ">
+                business_term = #{businessTerm},
+            </if>
+            <if test="peopleScale != null and peopleScale != '' ">
+                people_scale = #{peopleScale},
+            </if>
+            <if test="regAddress != null and regAddress != '' ">
+                reg_address = #{regAddress},
+            </if>
+            <if test="businessScope != null and businessScope != '' ">
+                business_scope = #{businessScope},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        customer_id = #{customerId}
+    </update>
+
+    <delete id="deleteCustomerByPrimarykey">
+		delete
+		from
+			customer
+		where
+			customer_id = #{customerId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.DocsMapper">
+
+    <sql id="Base_Column_List">
+		d.doc_id,
+		d.link_id,
+		d.doc_original_name,
+		d.doc_name,
+		d.doc_type,
+		d.doc_path,
+		d.doc_size,
+		d.create_user_id,
+		d.create_time,
+		d.update_user_id,
+		d.update_time,
+		d.remarks,
+		d.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+		left join user u on d.create_user_id = u.user_id
+	</sql>
+
+    <select id="queryDocsList" resultType="docs">
+        select
+        u.real_name uploader,
+        <include refid="Base_Column_List"/>
+        from docs d
+        <include refid="Link_Column_List"/>
+        where d.del_flag = '0'
+        <if test="linkId != null ">
+            and d.link_id = #{linkId}
+        </if>
+        <if test="docType != null and docType != '' ">
+            and d.doc_type = #{docType}
+        </if>
+    </select>
+
+    <select id="queryDocsDetailByPrimarykey" resultType="docs">
+        select
+        <include refid="Base_Column_List"/>
+        from docs d
+        where
+        d.doc_id = #{docId}
+    </select>
+
+    <select id="queryDocsDetail" resultType="docs">
+        select
+        <include refid="Base_Column_List"/>
+        from docs d
+        where
+        d.doc_id = #{docId}
+    </select>
+
+    <insert id="insertDocs" useGeneratedKeys="true" keyProperty="docId" keyColumn="doc_id">
+        insert into docs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="docId != null ">
+                doc_id,
+            </if>
+            <if test="linkId != null ">
+                link_id,
+            </if>
+            <if test="docOriginalName != null and docOriginalName != '' ">
+                doc_original_name,
+            </if>
+            <if test="docName != null and docName != '' ">
+                doc_name,
+            </if>
+            <if test="docType != null and docType != '' ">
+                doc_type,
+            </if>
+            <if test="docPath != null and docPath != '' ">
+                doc_path,
+            </if>
+            <if test="docSize != null and docSize != '' ">
+                doc_size,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="docId != null ">
+                #{docId},
+            </if>
+            <if test="linkId != null ">
+                #{linkId},
+            </if>
+            <if test="docOriginalName != null and docOriginalName != '' ">
+                #{docOriginalName},
+            </if>
+            <if test="docName != null and docName != '' ">
+                #{docName},
+            </if>
+            <if test="docType != null and docType != '' ">
+                #{docType},
+            </if>
+            <if test="docPath != null and docPath != '' ">
+                #{docPath},
+            </if>
+            <if test="docSize != null and docSize != '' ">
+                #{docSize},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateDocs">
+        update docs
+        <set>
+            <if test="linkId != null ">
+                link_id = #{linkId},
+            </if>
+            <if test="docOriginalName != null and docOriginalName != '' ">
+                doc_original_name = #{docOriginalName},
+            </if>
+            <if test="docName != null and docName != '' ">
+                doc_name = #{docName},
+            </if>
+            <if test="docType != null and docType != '' ">
+                doc_type = #{docType},
+            </if>
+            <if test="docPath != null and docPath != '' ">
+                doc_path = #{docPath},
+            </if>
+            <if test="docSize != null and docSize != '' ">
+                doc_size = #{docSize},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        doc_id = #{docId}
+    </update>
+
+    <delete id="deleteDocsByPrimarykey">
+		delete
+		from
+			docs
+		where
+			doc_id = #{docId}
+	</delete>
+
+</mapper>

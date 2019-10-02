@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.FeeTypeMapper">
+ 
+	<sql id="Base_Column_List" >
+		f.id,
+		f.company_code,
+		f.type,
+		f.create_user_id,
+		f.create_time,
+		f.update_user_id,
+		f.update_time,
+		f.remarks,
+		f.del_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryFeeTypeList" resultType="feeType">
+		select
+			<include refid="Base_Column_List"/>
+		from fee_type f
+		where f.del_flag = '0'
+			<if test="companyCode != null and companyCode != '' " >
+				and f.company_code = #{companyCode}
+			</if>
+			<if test="type != null and type != '' " >
+				and f.type = #{type}
+			</if>
+	</select>
+	
+	<select id="queryFeeTypeDetailByPrimarykey" resultType="feeType">
+		select
+			<include refid="Base_Column_List"/>
+		from fee_type f
+		where
+			f.id = #{id}
+	</select>
+
+	<select id="queryFeeTypeDetail" resultType="feeType">
+		select
+			<include refid="Base_Column_List"/>
+		from fee_type f
+		where
+			f.id = #{id}
+	</select>
+
+	<insert id="insertFeeType">
+		insert into fee_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="companyCode != null and companyCode != '' " >
+			company_code,
+		</if>
+		<if test="type != null and type != '' " >
+			type,
+		</if>
+		<if test="createUserId != null " >
+			create_user_id,
+		</if>
+		<if test="createTime != null " >
+			create_time,
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id,
+		</if>
+		<if test="updateTime != null " >
+			update_time,
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks,
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="companyCode != null and companyCode != '' " >
+			#{companyCode},		
+		</if>
+		<if test="type != null and type != '' " >
+			#{type},		
+		</if>
+		<if test="createUserId != null " >
+			#{createUserId},	
+		</if>
+		<if test="createTime != null " >
+			#{createTime},	
+		</if>
+		<if test="updateUserId != null " >
+			#{updateUserId},	
+		</if>
+		<if test="updateTime != null " >
+			#{updateTime},	
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			#{remarks},		
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			#{delFlag},		
+		</if>
+		</trim>
+	</insert>
+
+	<update id="updateFeeType">
+	    update fee_type
+	    <set >
+		<if test="companyCode != null and companyCode != '' " >
+			company_code = #{companyCode},
+		</if>
+		<if test="type != null and type != '' " >
+			type = #{type},
+		</if>
+		<if test="createUserId != null " >
+			create_user_id = #{createUserId},
+		</if>
+		<if test="createTime != null " >
+			create_time = #{createTime},
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id = #{updateUserId},
+		</if>
+		<if test="updateTime != null " >
+			update_time = #{updateTime},
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks = #{remarks},
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag = #{delFlag},
+		</if>
+	    </set>
+		where
+			id = #{id}
+	</update>
+
+	<delete id="deleteFeeTypeByPrimarykey">
+		delete
+		from
+			fee_type
+		where
+			id = #{id}
+	</delete>
+
+</mapper>

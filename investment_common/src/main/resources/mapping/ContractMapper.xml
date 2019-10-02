@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ContractMapper">
+
+    <sql id="Base_Column_List">
+        c.id,
+		c.contract_code,
+		c.version,
+		c.same_code,
+		c.project_id,
+		c.building_id,
+		c.company_code,
+		c.contract_type,
+		c.state_one,
+		c.state_two,
+		c.oper_type,
+		c.audit_state,
+		c.sign_date,
+		c.customer_id,
+		c.start_date,
+		c.end_date,
+		c.lease_term,
+		c.remainder_days,
+		c.expire_state,
+		c.rent_amt,
+		c.deposit,
+		c.deposit_type,
+		c.deposit_late_ratio,
+		c.wy_deposit,
+		c.breach_amt,
+		c.change_date,
+		c.change_reason,
+		c.follow_person,
+		c.create_user_id,
+		c.create_time,
+        c.room_nos,
+        c.total_area,
+        c.reg_room_no,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+		left join project p on c.project_id = p.project_id
+		left join building b on c.building_id = b.building_id
+		left join customer cu on c.customer_id = cu.customer_id
+	</sql>
+
+    <select id="queryHistoryContractList" resultType="contract">
+        select
+        u.real_name operator,
+        <include refid="Base_Column_List"/>
+        from contract c
+        left join user u on c.create_user_id = u.user_id
+        where c.del_flag = '0'
+        and c.audit_state = '2'
+        and c.same_code = #{sameCode}
+        order by c.create_time desc
+    </select>
+
+    <select id="queryCheckContractCode" resultType="int">
+        select
+            count(*)
+        from contract
+        where contract_code = #{contractCode}
+    </select>
+
+    <select id="queryContractList" resultType="contract">
+        select
+        c.contract_code,
+        c.version,
+        c.company_code,
+        c.contract_type,
+        c.same_code,
+        c.state_one,
+        c.state_two,
+        c.oper_type,
+        c.follow_person,
+        c.audit_state,
+        c.customer_id ,
+        c.sign_date,
+        c.start_date,
+        c.end_date,
+        c.change_date,
+        c.lease_term,
+        c.remainder_days,
+        c.expire_state,
+        c.room_nos,
+        c.total_area,
+        c.project_id,
+        c.reg_room_no,
+        p.remind_days,
+        p.project_name,
+        b.building_name,
+        cu.customer_name
+        from contract c
+        <include refid="Link_Column_List"/>
+        where c.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and c.contract_type = #{contractType}
+        </if>
+        <if test="customerId != null ">
+            and c.customer_id = #{customerId}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+        <if test="operType != null and operType != '' ">
+            and c.oper_type = #{operType}
+        </if>
+        <if test="auditState != null and auditState != '' ">
+            and c.audit_state = #{auditState}
+        </if>
+        <if test="expireState != null and expireState != '' ">
+            and c.expire_state = #{expireState}
+        </if>
+        <if test="startDateRange1 != null and startDateRange1 != '' ">
+            and c.start_date between #{startDateRange1} and #{startDateRange2}
+        </if>
+        <if test="endDateRange1 != null and endDateRange1 != '' ">
+            and c.end_date between #{endDateRange1} and #{endDateRange2}
+        </if>
+        <if test="remainderDays != null ">
+            and c.remainder_days = #{remainderDays}
+        </if>
+        <if test="buildingId != null ">
+            and b.building_id = #{buildingId}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            b.building_name like concat('%',#{keyword},'%')
+            or
+            cu.customer_name like concat('%',#{keyword},'%')
+            or
+            c.contract_code like concat('%',#{keyword},'%')
+            )
+        </if>
+        order by c.create_time desc
+    </select>
+
+    <select id="queryContractRoomInfoList" resultType="contractRoom">
+        select
+        c.same_code,
+        c.remainder_days,
+        c.state_two contract_state,
+        cr.project_id,
+        cr.room_id,
+        cr.room_no,
+        cr.build_area,
+        r.state roomState
+        from contract c
+        left join contract_room cr on c.contract_code = cr.contract_code and c.version = cr.version
+        left join room r on cr.room_id = r.room_id
+        where c.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and c.contract_type = #{contractType}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+    </select>
+
+    <select id="queryContractCount" resultType="int">
+        select
+        count(*) num
+        from contract
+        where del_flag = '0'
+        <if test="buildingId != null">
+            and building_id = #{buildingId}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and state_one = #{stateOne}
+        </if>
+        <if test="expireState != null and expireState != '' ">
+            and expire_state = #{expireState}
+        </if>
+        <if test="customerId != null">
+            and customer_id = #{customerId}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and contract_type = #{contractType}
+        </if>
+    </select>
+
+    <select id="queryContractRoomCount" resultType="int">
+        select
+        count(distinct room_no) num
+        from contract c
+        left join contract_room cr on c.contract_code = cr.contract_code and c.version = cr.version
+        where c.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and c.contract_type = #{contractType}
+        </if>
+    </select>
+
+    <select id="queryContractRoomArea" resultType="int">
+        select
+        count(distinct room_no) num
+        from contract c
+        left join contract_room cr on c.contract_code = cr.contract_code and c.version = cr.version
+        where c.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and c.contract_type = #{contractType}
+        </if>
+    </select>
+
+    <select id="queryCustomerCount" resultType="int">
+        select
+        count(distinct customer_id) num
+        from contract
+        where del_flag = '0'
+        <if test="buildingId != null">
+            and building_id = #{buildingId}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and state_one = #{stateOne}
+        </if>
+    </select>
+
+    <select id="querySumDayPrice" resultType="bigDecimal">
+        select
+        ifnull(sum(cr.day_price),0) amt
+        from contract c
+        left join contract_rent cr on c.contract_code = cr.contract_code
+        and c.version = cr.version
+        where c.del_flag = '0'
+        <if test="buildingId != null">
+            and c.building_id = #{buildingId}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+    </select>
+
+    <select id="querySumArea" resultType="double">
+        select
+        ifnull(sum(cr.build_area),0) area
+        from contract c
+        left join contract_room cr on c.contract_code = cr.contract_code
+        and c.version = cr.version
+        where c.del_flag = '0'
+        <if test="buildingId != null">
+            and c.building_id = #{buildingId}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+        <if test="customerId != null">
+            and customer_id = #{customerId}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and contract_type = #{contractType}
+        </if>
+    </select>
+
+    <select id="queryContractRoomList" resultType="contractRoom">
+        select
+        cr.room_no,
+        cr.build_area
+        from contract c
+        left join contract_room cr on c.contract_code = cr.contract_code
+        and c.version = cr.version
+        where c.del_flag = '0'
+        <if test="buildingId != null">
+            and c.building_id = #{buildingId}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and c.company_code = #{companyCode}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+        <if test="customerId != null">
+            and c.customer_id = #{customerId}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and c.contract_type = #{contractType}
+        </if>
+    </select>
+
+    <select id="queryContractDetailInfo" resultType="contract">
+        select
+        <include refid="Base_Column_List"/>
+        from contract c
+        where c.building_id = #{buildingId}
+        and c.room_nos like concat('%',#{regRoomNo},'%')
+        and c.state_one = '1'
+        and c.state_two = '2'
+    </select>
+
+    <select id="queryContractDetail" resultType="contract">
+        select
+        <include refid="Base_Column_List"/>,
+        cu.customer_type,
+        cu.customer_name,
+        cu.legal_person,
+        cu.contacts_card,
+        cu.contacts,
+        cu.phone,
+        cu.work_unit,
+        cu.industry,
+        cu.channel_source,
+        cu.source_name,
+        cu.email,
+        cu.link_address,
+        cu.cedit_code,
+        cu.unified_code,
+        p.remind_days,
+        b.building_name
+        from contract c
+        left join customer cu on c.customer_id = cu.customer_id
+        left join project p on c.project_id = p.project_id
+        left join building b on c.building_id = b.building_id
+        <where>
+            <if test="version != null ">
+                and c.version = #{version}
+            </if>
+            <if test="contractCode != null and contractCode != '' ">
+                and c.contract_code = #{contractCode}
+            </if>
+            <if test="sameCode != null and sameCode != '' ">
+                and c.same_code = #{sameCode}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertContract">
+        insert into contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code,
+            </if>
+            <if test="version != null ">
+                version,
+            </if>
+            <if test="sameCode != null and sameCode != '' ">
+                same_code,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="buildingId != null">
+                building_id,
+            </if>
+            <if test="contractType != null and contractType != '' ">
+                contract_type,
+            </if>
+            <if test="stateOne != null and stateOne != '' ">
+                state_one,
+            </if>
+            <if test="stateTwo != null and stateTwo != '' ">
+                state_two,
+            </if>
+            <if test="operType != null and operType != '' ">
+                oper_type,
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                audit_state,
+            </if>
+            <if test="signDate != null and signDate != '' ">
+                sign_date,
+            </if>
+            <if test="customerId != null ">
+                customer_id,
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date,
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date,
+            </if>
+            <if test="leaseTerm != null ">
+                lease_term,
+            </if>
+            <if test="remainderDays != null and remainderDays != '' ">
+                remainder_days,
+            </if>
+            <if test="rentAmt != null ">
+                rent_amt,
+            </if>
+            <if test="deposit != null ">
+                deposit,
+            </if>
+            <if test="depositType != null and depositType != '' ">
+                deposit_type,
+            </if>
+            <if test="depositLateRatio != null ">
+                deposit_late_ratio,
+            </if>
+            <if test="wyDeposit != null ">
+                wy_deposit,
+            </if>
+            <if test="breachAmt != null ">
+                breach_amt,
+            </if>
+            <if test="changeDate != null and changeDate != ''  ">
+                change_date,
+            </if>
+            <if test="roomNos != null and roomNos != ''  ">
+                room_nos,
+            </if>
+            <if test="totalArea != null ">
+                total_area,
+            </if>
+            <if test="followPerson != null and followPerson != ''  ">
+                follow_person,
+            </if>
+            <if test="regRoomNo != null and regRoomNo != ''  ">
+                reg_room_no,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="contractCode != null and contractCode != '' ">
+                #{contractCode},
+            </if>
+            <if test="version != null ">
+                #{version},
+            </if>
+            <if test="sameCode != null and sameCode != '' ">
+                #{sameCode},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="projectId != null">
+                #{projectId},
+            </if>
+            <if test="buildingId != null">
+                #{buildingId},
+            </if>
+            <if test="contractType != null and contractType != '' ">
+                #{contractType},
+            </if>
+            <if test="stateOne != null and stateOne != '' ">
+                #{stateOne},
+            </if>
+            <if test="stateTwo != null and stateTwo != '' ">
+                #{stateTwo},
+            </if>
+            <if test="operType != null and operType != '' ">
+                #{operType},
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                #{auditState},
+            </if>
+            <if test="signDate != null and signDate != '' ">
+                #{signDate},
+            </if>
+            <if test="customerId != null ">
+                #{customerId},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                #{endDate},
+            </if>
+            <if test="leaseTerm != null ">
+                #{leaseTerm},
+            </if>
+            <if test="remainderDays != null and remainderDays != '' ">
+                #{remainderDays},
+            </if>
+            <if test="rentAmt != null ">
+                #{rentAmt},
+            </if>
+            <if test="deposit != null ">
+                #{deposit},
+            </if>
+            <if test="depositType != null and depositType != '' ">
+                #{depositType},
+            </if>
+            <if test="depositLateRatio != null ">
+                #{depositLateRatio},
+            </if>
+            <if test="wyDeposit != null ">
+                #{wyDeposit},
+            </if>
+            <if test="breachAmt != null ">
+                #{breachAmt},
+            </if>
+            <if test="changeDate != null and changeDate != ''  ">
+                #{changeDate},
+            </if>
+            <if test="roomNos != null and roomNos != ''  ">
+                #{roomNos},
+            </if>
+            <if test="totalArea != null ">
+                #{totalArea},
+            </if>
+            <if test="followPerson != null and followPerson != ''  ">
+                #{followPerson},
+            </if>
+            <if test="regRoomNo != null and regRoomNo != ''  ">
+                #{regRoomNo},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateContract">
+        update contract
+        <set>
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code = #{contractCode},
+            </if>
+            <if test="newVersion != null">
+                version = #{newVersion},
+            </if>
+            <if test="contractType != null and contractType != '' ">
+                contract_type = #{contractType},
+            </if>
+            <if test="stateOne != null and stateOne != '' ">
+                state_one = #{stateOne},
+            </if>
+            <if test="stateTwo != null and stateTwo != '' ">
+                state_two = #{stateTwo},
+            </if>
+            <if test="operType != null and operType != '' ">
+                oper_type = #{operType},
+            </if>
+            <if test="auditState != null and auditState != '' ">
+                audit_state = #{auditState},
+            </if>
+            <if test="signDate != null and signDate != '' ">
+                sign_date = #{signDate},
+            </if>
+            <if test="customerId != null ">
+                customer_id = #{customerId},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date = #{endDate},
+            </if>
+            <if test="leaseTerm != null ">
+                lease_term = #{leaseTerm},
+            </if>
+            <if test="remainderDays != null and remainderDays != '' ">
+                remainder_days = #{remainderDays},
+            </if>
+            <if test="expireState != null and expireState != '' ">
+                expire_state = #{expireState},
+            </if>
+            <if test="deposit != null ">
+                deposit = #{deposit},
+            </if>
+            <if test="depositType != null and depositType != '' ">
+                deposit_type = #{depositType},
+            </if>
+            <if test="depositLateRatio != null ">
+                deposit_late_ratio = #{depositLateRatio},
+            </if>
+            <if test="wyDeposit != null ">
+                wy_dposit = #{wyDeposit},
+            </if>
+            <if test="breachAmt != null ">
+                breach_amt = #{breachAmt},
+            </if>
+            <if test="changeDate != null and changeDate != '' ">
+                change_date = #{changeDate},
+            </if>
+            <if test="changeReason != null and changeReason != '' ">
+                change_reason = #{changeReason},
+            </if>
+            <if test="regRoomNo != null ">
+                reg_room_no = #{regRoomNo},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        contract_code = #{contractCode}
+        and version = #{version}
+    </update>
+
+    <update id="updateContractState">
+        update contract
+        <set>
+            <if test="stateOne != null and stateOne != '' ">
+                state_one = #{stateOne},
+            </if>
+            <if test="stateTwo != null and stateTwo != '' ">
+                state_two = #{stateTwo},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 正式未到期 -->
+    <update id="updateContractDays">
+        update contract set remainder_days = remainder_days - 1 where state_one = '1' and state_two != '6';
+    </update>
+
+    <update id="updateExpireState">
+        update contract set expire_state = #{expireState} where id = #{id} ;
+    </update>
+
+    <select id="queryContractSummaryInfo" resultType="contractSummaryInfo">
+        SELECT
+            c.contract_code,
+            c.version,
+            c.customer_id,
+            cu.customer_name,
+            c.sign_date,
+            c.start_date,
+            c.end_date,
+            c.room_nos,
+            c.total_area,
+            c.follow_person,
+            cr.unit_price,
+            cr.charge_unit,
+            cr.month_price,
+            group_concat( concat( cft.free_start_date, '~', cft.free_end_date ) ) freeTime
+        FROM
+            contract c
+            LEFT JOIN customer cu ON c.customer_id = cu.customer_id
+            LEFT JOIN contract_rent cr ON c.contract_code = cr.contract_code
+            AND c.version = cr.version
+            LEFT JOIN contract_free_time cft ON c.contract_code = cft.contract_code
+            AND c.version = cft.version
+        WHERE
+            c.contract_type = '房源合同'
+            AND c.audit_state = '2'
+            AND cr.cost_name = '租金'
+            AND c.company_code = #{companyCode}
+            <if test="customerName != null and customerName != '' ">
+                AND cu.customer_name like concat('%',#{customerName},'%')
+            </if>
+            <if test="projectId != null ">
+                AND c.project_id = #{projectId}
+            </if>
+            <if test="buildingId != null ">
+                AND c.building_id = #{buildingId}
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND date_format( c.create_time, '%Y-%m') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                AND date_format( c.create_time, '%Y-%m') &lt;= #{endDate}
+            </if>
+        GROUP BY
+            c.contract_code,
+            c.version
+        ORDER BY
+            c.create_time
+    </select>
+
+    <delete id="deleteContract">
+		delete
+		from
+			contract
+		where
+			contract_code = #{contractCode}
+			and version = #{version}
+	</delete>
+
+</mapper>

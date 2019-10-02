@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.CustomerTemporaryRoomMapper">
+
+    <sql id="Base_Column_List">
+		c.id,
+		c.temporary_id,
+		c.room_id,
+		c.room_no,
+		c.build_area,
+		c.floor_id,
+		c.floor_no,
+		c.building_id,
+		c.building_name,
+		c.project_id,
+		c.project_name,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryCustomerRoomList" resultType="customerTemporaryRoom">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_temporary_room c
+        where c.del_flag = '0'
+        <if test="temporaryId != null">
+            and c.temporary_id = #{temporaryId}
+        </if>
+    </select>
+
+    <insert id="insertCustomerTemporaryRoom">
+        insert into customer_temporary_room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="temporaryId != null ">
+                temporary_id,
+            </if>
+            <if test="roomId != null ">
+                room_id,
+            </if>
+            <if test="roomNo != null and roomNo != '' ">
+                room_no,
+            </if>
+            <if test="buildArea != null">
+                build_area,
+            </if>
+            <if test="floorId != null ">
+                floor_id,
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no,
+            </if>
+            <if test="buildingId != null ">
+                building_id,
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+                create_time,
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+                update_time,
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="temporaryId != null ">
+                #{temporaryId},
+            </if>
+            <if test="roomId != null ">
+                #{roomId},
+            </if>
+            <if test="roomNo != null and roomNo != '' ">
+                #{roomNo},
+            </if>
+            <if test="buildArea != null">
+                #{buildArea},
+            </if>
+            <if test="floorId != null ">
+                #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+                now(),
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+                now(),
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteCustomerTemporaryRoomByTemporaryId">
+		delete
+		from
+			customer_temporary_room
+		where
+			temporary_id = #{temporaryId}
+	</delete>
+
+</mapper>

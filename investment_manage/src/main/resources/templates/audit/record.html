@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row ">
+        <div class="layui-col-md12">
+            <div class="layui-card l_shadow">
+                <div class="w_deltab">
+                    <ul>
+                        <a th:href="@{/queryAuditContractDetail(code=${contractCode},version=${version},id=${id}) }">
+                            <li>合同信息</li>
+                        </a>
+                        <a>
+                            <li class="delactive">审核记录</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="w_part">
+                            <div class="layui-col-xs12">
+                                <table class="layui-table">
+                                    <thead>
+                                    <tr>
+                                        <th>顺序</th>
+                                        <th>审核人</th>
+                                        <th>职位</th>
+                                        <th>审核状态</th>
+                                        <th>审核意见</th>
+                                        <th>审核时间</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:if="${recordList.size() == 0}">
+                                        <td th:colspan="6">无数据</td>
+                                    </tr>
+                                    <tr th:each="obj:${recordList}">
+                                        <td th:text="${objStat.count}"></td>
+                                        <td th:text="${obj.auditor}"></td>
+                                        <td th:text="${obj.jobName}"></td>
+                                        <td th:if="${#strings.equals(obj.auditState, '1')}" style="color: #777777">未审核
+                                        </td>
+                                        <td th:if="${#strings.equals(obj.auditState, '2')}" style="color: #1E9300">通过
+                                        </td>
+                                        <td th:if="${#strings.equals(obj.auditState, '3')}" style="color: red">驳回</td>
+                                        <td th:text="${#strings.isEmpty(obj.auditOpinion)?'--':obj.auditOpinion}"></td>
+                                        <td th:text="${#strings.isEmpty(obj.auditDate)?'--':obj.auditDate}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('body').on('click', '.w_deltab li', function () {
+        $(this).addClass('delactive').siblings().removeClass('delactive');
+    })
+</script>
+</body>
+
+</html>

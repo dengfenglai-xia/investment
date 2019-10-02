@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/common-head::head"></head>
+<body>
+<div id="show-map" style="width:600px;height:300px;"></div>
+<script th:src="@{/layuiadmin/js/jquery.min.js}" type="text/javascript" charset="utf-8" ></script>
+<script th:src="@{http://api.map.baidu.com/api(v=2.0,ak='4j9is3pGzFvAjex3j4KuiC7A')}" type="text/javascript" ></script>
+<script>
+	//加载地图
+	var map = new BMap.Map("show-map");
+	map.centerAndZoom(new BMap.Point('[[${longitude}]]', '[[${latitude}]]'), 11);
+	var localSearch = new BMap.LocalSearch(map, {
+		renderOptions:{map: map}
+	});
+	localSearch.search('[[${address}]]');
+
+</script>
+</body>
+</html>

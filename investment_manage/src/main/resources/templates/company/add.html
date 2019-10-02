@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>公司编号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="companyCode" th:value="${companyCode}" class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>公司名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="company" lay-verify="required" placeholder="请输入公司名称"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>联&nbsp;&nbsp;系&nbsp;&nbsp;人：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="realName" lay-verify="required" placeholder="请输入联系人"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>联系电话：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phone" lay-verify="required|phone" placeholder="请输入联系电话"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md8 layui-col-xs8 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="address" placeholder="请输入地址"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--账号设置-->
+        <div class="layui-row layui-form-item bc_msg">
+            <div class="mytitle">账号设置</div>
+            <div class="w_addpart l_shadow w_bccont">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>登录账号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userName" lay-verify="required" placeholder="请输入登录账号"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" id="password" name="password" lay-verify="required" placeholder="请输入密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>确认密码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" lay-verify="required|rePassword" placeholder="请再次输入密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="accountType" value="1" title="试用" lay-filter="customerType-select"
+                               checked="">
+                        <input type="radio" name="accountType" value="2" title="正式" lay-filter="customerType-select">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label"><b class="w_sur">*</b>截止日期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="endDate" class="layui-input l_time laydate-control"
+                               lay-verify="required" placeholder="请选择截止日期">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--账号设置end-->
+        <!--备注-->
+        <div class="mytitle">
+            备注
+        </div>
+        <div class="w_addpart l_shadow mb-15">
+            <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                <textarea name="remarks" class="w_tzteaxer" placeholder="请输入备注..."></textarea>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--备注end-->
+        <div class="w_del_btnbox">
+            <input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+            <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+        </div>
+    </form>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        form.on('submit(commit)', function () {
+            var formData = $("#form").serializeObject();
+            $.ajax({
+                url: URL + "insertCompany",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.table.reload('dataList');
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+            });
+        });
+
+        form.verify({
+            rePassword: function (value) {
+                if (value === "")
+                    return "请输入二次密码！";
+                if (value.length < 6) {
+                    return "密码不能少于六位！";
+                }
+                var pwd = $("#password").val();
+                if (pwd !== value) {
+                    return "二次输入的密码不一致！";
+                }
+            }
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    });
+</script>
+</body>
+</html>

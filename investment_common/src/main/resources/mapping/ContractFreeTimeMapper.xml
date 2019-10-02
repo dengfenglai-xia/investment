@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ContractFreeTimeMapper">
+
+    <sql id="Base_Column_List">
+		c.id,
+		c.contract_code,
+        c.version,
+		c.free_start_date,
+		c.free_end_date,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryContractFreeTimeList" resultType="contractFreeTime">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_free_time c
+        where c.del_flag = '0'
+        <if test="contractCode != null and contractCode != '' ">
+            and c.contract_code = #{contractCode}
+        </if>
+        <if test="version != null">
+            and c.version = #{version}
+        </if>
+    </select>
+
+    <select id="queryContractFreeTimeDetailByPrimarykey" resultType="contractFreeTime">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_free_time c
+        where
+        c.id = #{id}
+    </select>
+
+    <select id="queryContractFreeTimeDetail" resultType="contractFreeTime">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_free_time c
+        where
+        c.id = #{id}
+    </select>
+
+    <insert id="insertContractFreeTime">
+        insert into contract_free_time
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code,
+            </if>
+            <if test="version != null ">
+                version,
+            </if>
+            <if test="freeStartDate != null and freeStartDate != '' ">
+                free_start_date,
+            </if>
+            <if test="freeEndDate != null and freeEndDate != '' ">
+                free_end_date,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="contractCode != null and contractCode != '' ">
+                #{contractCode},
+            </if>
+            <if test="version != null ">
+                #{version},
+            </if>
+            <if test="freeStartDate != null and freeStartDate != '' ">
+                #{freeStartDate},
+            </if>
+            <if test="freeEndDate != null and freeEndDate != '' ">
+                #{freeEndDate},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateContractFreeTime">
+        update contract_free_time
+        <set>
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code = #{contractCode},
+            </if>
+            <if test="version != null ">
+                version = #{version},
+            </if>
+            <if test="freeStartDate != null and freeStartDate != '' ">
+                free_start_date = #{freeStartDate},
+            </if>
+            <if test="freeEndDate != null and freeEndDate != '' ">
+                free_end_date = #{freeEndDate},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <delete id="deleteContractFreeTimeByPrimarykey">
+		delete
+		from
+			contract_free_time
+		where
+			id = #{id}
+	</delete>
+
+    <delete id="deleteContractFreeTime">
+		delete
+		from
+			contract_free_time
+		where
+			contract_code = #{contractCode}
+			and version = #{version}
+	</delete>
+</mapper>

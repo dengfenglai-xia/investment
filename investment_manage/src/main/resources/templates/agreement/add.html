@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<form id="form" class="w_addbox layui-form">
+    <div class="house_page1">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <input type="hidden" name="version" th:value="${version}">
+                    <input type="hidden" name="sameCode" th:value="${sameCode}">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>协议编号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="contractCode" name="contractCode" lay-verify="required"
+                               th:value="${contractCode}" placeholder="请输入合同编号，如不填写自动生成" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>签订日期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="signDate" class="layui-input l_time laydate-control"
+                               th:value="${currentDate}" lay-verify="required" placeholder="请选择签订日期">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--客户信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">客户信息</div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>客户类型：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="customerType" th:value="1" title="公司" lay-filter="customerType-select"
+                               checked>
+                        <input type="radio" name="customerType" th:value="2" title="个人"
+                               lay-filter="customerType-select">
+                    </div>
+                </div>
+                <!--公司/个人租赁信息-->
+                <div class="customer-info-switch"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--客户信息end-->
+        <!--资源信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">资源信息</div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">资源选择：</label>
+                    <div class="layui-input-block">
+                        <b class="w_sur">*</b>
+                        <input type="button" value="房源选择" class="layui-btn btn layui-btn-normal pop-up"
+                               data-type="addRoom"/>
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">已选房源：</label>
+                    <div class="layui-input-block">
+                        <table class="layui-table" style="width: auto;">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>楼层</th>
+                                <th>房间</th>
+                                <th>面积（㎡）</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="selectedRoomList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--租赁信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">租赁信息</div>
+            <div class="w_addpart l_shadow">
+                <input type="hidden" name="costName" th:value="租金">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>生效日期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="startDate" name="startDate" class="layui-input l_time"
+                               th:value="${currentDate}" lay-verify="required" placeholder="合同生效日期" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>租期：</label>
+                    <div class="layui-input-block">
+                        <select id="leaseTerm" name="leaseTerm" lay-verify="required" lay-search
+                                lay-filter="term-select">
+                            <option value="">请选择租期</option>
+                            <option th:each="obj:${termList}" th:value="${obj.bdName}"
+                                    th:text="${obj.bdName eq '0.5'?'半':obj.bdName} + '年'"></option>
+                            <option value="0">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>截止时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="endDate" name="endDate" lay-verify="required" readonly
+                               class="layui-input l_time laydate-control" placeholder="合同截止日期">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>租金：</label>
+                    <div class="layui-input-block">
+                        <div class="day_left">
+                            <input type="text" name="rentAmt" oninput="onlyNumber(this)" lay-verify="required" autocomplete="off" placeholder="请输入租金" class="layui-input">
+                        </div>
+                        <div class="day_right">
+                            元
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>押金：</label>
+                    <div class="layui-input-block">
+                        <div class="day_left">
+                            <input type="text" name="deposit" oninput="onlyNumber(this)" lay-verify="required" autocomplete="off" placeholder="请输入押金" class="layui-input">
+                        </div>
+                        <div class="day_right">
+                            元
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--租赁信息-->
+        <!--备注-->
+        <div class="mytitle">
+            备注
+        </div>
+        <div class="w_addpart l_shadow mb-15">
+            <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                <textarea name="remarks" class="w_tzteaxer" placeholder="请输入备注..."></textarea>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--备注end-->
+        <div class="w_del_btnbox">
+            <input type="button" operFlag="1" value="保存" lay-submit lay-filter="commit" class="layui-btn btn layui-btn-normal"/>
+            <input type="button" operFlag="2" value="提交" lay-submit lay-filter="commit" class="layui-btn btn layui-btn-warm"/>
+            <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+        </div>
+    </div>
+</form>
+<!-- 弹窗、模板 -->
+<!--公司信息部分start-->
+<script type="text/html" id="company_part">
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>选择客户：</label>
+        <div class="layui-input-block">
+            <select id="company_customerId" name="customerId" lay-verify="required" lay-filter="customer-select"
+                    lay-search>
+                <option th:if="${customerList.size() == 0}" value="">暂无客户信息</option>
+                <option th:if="${customerList.size() > 0}" value="">请选择客户</option>
+                <option th:each="obj:${customerList}" th:value="${obj.customerId}"
+                        th:text="${obj.customerName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">所属行业：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_industry" placeholder="请输入所属行业" autocomplete="off"
+                   class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label l_hg">纳税人识&nbsp;&nbsp;&nbsp;<br/>别号：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_ceditCode" placeholder="请输入纳税人识别号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">联&nbsp;&nbsp;系&nbsp;&nbsp;人：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_contacts" placeholder="请输入联系人" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">联系电话：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_phone" placeholder="请输入联系电话" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">法&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_legalPerson" placeholder="请输入法人" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道来源：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_channelSource" placeholder="请输入渠道来源" autocomplete="off"
+                   class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道名称：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_sourceName" placeholder="请输入渠道名称" autocomplete="off"
+                   class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md8 layui-col-xs8 l_po">
+        <label class="layui-form-label w_label ">通讯地址：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_linkAddress" placeholder="请输入通讯地址" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</script>
+<!--公司信息部分end-->
+<!--个人信息部分end-->
+<script type="text/html" id="personal_part">
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>选择客户：</label>
+        <div class="layui-input-block">
+            <select id="personal_customerId" name="customerId" lay-verify="required" lay-filter="customer-select"
+                    lay-search>
+                <option th:if="${customerList.size() == 0}" value="">暂无客户信息</option>
+                <option th:if="${customerList.size() > 0}" value="">请选择客户</option>
+                <option th:each="obj:${customerList}" th:value="${obj.customerId}"
+                        th:text="${obj.customerName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">身份证号：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_contactsCard" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">联系电话：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_phone" placeholder="请输入联系电话" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">所属行业：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_industry" placeholder="请输入所属行业" autocomplete="off"
+                   class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">工作单位：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_workUnit" placeholder="请输入工作单位" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道来源：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_channelSource" placeholder="请输入渠道来源" autocomplete="off"
+                   class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道名称：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_sourceName" placeholder="请输入渠道名称" autocomplete="off"
+                   class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md8 layui-col-xs8 l_po">
+        <label class="layui-form-label w_label ">通讯地址：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_linkAddress" placeholder="请输入通讯地址" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</script>
+<!--个人信息部分end-->
+
+<!--房源选择-->
+<script type="text/html" id="rooms">
+    <div class="w_hosue_open">
+        <div>
+            <div class="w_sear_box">
+                <input type="text" id="room-keyword" autocomplete="off" placeholder="请根据 项目名称 / 楼宇名称 / 楼层 / 房间号 进行查询"
+                       class="w_sear_inp"/>
+                <input type="button" value="搜索" class="w_sear_btn searchRoom"/>
+            </div>
+            <div class="w_rybox layui-form l_m_10 ope_size">
+                <table class="layui-hide" id="roomList"></table>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type">
+                <button class="layui-btn layui-btn-normal add-room">确定</button>
+                <button type="button" class="layui-btn layui-btn-primary close">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<!--房源选择end-->
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script type="text/html" id="state">
+    {{#  if(d.state === '0' ){ }}
+    <span style="color:#C2C5D6;">不对外招租</span>
+    {{#  } else if(d.state === '1'){ }}
+    <span style="color:#44B549;">在租</span>
+    {{#  } else if(d.state === '2'){ }}
+    <span style="color:#FEB97A;">即将到期</span>
+    {{#  } else if(d.state === '3'){ }}
+    <span style="color:#69BFD3;">空置</span>
+    {{#  } else{ }}
+    <span style="color:#DE7B9E;">到期未处理</span>
+    {{#  } }}
+</script>
+<script id="customer-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择客户</option>
+    {{each list as obj index}}
+    <option value="{{obj.customerId}}">{{obj.customerName}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无客户信息</option>
+    {{/if}}
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['form', 'index', 'contlist', 'table', 'laydate'], function () {
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            table = layui.table,
+            form = layui.form;
+
+        var $ = layui.$, active = {
+            addRoom: function () {
+                layer.open({
+                    type: 1,
+                    title: '房源选择',
+                    content: $('#rooms').html(),
+                    area: ['724px', '400px'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success: function () {
+                        table.render({
+                            elem: '#roomList'
+                            , url: URL + 'room/queryRoomListNoPageing'
+                            , defaultToolbar: false
+                            , cols: [
+                                [
+                                    {type: 'checkbox', width: 50}
+                                    , {field: 'projectId', title: '项目ID', hide: true}
+                                    , {field: 'projectName', title: '项目', width: 150}
+                                    , {field: 'buildingId', title: '楼宇ID', hide: true}
+                                    , {field: 'buildingName', title: '楼宇', width: 150}
+                                    , {field: 'floorId', title: '楼层ID', hide: true}
+                                    , {field: 'floorNo', title: '楼层', width: 60}
+                                    , {field: 'roomId', title: '房间ID', hide: true}
+                                    , {field: 'roomNo', title: '房间', width: 80}
+                                    , {field: 'buildArea', title: '面积（㎡）', width: 100}
+                                    , {field: 'state', title: '状态', templet: '#state', width: 92}
+                                ]
+                            ], parseData: function (res) { //res 即为原始返回的数据
+                                return {
+                                    "code": 0, //解析接口状态
+                                    "msg": "查询成功", //解析提示文本
+                                    "count": res.data.total, //解析数据长度
+                                    "data": res.data.list //解析数据列表
+                                };
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $('.pop-up').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        $('body').on('click', '.searchRoom', function () {
+            var keyword = $.trim($('#room-keyword').val());
+            table.reload('roomList', {
+                where: {
+                    keyword: keyword
+                }
+            });
+        });
+
+        var roomArr = [];
+        $('body').on('click', '.add-room', function () {
+            var checkStatus = table.checkStatus('roomList');
+            var data = checkStatus.data;
+            if (data.length == 0) {
+                layer.msg('请选择房源');
+                return;
+            }
+            $.each(data, function (i, item) {
+                var roomId = parseInt(item.roomId);
+                var res = get(roomArr, 'roomId', roomId);
+                if (res == '') {
+                    var obj = {};
+                    obj.roomId = roomId;
+                    obj.roomNo = item.roomNo;
+                    obj.buildArea = item.buildArea;
+                    obj.floorId = parseInt(item.floorId);
+                    obj.floorNo = item.floorNo;
+                    obj.buildingId = parseInt(item.buildingId);
+                    obj.buildingName = item.buildingName;
+                    obj.projectId = parseInt(item.projectId);
+                    obj.projectName = item.projectName;
+                    roomArr.push(obj);
+                    var tr = '<tr class="rm">' +
+                        '<td>' + item.projectName + '</td>' +
+                        '<td>' + item.buildingName + '</td>' +
+                        '<td>' + item.floorNo + '</td>' +
+                        '<td>' + item.roomNo + '</td>' +
+                        '<td>' + item.buildArea + '</td>' +
+                        '<td>' +
+                        '<a title="删除" roomId="' + item.roomId + '" class="btn w_sc_btn del-room"></a>' +
+                        '</td>' +
+                        '</tr>';
+                    $('#selectedRoomList').append(tr);
+                }
+                layer.closeAll(); //关闭弹层
+            });
+        });
+
+        $('body').on('click', '.del-room', function () {
+            var roomId = parseInt($(this).attr("roomId"));
+            roomArr = remove(roomArr, 'roomId', roomId);
+            $(this).parents('.rm').remove();
+        })
+
+        //监听单选按钮--租赁方式
+        var company_part = $('#company_part').html();
+        var personal_part = $('#personal_part').html();
+        $('.customer-info-switch').html(company_part); // 默认公司租赁
+        form.render();
+        form.on("radio(customerType-select)", function (data) {
+            var val = data.value;
+            if (val == '1') { // 公司租赁
+                $('.customer-info-switch').html(company_part);
+            } else if (val == '2') { // 个人租赁
+                $('.customer-info-switch').html(personal_part);
+            }
+            $.ajax({
+                url: URL + "customer/queryCustomerBaseList",
+                type: "POST",
+                data: {
+                    customerType: val
+                },
+                dataType: "json",
+                success: function (data) {
+                    var html = template('customer-templete', data);
+                    if (val == '1') { // 公司租赁
+                        $('#company_customerId').html(html);
+                    } else if (val == '2') { // 个人租赁
+                        $('#personal_customerId').html(html);
+                    }
+                    form.render('select');
+                }
+            });
+            form.render();
+        });
+
+        form.on('select(customer-select)', function (data) {
+            var customerId = data.value;
+            if (customerId != '') {
+                $.ajax({
+                    url: URL + "customer/queryCustomerDetail",
+                    type: "POST",
+                    data: {
+                        customerId: customerId
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var customerType = data.customerType;
+                        if (customerType == '1') { // 公司租赁
+                            $('#company_ceditCode').val(data.ceditCode);
+                            $('#company_contacts').val(data.contacts);
+                            $('#company_phone').val(data.phone);
+                            $('#company_legalPerson').val(data.legalPerson);
+                            $('#company_email').val(data.email);
+                            $('#company_linkAddress').val(data.linkAddress);
+                            $('#company_industry').val(data.industry);
+                            $('#company_channelSource').val(data.channelSource);
+                            $('#company_sourceName').val(data.sourceName);
+                        } else if (customerType == '2') { // 个人租赁
+                            $('#personal_contactsCard').val(data.contactsCard);
+                            $('#personal_phone').val(data.phone);
+                            $('#personal_industry').val(data.industry);
+                            $('#personal_channelSource').val(data.channelSource);
+                            $('#personal_sourceName').val(data.sourceName);
+                            $('#personal_workUnit').val(data.workUnit);
+                            $('#personal_email').val(data.email);
+                            $('#personal_linkAddress').val(data.linkAddress);
+                        }
+                    }
+                });
+            } else {
+                $('#company_ceditCode').val('');
+                $('#company_contacts').val('');
+                $('#company_phone').val('');
+                $('#company_legalPerson').val('');
+                $('#company_email').val('');
+                $('#company_linkAddress').val('');
+                $('#company_industry').val('');
+                $('#company_channelSource').val('');
+                $('#company_sourceName').val('');
+                $('#personal_contactsCard').val('');
+                $('#personal_phone').val('');
+                $('#personal_industry').val('');
+                $('#personal_channelSource').val('');
+                $('#personal_sourceName').val('');
+                $('#personal_workUnit').val('');
+                $('#personal_email').val('');
+                $('#personal_linkAddress').val('');
+            }
+        });
+
+        form.on('select(term-select)', function (data) {
+            var term = data.value;
+            if(term == '0'){
+                $("#endDate").val('');
+                return;
+            }
+            var startDate = $("#startDate").val();
+            if (term != '') {
+                var month = Number(term) * 12;
+                var endDate = DateAdd("m", month, stringToDate(startDate, '-'));
+                endDate = DateAdd("d", -1, endDate);
+                var tempDate = dateToString(endDate);
+                var year = startDate.substring(0, 4);
+                if (isLeapYear(year) == false) {
+                    if (tempDate.substring(5) == '02-29') {
+                        endDate = DateAdd("d", -1, endDate)
+                    }
+                }
+                $("#endDate").val(dateToString(endDate));
+            }
+        });
+
+        //生效日期
+        laydate.render({
+            elem: '#startDate',
+            format: 'yyyy-MM-dd',
+            done: function (value) {
+                var term = $('#leaseTerm').val();
+                if (term != '') {
+                    var month = Number(term) * 12;
+                    var endDate = DateAdd("m", month, stringToDate(value, '-'));
+                    endDate = DateAdd("d", -1, endDate)
+                    var tempDate = dateToString(endDate);
+                    var year = value.substring(0, 4);
+                    if (isLeapYear(year) == false) {
+                        if (tempDate.substring(5) == '02-29') {
+                            endDate = DateAdd("d", -1, endDate)
+                        }
+                    }
+                    $("#endDate").val(dateToString(endDate));
+                }
+            }
+        });
+
+        form.on('submit(commit)', function (data) {
+            var operFlag = $(data.elem).attr('operFlag');
+            var formData = $("#form").serializeObject();
+            var bool = true;
+            if (checekRooms(roomArr) == false) {
+                layer.msg("请选择同一楼宇房间");
+                return false;
+            }
+            for (var i = 0; i < roomArr.length; i++) {
+                $.ajax({
+                    url: URL + "checkRoom",
+                    type: "POST",
+                    async: false,
+                    data: {
+                        roomId: roomArr[i].roomId,
+                        roomNo: roomArr[i].roomNo,
+                        buildingName: roomArr[i].buildingName,
+                        startDate: $("#startDate").val(),
+                        endDate: $("#endDate").val()
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("允许签约");
+                        } else {
+                            bool = false;
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+                if (bool == false) break;
+            }
+            if (bool == true) {
+                formData['operFlag'] = operFlag;
+                $.each(roomArr, function (i, item) {
+                    formData['roomList[' + i + '].contractCode'] = $("#contractCode").val();
+                    formData['roomList[' + i + '].roomId'] = item.roomId;
+                    formData['roomList[' + i + '].roomNo'] = item.roomNo;
+                    formData['roomList[' + i + '].buildArea'] = item.buildArea;
+                    formData['roomList[' + i + '].floorId'] = item.floorId;
+                    formData['roomList[' + i + '].floorNo'] = item.floorNo;
+                    formData['roomList[' + i + '].buildingId'] = item.buildingId;
+                    formData['roomList[' + i + '].buildingName'] = item.buildingName;
+                    formData['roomList[' + i + '].projectId'] = item.projectId;
+                    formData['roomList[' + i + '].projectName'] = item.projectName;
+                });
+                $.ajax({
+                    url: URL + "insertAgreement",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                                parent.location.reload();
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(index);
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg, {time: 6000});
+                        }
+                    }
+                });
+            }
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+            });
+        });
+
+        //判断是否存在签订两个不同楼宇的房间
+        function checekRooms(roomArr) {
+            var len = roomArr.length;
+            for (var i = 0; i < len; i++) {
+                var buildingId1 = roomArr[i].buildingId;
+                for (var j = 0; j < len; j++) {
+                    var buildingId2 = roomArr[j].buildingId;
+                    if (buildingId1 != buildingId2) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //数据表格点击一行选中
+        $(document).on("click", ".layui-table-body table.layui-table tbody tr", function () {
+            var obj = event ? event.target : event.srcElement;
+            var tag = obj.tagName;
+            var checkbox = $(this).find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if (checkbox.length != 0) {
+                if (tag == 'DIV') {
+                    checkbox.click();
+                }
+            }
+        });
+        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+            e.stopPropagation();
+        });
+
+        //关闭按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll(); //关闭弹层
+        })
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);//关闭当前页
+        })
+    });
+</script>
+</body>
+</html>

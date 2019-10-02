@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<style type="text/css">
+    input {
+        width: 150px;
+        height: 40px;
+    }
+
+    .w_little_open {
+        position: relative;
+        width: 100%;
+        min-height: 100%;
+        overflow: hidden;
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-row layui-form">
+        <div class="layui-col-md12">
+            <div class="layui-card l_shadow">
+                <div class="information" style="padding: 10px;">
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">客户名称</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd"><span class="w_fs_18" th:text="${obj.customerName}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">账单状态</div>
+                        <div class="information_list_zd">
+                            <span class="w_fs_18 w_fc_2" th:text="${settleState}"></span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">应付时间：</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd">
+                                <span class="w_fs_18" th:text="${obj.shouldDealDate}"></span></div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">账单总金额（元）：</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd">
+                                <span class="w_fs_18" th:text="${obj.costAmt} + ${obj.feeLateAmt} - ${obj.freeAmt}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">账单编号：</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd">
+                                <span class="w_fs_18" id="billCode" th:text="${obj.billCode}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">合同编号：</div>
+                        <div class="information_list_zd"><a class="w_fs_18 w_fc_2" style="cursor:pointer;"
+                                                            th:text="${obj.contractCode}"></a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card l_shadow">
+                <div class="mytitle">资源信息</div>
+                <div class="w_part">
+                    <div class="w_colxs_5">
+                        <span class="htstyle">房源面积：</span>
+                        <span class="htcont" th:text="${#numbers.formatDecimal(totalArea, 0, 2)} + ' ㎡'"></span>
+                    </div>
+                    <div class="w_colxs_5" th:if="${carplaceList.size() > 0}">
+                        <span class="htstyle">车位数量：</span>
+                        <span class="htcont" th:text="${carplaceList.size()} + ' 个'"></span>
+                    </div>
+                    <div class="layui-col-xs12">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>房源</th>
+                                <th>面积</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item:${roomList}">
+                                <td th:text="${item.projectName}"></td>
+                                <td th:text="${item.buildingName}"></td>
+                                <td th:text="${item.roomNo}"></td>
+                                <td th:text="${#numbers.formatDecimal(item.buildArea, 0, 2)} + ' ㎡'"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="layui-col-xs12" th:if="${carplaceList.size() > 0}">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>车位</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item:${carplaceList}">
+                                <td th:text="${item.projectName}"></td>
+                                <td th:text="${item.buildingName}"></td>
+                                <td th:text="${item.floorNo}+' - '+ ${item.buildArea}">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--费用信息-->
+            <div class="layui-card l_shadow">
+                <div class="mytitle">
+                    费用信息
+                </div>
+                <div class="w_part">
+                    <div class="w_colxs_5" style="width: 100%">
+                        <span class="htstyle">应付金额总计：</span>
+                        <span class="htcont" id="shouldAmt"
+                              th:text="${obj.costAmt} + ${obj.feeLateAmt} - ${obj.freeAmt} + ' 元' + '（ 费用金额：' +${obj.costAmt} +'元，扣除金额：'+ ${obj.freeAmt} +'元 ）'"></span>
+                    </div>
+                    <br/>
+                    <div class="w_colxs_5" style="width: 40%">
+                        <span class="htstyle">已付金额总计：</span>
+                        <span class="htcont" id="finishAmt"
+                              th:text="${obj.finishAmt}+ ' 元' "></span>
+                    </div>
+                    <div class="w_colxs_5" style="width: 30%">
+                        <span class="htstyle">未付金额总计：</span>
+                        <span class="htcont" id="residualAmt" th:text="${obj.residualAmt}+ ' 元'"></span>
+                    </div>
+                    <div class="layui-col-xs12">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th>费用名称</th>
+                                <th>费用区间</th>
+                                <th>支付状态</th>
+                                <th>应付金额（元）</th>
+                                <th style="display: none;">滞纳金（元）</th>
+                                <th>已付金额（元）</th>
+                                <th style="display: none;">扣除金额（元）</th>
+                                <th>未付金额（元）</th>
+                                <th>说明</th>
+                            </tr>
+                            </thead>
+                            <tbody id="billsList">
+                            <tr th:each="item:${billsList}">
+                                <td style="display: none;" th:text="${item.billId}"></td>
+                                <td class="htstyle" th:text="${item.costName}"></td>
+                                <td th:text="${item.startDate} + ' ~ ' + ${item.endDate}"></td>
+                                <td th:if="${item.state eq '1'}" style="color: red;">未付</td>
+                                <td th:if="${item.state eq '2'}" style="color: blue;">部分</td>
+                                <td th:if="${item.state eq '3'}" style="color: green;">已付</td>
+                                <td class="show" th:msg="'费用金额：' + ${item.costAmt} +'元，扣除金额：'+ ${item.freeAmt} +'元'"
+                                    th:text="${item.costAmt} - ${item.freeAmt}"></td>
+                                <td style="display: none;" th:text="${item.feeLateAmt}"></td>
+                                <td th:text="${item.finishAmt}"></td>
+                                <td style="display: none;" th:text="${item.freeAmt}"></td>
+                                <td th:text="${item.residualAmt}"></td>
+                                <td th:text="${item.remarks}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--费用信息end-->
+            <!--结算历史-->
+            <div class="layui-card l_shadow" th:if="${settleHistoryList.size() > 0}">
+                <div class="mytitle">
+                    结算历史
+                </div>
+                <div class="w_part">
+                    <div class="layui-col-xs12">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th>费用名称</th>
+                                <th>费用区间</th>
+                                <th>付款金额（元）</th>
+                                <th>付款时间</th>
+                                <th>支付方式</th>
+                                <th>操作人</th>
+                                <th>说明</th>
+                            </tr>
+                            </thead>
+                            <tbody id="settleHistoryList">
+                            <tr th:each="item:${settleHistoryList}">
+                                <td class="htstyle" th:text="${item.costName}"></td>
+                                <td th:text="${item.startDate} + ' ~ ' + ${item.endDate}"></td>
+                                <td th:text="${item.actualAmt}+ ' 元'"></td>
+                                <td th:text="${#dates.format(item.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td th:if="${item.payType eq '1'}">现金</td>
+                                <td th:if="${item.payType eq '2'}">银行转账（对公）</td>
+                                <td th:if="${item.payType eq '5'}">银行转账（对私）</td>
+                                <td th:if="${item.payType eq '3'}">微信/支付宝</td>
+                                <td th:if="${item.payType eq '4'}">其他</td>
+                                <td th:text="${item.operator}"></td>
+                                <td th:text="${item.remarks}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--结算历史end-->
+            <!--费用结算-->
+            <div class="layui-card l_shadow">
+                <div class="mytitle">
+                    费用结算
+                </div>
+                <div class="w_part">
+                    <div class="w_colxs_5" style="width: 25%">
+                        <span class="htstyle">本次应付金额总计：</span>
+                        <span class="htcont" id="shouldAmtSum" th:text="${shouldAmt} + ' 元'"></span>
+                    </div>
+                    <div class="w_colxs_5" style="width: 25%">
+                        <span class="htstyle">本次实付金额总计：</span>
+                        <span class="htcont" id="actualAmtSum">0.00 元</span>
+                    </div>
+                    <div class="layui-col-xs12">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <td class="layui-form">
+                                    <input type="checkbox" lay-skin="primary" id="c_all" lay-filter="c_all">
+                                </td>
+                                <th>费用名称</th>
+                                <th>费用区间</th>
+                                <th>支付状态</th>
+                                <th>本次应付金额（元）</th>
+                                <th>本次实付金额（元）</th>
+                                <th>支付时间</th>
+                                <th>支付方式</th>
+                                <th>说明</th>
+                            </tr>
+                            </thead>
+                            <tbody id="settleList">
+                            <tr th:each="item:${settleList}">
+                                <td class="layui-form">
+                                    <input type="checkbox" name="billId" th:value="${item.billId}"
+                                           th:index="${itemStat.index}" class="billId" lay-filter="c_one"
+                                           lay-skin="primary">
+                                </td>
+                                <td class="htstyle" th:feeType="${item.feeType}" th:text="${item.costName}"></td>
+                                <td th:text="${item.startDate} + ' ~ ' + ${item.endDate}"></td>
+                                <td th:if="${item.state eq '1'}" style="color: red;">未付</td>
+                                <td th:if="${item.state eq '2'}" style="color: blue;">部分</td>
+                                <td th:if="${item.state eq '3'}" style="color: green;">已付</td>
+                                <td th:text="${item.residualAmt}"></td>
+                                <td class="in_pd">
+                                    <input type="text" th:index="${itemStat.index}" th:maxValue="${item.residualAmt}"
+                                           th:value="0.00" placeholder="请输入付款金额" class="layui-input text_center payAmt">
+                                </td>
+                                <td class="in_pd">
+                                    <input type="text" th:index="${itemStat.index}" th:value="${currentDate}"
+                                           placeholder="请选择付款时间" class="layui-input text_center laydate-item">
+                                </td>
+                                <td>
+                                    <select name="type" th:index="${itemStat.index}" lay-filter="pay-type-select">
+                                        <option value="1">现金</option>
+                                        <option value="2" selected>银行转账（对公）</option>
+                                        <option value="5">银行转账（对私）</option>
+                                        <option value="3">微信/支付宝</option>
+                                        <option value="4">其他</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class="layui-input text_center" placeholder="请输入说明信息"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--费用结算end-->
+            <div class="w_del_btnbox mt-20">
+                <input type="button" value="一键结清" style="display: none;"
+                       class="layui-btn btn layui-btn-warm w_generate clearOpen">
+                <input type="button" value="确认付款" class="layui-btn btn layui-btn-normal w_generate confirmSettle">
+                <input type="button" value="取消" class="layui-btn layui-btn-primary cancel">
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<!--一键结清-->
+<script type="text/html" id="settle-tmp">
+    <form class="w_little_open layui-form">
+        <div class="layui-col-xs12 l_po">
+            <label class="layui-form-label w_label_see ">付款金额：</label>
+            <div class="layui-input-block-see">
+                <span id="settleAmt"></span>
+            </div>
+        </div>
+        <div class="layui-col-xs12 l_po">
+            <label class="layui-form-label w_label_see ">支付方式：</label>
+            <div class="layui-input-block-see">
+                <select lay-verify="required" lay-search lay-filter="pay-type-select-all" class="payType">
+                    <option value="">请选择支付方式</option>
+                    <option value="1">现金</option>
+                    <option value="2" selected>银行转账（对公）</option>
+                    <option value="5">银行转账（对私）</option>
+                    <option value="3">微信/支付宝</option>
+                    <option value="4">其他</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-col-xs12 l_po">
+            <label class="layui-form-label w_label_see ">支付时间：</label>
+            <div class="layui-input-block-see">
+                <input type="text" th:value="${currentDate}" lay-verify="required"
+                       class="layui-input l_time laydate-item payDate" placeholder="请选择支付时间">
+            </div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type2">
+                <button class="layui-btn layui-btn-normal clearSettle">提交</button>
+                <button type="button" class="layui-btn layui-btn-primary close">取消</button>
+            </div>
+        </div>
+    </form>
+</script>
+<!--一键结清end-->
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        var table = layui.table;
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate;
+
+        $(document).on('input', '.payAmt', function () {
+            var actualAmtSum = 0;
+            $("#settleList tr").each(function () {
+                var maxVal = Number($(this).find('td').eq(5).find("input").attr("maxValue"));
+                var actualAmt = Number($(this).find('td').eq(5).find("input").val());
+                if (actualAmt < 0) {
+                    $(this).find('td').eq(5).find("input").val('0.00');
+                    actualAmt = 0;
+                }
+                if (actualAmt > maxVal) {
+                    $(this).find('td').eq(5).find("input").val(maxVal);
+                    actualAmt = maxVal;
+                }
+                actualAmtSum += actualAmt;
+            });
+            $("#actualAmtSum").text(actualAmtSum.toFixed(2) + ' 元');
+        });
+
+        form.on('select(pay-type-select)', function (data) {
+            var value = data.value;
+            var index = parseInt($(data.elem).attr('index'));
+            if (index == 0) {
+                $("select").each(function () {
+                    $(this).val(value);
+                });
+                form.render('select');
+            }
+        });
+
+        form.on('select(pay-type-select-all)', function (data) {
+            var value = data.value;
+            $("select").each(function () {
+                $(this).val(value);
+            });
+            form.render('select');
+        });
+
+        //复选框--费用信息
+        form.on('checkbox(c_all)', function (data) {
+            $('input[name=billId]').each(function (index, item) {
+                var a = data.elem.checked;
+                var thisTr = $("#settleList tr:eq(" + index + ")")
+                if (a == true) {
+                    $(".billId").prop("checked", true);
+                    form.render('checkbox');
+                    thisTr.find('td').eq(5).find("input").val(thisTr.find('td').eq(4).text());
+                } else {
+                    $(".billId").prop("checked", false);
+                    form.render('checkbox');
+                    thisTr.find('td').eq(5).find("input").val('0.00');
+                }
+            });
+            countActualAmt();
+        });
+
+        //有一个未选中全选取消选中
+        form.on('checkbox(c_one)', function (data) {
+            var obj = $(data.elem);
+            var index = obj.attr("index");
+            var thisTr = $("#settleList tr:eq(" + index + ")")
+            var item = $(".billId");
+            if (item[index].checked == true) {
+                thisTr.find('td').eq(5).find("input").val(thisTr.find('td').eq(4).text());
+            } else {
+                thisTr.find('td').eq(5).find("input").val('0.00');
+            }
+            for (var i = 0; i < item.length; i++) {
+                if (item[i].checked == false) {
+                    $("#c_all").prop("checked", false);
+                    form.render('checkbox');
+                    break;
+                }
+            }
+            //如果都勾选了  勾上全选
+            var all = item.length;
+            for (var i = 0; i < item.length; i++) {
+                if (item[i].checked == true) {
+                    all--;
+                }
+            }
+            if (all == 0) {
+                $("#c_all").prop("checked", true);
+                form.render('checkbox');
+            }
+            countActualAmt();
+        });
+
+        function countActualAmt() {
+            var actualAmtSum = 0;
+            $("#settleList tr").each(function () {
+                var actualAmt = Number($(this).find('td').eq(5).find("input").val());
+                actualAmtSum += actualAmt;
+            });
+            $("#actualAmtSum").text(actualAmtSum.toFixed(2) + ' 元');
+        };
+
+        $('body').on('click', '.clearOpen', function () {
+            $('input[name=billId]').each(function (index, item) {
+                $(this).prop("checked", true);
+            });
+            layer.open({
+                type: 1,
+                title: '一键结清',
+                content: $('#settle-tmp').html(),
+                maxmin: false,
+                skin: 'opens',
+                area: ['400px', '400px']
+            });
+            form.render();
+            w_date();
+            var settleAmt = 0;
+            $("#settleList tr").each(function () {
+                $(this).find('td').eq(5).find("input").val($(this).find('td').eq(4).text());
+                settleAmt += Number($(this).find('td').eq(4).text());
+            });
+            $("#settleAmt").text(settleAmt.toFixed(2) + ' 元');
+            $("#actualAmtSum").text(settleAmt.toFixed(2) + ' 元');
+        });
+
+        //提交一键结清
+        $('body').on('click', '.clearSettle', function () {
+            var payType = $(".payType").val();
+            var payDate = $(".payDate").val();
+            if (payType == '') {
+                layer.msg("支付方式不能为空");
+                return;
+            }
+            if (payDate == '') {
+                layer.msg("支付时间不能为空");
+                return;
+            }
+            settle();
+        });
+
+        //确认付款
+        $('body').on('click', '.confirmSettle', function () {
+            var num = $("input[name='billId']:checked").length;
+            if (num == 0) {
+                layer.msg("请勾选结算项");
+                return;
+            }
+            var actualAmtSum = $("#actualAmtSum").text();
+            actualAmtSum = number_format(actualAmtSum, 2);
+            layer.confirm('本次实付金额为：' + actualAmtSum + ' 元，请确认！', function (index) {
+                settle();
+            });
+        });
+
+        /* 结算 */
+        function settle() {
+            var items = $(".billId");
+            var count = 0;
+            var formData = $("form").serializeObject();
+            formData['contractCode'] = '[[${obj.contractCode}]]';
+            formData['version'] = [[${obj.version}]];
+            formData['companyCode'] = '[[${companyCode}]]';
+            formData['billType'] = '2'; // 付款
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var thisTr = $("#settleList tr:eq(" + i + ")");
+                if (item.checked == true) {
+                    var billId = item.value;
+                    var billCode = $("#billCode").text();
+                    var feeType = thisTr.find('td').eq(1).attr("feeType");
+                    var costName = thisTr.find('td').eq(1).text();
+                    var time = thisTr.find('td').eq(2).text();
+                    var startDate = $.trim(time.split("~")[0]);
+                    var endDate = $.trim(time.split("~")[1]);
+                    var shouldAmt = thisTr.find('td').eq(4).text();
+                    var actualAmt = thisTr.find('td').eq(5).find("input").val();
+                    var payDate = thisTr.find('td').eq(6).find("input").val();
+                    var payType = thisTr.find('td').eq(7).find("select").val();
+                    var remarks = thisTr.find('td').eq(8).find("input").val();
+
+                    formData['settleList[' + count + '].billId'] = billId;
+                    formData['settleList[' + count + '].billCode'] = billCode;
+                    formData['settleList[' + count + '].feeType'] = feeType;
+                    formData['settleList[' + count + '].costName'] = costName;
+                    formData['settleList[' + count + '].startDate'] = startDate;
+                    formData['settleList[' + count + '].endDate'] = endDate;
+                    formData['settleList[' + count + '].shouldAmt'] = shouldAmt;
+                    formData['settleList[' + count + '].actualAmt'] = actualAmt;
+                    formData['settleList[' + count + '].dealDate'] = payDate;
+                    formData['settleList[' + count + '].payType'] = payType;
+                    formData['settleList[' + count + '].remarks'] = remarks;
+                    count++;
+                }
+            }
+            $.ajax({
+                url: URL + "settleBills",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.table.reload('dataList', {
+                                where: {
+                                    startDate: parent.$.trim($("#startDate").val()),
+                                    endDate: parent.$.trim($("#endDate").val()),
+                                    contractType: parent.$("#contractType").val(),
+                                    state: parent.$("input[name='state']:checked").val(),
+                                    keyword: parent.$.trim($("#keyword").val())
+                                }
+                            });
+                            parent.layer.closeAll();
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        }
+
+        $(".show").mouseover(function(){
+            var msg = $(this).attr("msg");
+            layer.tips(msg,$(this),{time:3000});
+        });
+
+        $(".show").mouseout(function(){
+            layer.closeAll();
+        });
+
+        //取消按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll();
+        })
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);//关闭当前页
+        })
+
+        //时间选择器
+        lay('.laydate-item').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+            });
+        });
+
+        //时间选择器
+        var w_date = function () {
+            lay('.laydate-item').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                    , done: function (value) {
+                        $("#settleList tr").each(function () {
+                            $(this).find('td').eq(6).find("input").val(value);
+                        });
+                    }
+                });
+            });
+        }
+
+        //数据表格点击一行选中
+        $(document).on("click", ".layui-table-body table.layui-table tbody tr", function () {
+            var obj = event ? event.target : event.srcElement;
+            var tag = obj.tagName;
+            var checkbox = $(this).find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if (checkbox.length != 0) {
+                if (tag == 'DIV') {
+                    checkbox.click();
+                }
+            }
+        });
+
+        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+            e.stopPropagation();
+        });
+    });
+</script>
+</body>
+
+</html>

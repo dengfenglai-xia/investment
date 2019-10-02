@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <input type="hidden" name="roomId" th:value="${room.roomId}">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">项目名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${room.projectName}" autocomplete="off"
+                               class="layui-input layui-disabled" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼宇名称：</label>
+                    <div class="layui-input-block">
+                        <select id="buildingId" name="buildingId" lay-verify="required" lay-search
+                                lay-filter="building_select">
+                            <option value="">请选择楼宇</option>
+                            <option th:each="obj:${buildingList}" th:selected="${obj.buildingId eq room.buildingId}"
+                                    th:value="${obj.buildingId}" th:text="${obj.buildingName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
+                    <div class="layui-input-block">
+                        <select id="floorId" name="floorId" lay-verify="required" lay-search>
+                            <option value="">请选择楼层</option>
+                            <option th:each="obj:${floorList}" th:selected="${obj.floorId eq room.floorId}"
+                                    th:value="${obj.floorId}" th:text="${obj.floorNo}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>房&nbsp;&nbsp;间&nbsp;&nbsp;号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="roomNo" th:value="${room.roomNo}" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg"><b class="w_sur">*</b>使用面积&nbsp;&nbsp;<br/>（㎡）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="useArea" th:value="${#numbers.formatDecimal(room.useArea, 1, 2)}"
+                               placeholder="请输入使用面积" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg"><b class="w_sur">*</b>建筑面积&nbsp;&nbsp;<br/>（㎡）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="buildArea" th:value="${#numbers.formatDecimal(room.buildArea, 1, 2)}"
+                               placeholder="请输入建筑面积" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">装修状态：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="decorate" value="1" title="毛坯"
+                               th:checked="${#strings.equals(room.decorate, '1')}">
+                        <input type="radio" name="decorate" value="2" title="简装"
+                               th:checked="${#strings.equals(room.decorate, '2')}">
+                        <input type="radio" name="decorate" value="3" title="精装"
+                               th:checked="${#strings.equals(room.decorate, '3')}">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">是否对外招租：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="whetherOpen" value="1" title="是"
+                               th:checked="${#strings.equals(room.whetherOpen, '1')}">
+                        <input type="radio" name="whetherOpen" value="2" title="否"
+                               th:checked="${#strings.equals(room.whetherOpen, '2')}">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">租金底价：</label>
+                    <div class="layui-input-block">
+                        <div class="year_inp">
+                            <input type="text" name="bottomPrice" th:value="${room.bottomPrice}"
+                                   oninput="onlyNumber(this)" placeholder="租金底价" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="year_inp">
+                            <select name="chargeUnit" lay-search>
+                                <option value="">单位</option>
+                                <option th:each="obj:${CHARGE_UNIT_MAP}" th:value="${obj.key}"
+                                        th:selected="${obj.key eq room.chargeUnit}" th:text="${obj.value}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">是否临街 ：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="whetherStreet" value="1" title="是"
+                               th:checked="${#strings.equals(room.decorate, '1')}">
+                        <input type="radio" name="whetherStreet" value="2" title="否"
+                               th:checked="${#strings.equals(room.decorate, '2')}">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">朝&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向：</label>
+                    <div class="layui-input-block">
+                        <select name="orientation" lay-search>
+                            <option value="">请选择朝向</option>
+                            <option th:each="obj:${orientationList}" th:selected="${obj.bdName eq room.orientation}"
+                                    th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">用&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;途：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="purpose" th:value="${room.purpose}" placeholder="请输入用途"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs12 l_po" style="display: none;">
+                    <label class="layui-form-label w_label ">配套设施：</label>
+                    <div class="layui-input-block">
+                        <input name="facilities" th:if="${not #strings.isEmpty(room.facilities)}"
+                               th:each="obj:${facilitiesList}"
+                               th:checked="${#arrays.contains(#strings.setSplit(room.facilities,','), obj.bdName)}"
+                               th:value="${obj.bdName}" th:title="${obj.bdName}" type="checkbox" lay-skin="primary"/>
+                        <input name="facilities" th:if="${#strings.isEmpty(room.facilities)}"
+                               th:each="obj:${facilitiesList}" th:value="${obj.bdName}" th:title="${obj.bdName}"
+                               type="checkbox" lay-skin="primary"/>
+                    </div>
+                </div>
+                <div class="layui-col-xs12 l_po" style="display: none;">
+                    <label class="layui-form-label w_label ">房源标签：</label>
+                    <div class="layui-input-block" onselectstart="return false">
+                        <div name="tags" th:if="${not #strings.isEmpty(room.tags)}" th:each="obj:${tagsList}"
+                             th:class="${#arrays.contains(#strings.setSplit(room.tags,','), obj.bdName)?'fy_tips tags tag-bc2 on':'fy_tips tags tag-bc1'}"
+                             th:text="${obj.bdName}" style="cursor:pointer;"></div>
+                    </div>
+                </div>
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label">备注：</label>
+                    <div class="layui-input-block">
+                        <textarea name="remarks" th:text="${room.remarks}" class="w_tzteaxer" placeholder="请输入备注信息"
+                                  autocomplete="off"></textarea>
+                    </div>
+                </div>
+                <div class="layui-col-xs12">
+                    <label class="layui-form-label w_label ">房源照片：</label>
+                    <div class="layui-input-block" style="margin-left:116px">
+                        <a class="layui-btn layui-btn-normal upload-imgs"><i class="layui-icon">&#xe60d;</i>选择</a>
+                        <div class="layui-upload wy_flex_wrap imgs" style="margin-top:10px;">
+                            <div class="img" th:each="img:${#strings.setSplit(room.imgs,',')}">
+                                <div class="z_update_img">
+                                    <img th:src="${img}" class="z_full_width">
+                                    <img class="colse remove-img" src="../../img/sf.png"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <div class="w_del_btnbox">
+            <input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+            <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+        </div>
+    </form>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script id="floor-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择楼层</option>
+    {{each list as obj index}}
+    <option value="{{obj.floorId}}">{{obj.floorNo}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无楼层信息</option>
+    {{/if}}
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        var tags = '[[${room.tags}]]';
+        var tagArr = [];
+        if (tags != null && tags != '') {
+            tags = tags.split(',');
+            for (var i = 0; i < tags.length; i++) {
+                var obj = {};
+                obj.tag = tags[i];
+                tagArr.push(obj);
+            }
+        }
+
+        form.on('select(building_select)', function (data) {
+            var id = data.value;
+            if (id != '') {
+                $.ajax({
+                    url: URL + "floor/queryFloorBaseList",
+                    type: "POST",
+                    data: {
+                        buildingId: id
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var html = template('floor-templete', data);
+                        $('#floorId').html(html);
+                        form.render('select');
+                    }
+                });
+            } else {
+                $('#floorId').html('<option value="">请选择楼层</option>');
+                form.render('select');
+            }
+        });
+
+        $('body').on('click', '.tags', function () {
+            var tag = $(this).text();
+            if ($(this).hasClass("on")) {
+                tagArr = remove(tagArr, 'tag', tag); // 注：必须重新赋值
+                $(this).addClass("tag-bc1");
+                $(this).removeClass("tag-bc2");
+                $(this).removeClass("on");
+            } else {
+                var obj = {};
+                obj.tag = tag;
+                tagArr.push(obj);
+                $(this).addClass("tag-bc2");
+                $(this).removeClass("tag-bc1");
+                $(this).addClass("on")
+            }
+        });
+
+        /* 上传图片 */
+        var imgs = [];
+        var roomImgs = '[[${room.imgs}]]';
+        if (roomImgs != '') {
+            roomImgs = roomImgs.split(",");
+            for (var i = 0; i < roomImgs.length; i++) {
+                imgs.push(roomImgs[i]);
+            }
+        }
+        lay('.upload-imgs').each(function (i, ele) {
+            upload.render({
+                elem: this,
+                url: URL + 'imgUpload',
+                multiple: true,
+                before: function (obj) {
+                    obj.preview(function (index, file, result) {
+                        $('.imgs').eq(i).append('<div class="img">' +
+                            '<div class="z_update_img">' +
+                            '<img src="' + result + '" class="z_full_width">' +
+                            '<img class="colse remove-img" src="../../img/sf.png">' +
+                            '</div>' +
+                            '</div>');
+                    });
+                },
+                done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        layer.msg('上传失败');
+                    } else if (res.state == 'SUCCESS') {
+                        imgs.push(res.url);
+                    }
+                }
+            });
+        });
+
+        $('body').on('click', '.remove-img', function () {
+            var obj = $(this).parents('.img');
+            imgs.splice(obj.index, 1);
+            obj.remove();
+        });
+
+        form.on('submit(commit)', function () {
+            tags = ''; // 重置
+            var formData = $("#form").serializeObject();
+            $.each(tagArr, function (i, item) {
+                if (i + 1 == tagArr.length) {
+                    tags += item.tag;
+                } else {
+                    tags += item.tag + ',';
+                }
+            });
+            var whetherOpen = $("input[name='whetherOpen']:checked").val();
+            if (whetherOpen == '1') {
+                formData["state"] = '3';
+            } else {
+                formData["state"] = '0';
+            }
+            formData["tags"] = tags;
+            formData["imgs"] = imgs.join(",");
+            formData["buildingName"] = $("#buildingId").find("option:selected").text();
+            formData["floorNo"] = $("#floorId").find("option:selected").text();
+            $.ajax({
+                url: URL + "room/updateRoom",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.table.reload('dataList');
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    });
+</script>
+</body>
+
+</html>

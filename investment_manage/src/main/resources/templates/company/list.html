@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="layui-card l_shadow" style="margin-bottom: 15px;">
+            <div class="layui-row ">
+                <div class="information">
+                    <div class="w_colxs_8 w_bor">
+                        <div class="information_list">试用公司数：</div>
+                        <div class="information_list"><span class="w_fs_28" id="num1"></span>个</div>
+                    </div>
+                    <div class="w_colxs_8 w_bor">
+                        <div class="information_list">正式公司数：</div>
+                        <div class="information_list"><span class="w_fs_28" id="num2"></span>个</div>
+                    </div>
+                    <div class="w_colxs_8 w_bor">
+                        <div class="information_list">总数：</div>
+                        <div class="information_list"><span class="w_fs_28" id="total"></span>个</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">类型： </label>
+                    <div class="layui-input-inline layui-form sear_rad">
+                        <input type="radio" name="accountType" value="" title="全部" lay-filter="accountType-select" checked>
+                        <input type="radio" name="accountType" value="1" title="试用" lay-filter="accountType-select" >
+                        <input type="radio" name="accountType" value="2" title="正式" lay-filter="accountType-select" >
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">公司名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="company" placeholder="请输入公司名称" autocomplete="off" class="w_seartext" style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">公司列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="editor">编辑</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<!--<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>-->
+<script type="text/html" id="type">
+    {{#  if(d.accountType == '1' ){ }}
+    试用
+    {{#  } else if(d.accountType == '2'){ }}
+    正式
+    {{#  } }}
+</script>
+<script>
+    var table = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'queryCompanyList',
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'companyCode',
+                    title: '公司编号'
+                }, {
+                    field: 'company',
+                    title: '公司名称'
+                }, {
+                    field: 'realName',
+                    title: '联系人'
+                },{
+                    field: 'phone',
+                    title: '联系电话'
+                }, {
+                    field: 'accountType',
+                    title: '类型',
+                    sort: true,
+                    templet: '#type'
+                }, {
+                    field: 'endDate',
+                    title: '截止日期',
+                    sort: true
+                }, {
+                    field: 'creator',
+                    title: '添加人'
+                }, {
+                    field: 'createTime',
+                    title: '添加时间',templet:function(d){
+                        return formatDate(d.createTime,'yyyy-MM-dd');
+                    }
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 200,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                countNum();
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('radio(accountType-select)', function(data){
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    company: $.trim($("#company").val()),
+                    accountType: val
+                }
+            });
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    company: $.trim($("#company").val()),
+                    accountType: $("input[name='accountType']:checked").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#company').val('');
+            $("input[name='accountType']").get(0).checked = true;
+            form.render();
+            $(".search").click();
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>新增公司</b>',
+                content: URL + 'toAddCompany',
+                area: ['100%', '100%']
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.userId;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>公司详情</b>',
+                    content: URL + 'queryCompanyDetail/' + id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'editor') {
+                layer.open({
+                    type: 2,
+                    maxmin:true,
+                    title: '<b>编辑</b>',
+                    content: URL+'toEditorCompany/'+id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'deleteUser',
+                        data: {"userId": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                setTimeout(function () {
+                                    table.reload('dataList');
+                                }, 1000);
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        function countNum(){
+            $.ajax({
+                type: 'post',
+                url: URL + 'queryUserCount',
+                dataType: 'json',
+                traditional: true,
+                success: function (data) {
+                    $("#num1").text(data.num1)
+                    $("#num2").text(data.num2)
+                    $("#total").text(data.total)
+                }
+            });
+        }
+    });
+</script>
+</body>
+
+</html>

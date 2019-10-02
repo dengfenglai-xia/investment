@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="js">
+<script th:inline="javascript">
+    var URL = [[@{/}]];
+</script>
+<script th:src="@{/layuiadmin/js/jquery.min.js}" type="text/javascript" charset="utf-8" ></script>
+<script th:src="@{/layuiadmin/layui/layui.js}" type="text/javascript" charset="utf-8" ></script>
+<script th:src="@{/js/common.js}"></script>
+</html>

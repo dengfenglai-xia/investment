@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ChannelMapper">
+
+    <sql id="Base_Column_List">
+		c.channel_id,
+		c.company_code,
+		c.channel_source,
+		c.channel_name,
+		c.contacts,
+		c.phone,
+		c.prov_name,
+		c.city_name,
+		c.area_name,
+		c.address,
+		c.email,
+		c.order_num,
+        c.place_num,
+        c.total_amt,
+        c.total_area,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryChannelList" resultType="channel">
+        select
+        <include refid="Base_Column_List"/>
+        from channel c
+        where c.del_flag = '0'
+        and c.company_code = #{companyCode}
+        <if test="channelSource != null and channelSource != '' ">
+            and c.channel_source = #{channelSource}
+        </if>
+        <if test="channelName != null and channelName != '' ">
+            and c.channel_name like concat('%',#{channelName},'%')
+        </if>
+        <if test="startArea != null and endArea != null">
+            and c.total_area between #{startArea} and #{endArea}
+        </if>
+        <if test="startAmt != null and endAmt != null">
+            and c.total_amt between #{startAmt} and #{endAmt}
+        </if>
+    </select>
+
+    <select id="queryChannelBaseList" resultType="channel">
+        select distinct channel_name from channel where channel_source = #{channelSource}
+    </select>
+
+    <select id="queryChannelDetailByPrimarykey" resultType="channel">
+        select
+        <include refid="Base_Column_List"/>
+        from channel c
+        where
+        c.channel_id = #{channelId}
+    </select>
+
+    <select id="queryChannelDetail" resultType="channel">
+        select
+        <include refid="Base_Column_List"/>
+        from channel c
+        where
+        c.channel_id = #{channelId}
+    </select>
+
+    <insert id="insertChannel">
+        insert into channel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelId != null ">
+                channel_id,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                channel_source,
+            </if>
+            <if test="channelName != null and channelName != '' ">
+                channel_name,
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts,
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone,
+            </if>
+            <if test="provName != null and provName != '' ">
+                prov_name,
+            </if>
+            <if test="cityName != null and cityName != '' ">
+                city_name,
+            </if>
+            <if test="areaName != null and areaName != '' ">
+                area_name,
+            </if>
+            <if test="address != null and address != '' ">
+                address,
+            </if>
+            <if test="email != null and email != '' ">
+                email,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channelId != null ">
+                #{channelId},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                #{channelSource},
+            </if>
+            <if test="channelName != null and channelName != '' ">
+                #{channelName},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                #{phone},
+            </if>
+            <if test="provName != null and provName != '' ">
+                #{provName},
+            </if>
+            <if test="cityName != null and cityName != '' ">
+                #{cityName},
+            </if>
+            <if test="areaName != null and areaName != '' ">
+                #{areaName},
+            </if>
+            <if test="address != null and address != '' ">
+                #{address},
+            </if>
+            <if test="email != null and email != '' ">
+                #{email},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateChannel">
+        update channel
+        <set>
+            <if test="channelSource != null and channelSource != '' ">
+                channel_source = #{channelSource},
+            </if>
+            <if test="channelName != null and channelName != '' ">
+                channel_name = #{channelName},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts = #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="provName != null and provName != '' ">
+                prov_name = #{provName},
+            </if>
+            <if test="cityName != null and cityName != '' ">
+                city_name = #{cityName},
+            </if>
+            <if test="areaName != null and areaName != '' ">
+                area_name = #{areaName},
+            </if>
+            <if test="address != null and address != '' ">
+                address = #{address},
+            </if>
+            <if test="email != null and email != '' ">
+                email = #{email},
+            </if>
+            <if test="totalAmt != null ">
+                total_amt = total_amt + #{totalAmt},
+            </if>
+            <if test="totalArea != null ">
+                total_area = total_area + #{totalArea},
+            </if>
+            <if test="orderNum != null ">
+                order_num = order_num + #{orderNum},
+            </if>
+            <if test="placeNum != null ">
+                place_num = place_num + #{placeNum},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        channel_id = #{channelId}
+    </update>
+
+    <delete id="deleteChannelByPrimarykey">
+		delete
+		from
+			channel
+		where
+			channel_id = #{channelId}
+	</delete>
+
+</mapper>

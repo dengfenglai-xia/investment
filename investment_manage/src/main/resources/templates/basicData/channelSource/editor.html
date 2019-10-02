@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+		<div class="">
+			<div class="layui-row ">
+				<form id="form" class="layui-form">
+					<div class="layui-row layui-form-item">
+						<div class="w_centbis">
+							<input type="hidden" name="bdId" th:value="${basicData.bdId}" />
+							<input type="hidden" name="bdType" th:value="${basicData.bdType}" />
+							<div class="layui-col-md12 l_po">
+								<label class="layui-form-label w_label ">渠道来源：</label>
+								<div class="layui-input-block">
+									<input type="text" name="bdName" lay-verify="required" placeholder="请输入渠道来源" th:value="${basicData.bdName}" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-col-md12 l_po">
+				                  <label class="layui-form-label w_label">描述信息：</label>
+				                  <div class="layui-input-block">
+				                    <textarea name="remarks" placeholder="请输入描述信息" th:text="${basicData.remarks}" class="layui-textarea"></textarea>
+				                  </div>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<div class="layui-form-item layui-layout-admin">
+						<div class="layui-input-block">
+							<div class="layui-footer w_btn_foot" style="left: 0;">
+								<button type="button" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="commit">确定</button>
+								<button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script th:replace="common/common-js::js"></script>
+		<script>
+			layui.config({
+				base:URL+ 'layuiadmin/'
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['form'], function() {
+				var layer = layui.layer;
+				var form = layui.form;
+
+				form.on('submit(commit)', function(){
+					var formData = $("#form").serializeObject();
+					$.ajax({
+						url: URL + "updateBasicData",
+						type:"POST",
+						data: formData,
+						dataType:"json",
+						success:function(data){
+							if(data.success){
+								layer.msg(data.msg);
+								setTimeout(function(){
+									parent.table.reload('dataList');
+									var index = parent.layer.getFrameIndex(window.name);
+									parent.layer.close(index);
+								}, 1000);
+							}else{
+								layer.msg(data.msg);
+							}
+						}
+					});
+				});
+
+				//取消按钮
+				$('.cancel').on('click', function() {
+					parent.layer.closeAll(); //关闭弹层
+				})
+			});
+		</script>
+	</body>
+
+</html>

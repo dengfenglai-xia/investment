@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+		<div class="layui-show layui-form">
+			<!--需求面积-->
+			<div class="layui-col-xs4 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							需求面积
+						</div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_list1">
+							<div id="myChart" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<!--需求面积end-->
+			
+			<!--出租空置-->
+			<div class="layui-col-xs8 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							出租空置
+						</div>
+						<div class="ehr_inp ">
+							<select name="label" lay-verify="required" lay-search lay-filter="echars2">
+								<option value="1">数量</option>
+								<option value="2">面积</option>
+							</select>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_list1">
+							<div id="myChart2" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--出租空置end-->
+			
+			<!-- 租赁面积-->
+			<div class="layui-col-xs4 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							 租赁面积
+						</div>
+						<div class="ehr_inp ">
+							<select name="label" lay-verify="required" lay-search lay-filter="echars">
+								<option value="1">合同数</option>
+								<option value="2">面积</option>
+							</select>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_list1">
+							<div id="myChart3" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+						<div class="ehr_list2">
+							<div id="myChart4" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 租赁面积end-->
+			
+			<!--新签续签走势-->
+			<div class="layui-col-xs8 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							新签续签走势
+						</div>
+						<div class="ehr_inp ">
+							<select name="label" lay-verify="required" lay-search lay-filter="echars2">
+								<option value="1">合同数</option>
+								<option value="2">面积</option>
+							</select>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_list1">
+							<div id="myChart5" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--新签续签走势end-->
+			<!-- 签约年限-->
+			<div class="layui-col-xs4 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							 签约年限
+						</div>
+						<div class="ehr_inp ">
+							<select name="label" lay-verify="required" lay-search lay-filter="">
+								<option value="1">在租</option>
+								<option value="2">意向</option>
+								<option value="3">全部</option>
+							</select>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_list1">
+							<div id="myChart6" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 签约年限end-->
+			
+			<!-- 合同到期-->
+			<div class="layui-col-xs8 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							 合同到期
+						</div>
+						<div class="ehr_inp ">
+							<select name="label" lay-verify="required" lay-search lay-filter="">
+								<option value="1">合同数</option>
+								<option value="2">面积</option>
+							</select>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_listtab">
+							<div id="myChart7" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 合同到期end-->
+			
+			<!-- 客户来访渠道-->
+			<div class="layui-col-xs4 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							 成交渠道
+						</div>
+						
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_list1">
+							<div id="myChart11" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 客户来访渠道end-->
+			
+			<!-- 中介成交 TOP 5-->
+			<div class="layui-col-xs4 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							 中介成交 TOP 5
+						</div>
+						<div class="ehr_inp " style="width: 100px;margin-left: 10px;">
+							<select name="label" lay-verify="required" lay-search lay-filter="" >
+								<option value="1">金额</option>
+								<option value="2">数量</option>
+								<option value="3">面积</option>
+							</select>
+						</div>
+						<div class="ehr_inp ">
+							<div class="w_jctab wehr_tabs2">
+      	  	 	    	   	    <ul>
+      	  	 	    	   	    	 <li class="ehr_active">房源</li>
+      	  	 	    	   	    	 <li>工位</li>
+      	  	 	    	   	    </ul>
+      	  	 	    	   </div>
+						</div>
+						
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont">
+						<div class="ehr_listtab2">
+							<div id="myChart12" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+						<div class="ehr_listtab2">
+							<div id="myChart13" style="width: 100%;height:230px; text-align: right; "></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 中介成交 TOP 5end-->
+			
+			<!--流失原因-->
+			<div class="layui-col-xs4 w_ehr">
+				<div class="w_echars_list">
+					<div class="ehr_head">
+						<div class="ehr_tit">
+							 流失原因
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="chear_cont w_lose">
+						<span>爆炸</span>
+						<span>雪灾</span>
+						<span>城市安全</span>
+						<span>死亡</span>
+						<span>车祸</span>
+						<span>交通安全</span>
+						<span>冬季安全</span>
+						
+					</div>
+				</div>
+			</div>
+			<!--流失原因end-->
+		</div>
+		<script th:replace="common/common-js::js"></script>
+		<script th:src="@{/layuiadmin/js/echarts.min.js}" type="text/javascript" charset="utf-8" ></script>
+		<script>
+			layui.config({
+				base: URL + 'layuiadmin/'
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'contlist', 'table', 'laydate','form'], function() {
+				var laydate = layui.laydate;
+				var admin = layui.admin,
+					table = layui.table,
+					form = layui.form;
+					
+					form.render('select');
+				    //监听下拉列表
+				    form.on('select(echars)', function(data){
+					  	if(data.value == '1'){
+					  		$('.ehr_list1').show().siblings().hide()
+							myChart.resize();
+					  	}else if(data.value == '2'){
+					  		$('.ehr_list2').show().siblings().hide()
+					  		myChart2.resize();
+					  	}
+					});
+				
+			});
+			
+			//需求面积
+			var myChart = echarts.init(document.getElementById('myChart'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['50 ㎡ 以下','50-100 ㎡','100-200 ㎡','200 ㎡ 以上']
+			    },
+			    series: [
+			        {
+			            name:'需求面积',
+			            type:'pie',
+			            radius: ['50%', '70%'],
+			            center: ['30%', '50%'],
+			            avoidLabelOverlap: false,
+			            label: {
+			                normal: {
+			                    show: false,
+			                    position: 'center'
+			                },
+			                emphasis: {
+			                    show: true,
+			                    textStyle: {
+			                        fontSize: '16',
+			                        fontWeight: 'bold'
+			                    }
+			                }
+			            },
+			            labelLine: {
+			                normal: {
+			                    show: false
+			                }
+			            },
+			            data:[
+			                {value:335, name:'50 ㎡ 以下'},
+			                {value:310, name:'50-100 ㎡'},
+			                {value:234, name:'100-200 ㎡'},
+			                {value:135, name:'200 ㎡ 以上'}
+			            ]
+			        }
+			    ]
+			};
+			myChart.setOption(option);
+			
+			//需求面积end
+			
+			//出租空置
+			var myChart2 = echarts.init(document.getElementById('myChart2'));
+			option = {
+				legend: {
+			        data:['出租','空置']
+			    },
+		    	 tooltip: {
+			        trigger: 'axis'
+			    },
+			    toolbox: {
+			        show: true,   
+			    },
+			    grid: {
+			    	top:'10%',
+			        left: '5%',
+			        right: '5%',
+			        bottom: '5%',
+			        containLabel: true
+			    },
+			    xAxis:  {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+			    },
+			    yAxis: {
+			        type: 'value',
+			        
+			    },
+			    series: [
+			        {
+			            name:'出租',
+			            type:'line',
+		            	smooth: true,
+			            data:[2, 4, 12, 8,20,55,6,12,26,3,8,14],
+			           
+			        },
+			        {
+			            name:'空置',
+			            type:'line',
+		            	smooth: true,
+			            data:[1, 10, 6, 16,10,27,6,24,26,30,18,14],
+			           
+			        }
+			    ]
+			};
+			myChart2.setOption(option);
+			//出租空置end
+			
+			//租赁面积
+			var myChart3 = echarts.init(document.getElementById('myChart3'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['50 ㎡ 以下','50-100 ㎡','100-200 ㎡','200 ㎡ 以上']
+			    },
+			    series: [
+			        {
+			            name:'租赁面积',
+			            type:'pie',
+			            radius: ['50%', '70%'],
+			            center: ['30%', '50%'],
+			            avoidLabelOverlap: false,
+			            label: {
+			                normal: {
+			                    show: false,
+			                    position: 'center'
+			                },
+			                emphasis: {
+			                    show: true,
+			                    textStyle: {
+			                        fontSize: '16',
+			                        fontWeight: 'bold'
+			                    }
+			                }
+			            },
+			            labelLine: {
+			                normal: {
+			                    show: false
+			                }
+			            },
+			            data:[
+			                {value:335, name:'50 ㎡ 以下'},
+			                {value:310, name:'50-100 ㎡'},
+			                {value:234, name:'100-200 ㎡'},
+			                {value:135, name:'200 ㎡ 以上'}
+			            ]
+			        }
+			    ]
+			};
+			myChart3.setOption(option);
+			
+			var myChart4 = echarts.init(document.getElementById('myChart4'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['50 ㎡ 以下','50-100 ㎡','100-200 ㎡','200 ㎡ 以上']
+			    },
+			    series: [
+			        {
+			            name:'租赁面积',
+			            type:'pie',
+			            radius: ['50%', '70%'],
+			            center: ['30%', '50%'],
+			            avoidLabelOverlap: false,
+			            label: {
+			                normal: {
+			                    show: false,
+			                    position: 'center'
+			                },
+			                emphasis: {
+			                    show: true,
+			                    textStyle: {
+			                        fontSize: '16',
+			                        fontWeight: 'bold'
+			                    }
+			                }
+			            },
+			            labelLine: {
+			                normal: {
+			                    show: false
+			                }
+			            },
+			            data:[
+			                {value:135, name:'50 ㎡ 以下'},
+			                {value:210, name:'50-100 ㎡'},
+			                {value:134, name:'100-200 ㎡'},
+			                {value:335, name:'200 ㎡ 以上'}
+			            ]
+			        }
+			    ]
+			};
+			myChart4.setOption(option);
+			//租赁面积end
+			
+			//新签续签走势
+			var myChart5 = echarts.init(document.getElementById('myChart5'));
+			option = {
+				legend: {
+			        data:['出租','空置']
+			    },
+		    	 tooltip: {
+			        trigger: 'axis'
+			    },
+			    toolbox: {
+			        show: true,   
+			    },
+			    grid: {
+			    	top:'10%',
+			        left: '5%',
+			        right: '5%',
+			        bottom: '5%',
+			        containLabel: true
+			    },
+			    xAxis:  {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+			    },
+			    yAxis: {
+			        type: 'value',
+			        
+			    },
+			    series: [
+			        {
+			            name:'出租',
+			            type:'line',
+		            	smooth: true,
+			            data:[2, 4, 12, 8,20,55,6,12,26,3,8,14],
+			           
+			        },
+			        {
+			            name:'空置',
+			            type:'line',
+		            	smooth: true,
+			            data:[1, 10, 6, 16,10,27,6,24,26,30,18,14],
+			           
+			        }
+			    ]
+			};
+			myChart5.setOption(option);
+			//新签续签走势end
+			
+			//签约年限
+			var myChart6 = echarts.init(document.getElementById('myChart6'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['2 年以下','2-5 年','5-10 年','10 年以上']
+			    },
+			    series: [
+			        {
+			            name:'签约年限',
+			            type:'pie',
+			            radius: ['50%', '70%'],
+			            center: ['30%', '50%'],
+			            avoidLabelOverlap: false,
+			            label: {
+			                normal: {
+			                    show: false,
+			                    position: 'center'
+			                },
+			                emphasis: {
+			                    show: true,
+			                    textStyle: {
+			                        fontSize: '16',
+			                        fontWeight: 'bold'
+			                    }
+			                }
+			            },
+			            labelLine: {
+			                normal: {
+			                    show: false
+			                }
+			            },
+			            data:[
+			                {value:127, name:'2 年以下'},
+			                {value:36, name:'2-5 年'},
+			                {value:12, name:'5-10 年'},
+			                {value:8, name:'10 年以上'},
+			            ]
+			        }
+			    ]
+			};
+			myChart6.setOption(option);
+			//签约年限end
+			
+			//合同到期
+			var myChart7 = echarts.init(document.getElementById('myChart7'));
+			var dataShadow = [];
+			var  data=[1, 10, 6, 16,10,27,6,24,26,30,18,14];
+			var yMax = 100;
+			for (var i = 0; i < data.length; i++) {
+			    dataShadow.push(yMax);
+			}
+			option = {
+			    xAxis: {
+			        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+			        axisLabel: {
+			            textStyle: {
+			                color: '#000'
+			            }
+			        },
+			        
+			    },
+			    yAxis: {
+			        axisLine: {
+			            show: false
+			        },
+			        axisTick: {
+			            show: false
+			        },
+			        axisLabel: {
+			            textStyle: {
+			                color: '#999'
+			            }
+			        }
+			    },
+			   
+			    series: [
+			        { // For shadow
+			            type: 'bar',
+			            itemStyle: {
+			                normal: {color: 'rgba(0,0,0,0.05)'}
+			            },
+			            barGap:'-100%',
+			            barCategoryGap:'40%',
+			            data: dataShadow,
+			            animation: false
+			        },
+			        {
+			            type: 'bar',
+			            itemStyle: {
+			                normal: {
+			                    color: new echarts.graphic.LinearGradient(
+			                        0, 0, 0, 1,
+			                        [
+			                            {offset: 0, color: '#83bff6'},
+			                            {offset: 0.5, color: '#188df0'},
+			                            {offset: 1, color: '#188df0'}
+			                        ]
+			                    )
+			                },
+			                emphasis: {
+			                    color: new echarts.graphic.LinearGradient(
+			                        0, 0, 0, 1,
+			                        [
+			                            {offset: 0, color: '#2378f7'},
+			                            {offset: 0.7, color: '#2378f7'},
+			                            {offset: 1, color: '#83bff6'}
+			                        ]
+			                    )
+			                }
+			            },
+			            data:data
+			        }
+			    ]
+			};
+			myChart7.setOption(option);
+			
+			//合同到期end
+			
+			
+			
+			
+			
+			//成交渠道
+			var myChart11 = echarts.init(document.getElementById('myChart11'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['上门拜访','客户介绍','中介机构','渠道拓展','广告宣传']
+			    },
+			    series: [
+			        {
+			            name:'成交渠道',
+			            type:'pie',
+			            radius: ['50%', '70%'],
+			            center: ['30%', '50%'],
+			            avoidLabelOverlap: false,
+			            label: {
+			                normal: {
+			                    show: false,
+			                    position: 'center'
+			                },
+			                emphasis: {
+			                    show: true,
+			                    textStyle: {
+			                        fontSize: '16',
+			                        fontWeight: 'bold'
+			                    }
+			                }
+			            },
+			            labelLine: {
+			                normal: {
+			                    show: false
+			                }
+			            },
+			            data:[
+			                {value:127, name:'上门拜访'},
+			                {value:36, name:'客户介绍'},
+			                {value:12, name:'中介机构'},
+			                {value:8, name:'渠道拓展'},
+			                {value:4, name:'广告宣传'},
+			            ]
+			        }
+			    ]
+			};
+			myChart11.setOption(option);
+			//成交渠道end
+			
+			//中介成交 TOP 5
+			var myChart12 = echarts.init(document.getElementById('myChart12'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['看房团','安居客','搜房网','链家','我爱我家']
+			    },
+			    calculable: true,
+			    series: [
+			        {
+			            name: '中介',
+			            type: 'funnel',
+			            width: '40%',
+			            height: '45%',
+			            left: '10%',
+			            top: '20%',
+			            data:[
+			                {value: 60, name:'我爱我家'},
+			                {value: 30, name:'链家'},
+			                {value: 10, name:'搜房网'},
+			                {value: 80, name:'安居客'},
+			                {value: 100, name:'看房团'}
+			            ]
+			        },
+			    ]
+			};
+			myChart12.setOption(option);
+			
+			
+			var myChart13 = echarts.init(document.getElementById('myChart13'));
+			option = {
+		    tooltip: {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b}: {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        x: 'right',
+			        padding: [20,40,0,0],
+			        data:['看房团','安居客','搜房网','链家','我爱我家']
+			    },
+			    calculable: true,
+			    series: [
+			        {
+			            name: '中介',
+			            type: 'funnel',
+			            width: '40%',
+			            height: '45%',
+			            left: '10%',
+			            top: '20%',
+			            data:[
+			                {value: 30, name:'我爱我家'},
+			                {value: 60, name:'链家'},
+			                {value: 120, name:'搜房网'},
+			                {value: 80, name:'安居客'},
+			                {value: 180, name:'看房团'}
+			            ]
+			        },
+			    ]
+			};
+			myChart13.setOption(option);
+			
+			
+			
+			$('.wehr_tabs2 li').click(function(){
+			  	$(this).addClass('ehr_active').siblings().removeClass('ehr_active')
+			  	$('.chear_cont .ehr_listtab2:eq('+ $(this).index() +')').show().siblings().hide()
+				myChart12.resize();
+				myChart13.resize();
+			  	
+			})
+			//中介成交 TOP 5end
+			window.onresize = function() {
+				myChart.resize();
+				myChart2.resize();
+				myChart3.resize();
+				myChart4.resize();
+				myChart5.resize();
+				myChart6.resize();
+				myChart7.resize();
+				myChart8.resize();
+				myChart9.resize();
+				myChart10.resize();
+				myChart11.resize();
+				myChart12.resize();
+				myChart13.resize();
+			}
+
+		</script>
+	</body>
+
+</html>

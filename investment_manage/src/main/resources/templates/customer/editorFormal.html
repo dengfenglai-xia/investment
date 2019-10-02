@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <input type="hidden" name="customerId" th:value="${customer.customerId}">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>客户类型：</label>
+                    <div class="layui-input-block ">
+                        <span class="htcont" th:text="${customer.customerType eq '1'}?'公司':'个人'"></span>
+                    </div>
+                </div>
+                <!--公司/个人租赁信息-->
+                <div class="lease-info-switch"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--工商信息-->
+        <div class="layui-row layui-form-item bc_msg" id="gsxx">
+            <div class="mytitle">工商信息</div>
+            <div class="w_addpart l_shadow w_bccont">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">统一社会&nbsp;&nbsp;&nbsp;<br/>信用代码：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="unifiedCode" th:value="${customer.unifiedCode}" placeholder="请输入统一社会信用代码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">工商注册号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="businessRegNo" th:value="${customer.businessRegNo}" placeholder="请输入工商注册号"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">组织机构代码：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="organCode" th:value="${customer.organCode}" placeholder="请输入组织机构代码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">法&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="legalPerson" th:value="${customer.legalPerson}" placeholder="请输入法人" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">注册资本：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="regCapital" th:value="${customer.regCapital}" placeholder="请输入注册资本"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">经营状态：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="businessState" th:value="${customer.businessState}" placeholder="请输入经营状态"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">公司类型：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="companyType" th:value="${customer.companyType}" placeholder="请输入公司类型"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">登记机关：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="regOffice" th:value="${customer.regOffice}" placeholder="请输入登记机关"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">核准日期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="passDate" th:value="${customer.passDate}" class="layui-input l_time laydate-control"
+                               placeholder="请选择核准日期">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">成立日期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="buildDate" th:value="${customer.buildDate}" class="layui-input l_time laydate-control"
+                               placeholder="请选择成立日期">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">营业期限：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="businessTerm" th:value="${customer.businessTerm}" class="layui-input" placeholder="请输入营业期限">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">人员规模：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="peopleScale" th:value="${customer.peopleScale}" placeholder="请输入人员规模"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs8 l_po">
+                    <label class="layui-form-label w_label ">注册地址：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="regAddress" th:value="${customer.regAddress}" placeholder="请输入通讯地址"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">经营范围：</label>
+                    <div class="layui-input-block">
+                        <textarea class="w_tzteaxer" name="businessScope" th:text="${customer.businessScope}" placeholder="请输入经营范围"></textarea>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--工商信息end-->
+        <div class="w_del_btnbox">
+            <input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+            <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+        </div>
+    </form>
+</div>
+<script th:replace="common/common-js::js"></script>
+<!-- 弹窗、模板 -->
+<!--公司信息部分start-->
+<script type="text/html" id="company_part">
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>客户名称：</label>
+        <div class="layui-input-block">
+            <input type="text" name="customerName" th:value="${customer.customerName}" lay-verify="required" placeholder="请输入客户名称"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>联&nbsp;&nbsp;系&nbsp;&nbsp;人：</label>
+        <div class="layui-input-block">
+            <input type="text" name="contacts" th:value="${customer.contacts}" lay-verify="required" placeholder="请输入联系人"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>联系电话：</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" th:value="${customer.phone}" lay-verify="required|phone" placeholder="请输入联系人联系方式"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>行业类型：</label>
+        <div class="layui-input-block">
+            <select name="industry" lay-verify="required" lay-search>
+                <option value="">请选择行业类型</option>
+                <option th:each="obj:${industryList}" th:selected="${obj.bdName eq customer.industry}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>渠道来源：</label>
+        <div class="layui-input-block">
+            <select name="channelSource" lay-verify="required"  lay-search>
+                <option value="">请选择渠道来源</option>
+                <option th:each="obj:${sourceList}" th:selected="${obj.bdName eq customer.channelSource}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道名称：</label>
+        <div class="layui-input-block">
+            <input type="text" name="sourceName" th:value="${customer.sourceName}" placeholder="请输入渠道名称"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</label>
+        <div class="layui-input-block">
+            <input type="text" name="email" th:value="${customer.email}" placeholder="请输入邮箱"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编：</label>
+        <div class="layui-input-block">
+            <input type="text" name="zipCode" th:value="${customer.zipCode}" placeholder="请输入邮编"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md8 layui-col-xs8 l_po">
+        <label class="layui-form-label w_label ">通讯地址：</label>
+        <div class="layui-input-block">
+            <input type="text" name="linkAddress" th:value="${customer.linkAddress}" placeholder="请输入通讯地址"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</script>
+<!--公司信息部分end-->
+
+<!--个人信息部分end-->
+<script type="text/html" id="personal_part">
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>客户姓名：</label>
+        <div class="layui-input-block">
+            <input type="text" name="customerName" th:value="${customer.customerName}" lay-verify="required"  placeholder="请输入客户姓名"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">身份证号：</label>
+        <div class="layui-input-block">
+            <input type="text" name="contactsCard" th:value="${customer.contactsCard}" placeholder="请输入身份证号"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>联系电话：</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" th:value="${customer.phone}" lay-verify="required|phone" placeholder="请输入联系方式"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">工作单位：</label>
+        <div class="layui-input-block">
+            <input type="text" name="workUnit" th:value="${customer.workUnit}" placeholder="请输入工作单位" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>行业类型：</label>
+        <div class="layui-input-block">
+            <select name="industry" lay-verify="required" lay-search>
+                <option value="">请选择行业类型</option>
+                <option th:each="obj:${industryList}" th:selected="${obj.bdName eq customer.industry}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>渠道来源：</label>
+        <div class="layui-input-block">
+            <select name="channelSource" lay-verify="required"  lay-search>
+                <option value="">请选择渠道来源</option>
+                <option th:each="obj:${sourceList}" th:selected="${obj.bdName eq customer.channelSource}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道名称：</label>
+        <div class="layui-input-block">
+            <input type="text" name="sourceName" th:value="${customer.sourceName}" placeholder="请输入渠道名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</label>
+        <div class="layui-input-block">
+            <input type="text" name="email" th:value="${customer.email}" placeholder="请输入邮箱"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编：</label>
+        <div class="layui-input-block">
+            <input type="text" name="zipCode" th:value="${customer.zipCode}" placeholder="请输入邮编"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md8 layui-col-xs8 l_po">
+        <label class="layui-form-label w_label ">通讯地址：</label>
+        <div class="layui-input-block">
+            <input type="text" name="linkAddress" th:value="${customer.linkAddress}" placeholder="请输入通讯地址"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</script>
+<!--个人信息部分end-->
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        var company_part = $('#company_part').html();
+        var personal_part = $('#personal_part').html();
+        var customerType = '[[${customer.customerType}]]';
+        if(customerType == '1'){
+            $('.lease-info-switch').html(company_part);
+            $("#gsxx").css('display','block');
+        }else{
+            $('.lease-info-switch').html(personal_part);
+            $("#gsxx").css('display','none');
+        }
+        form.render();
+
+        form.on('submit(commit)', function () {
+            var formData = $("#form").serializeObject();
+            $.ajax({
+                url: URL + "customer/updateCustomer",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.table.reload('dataList');
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+            });
+        });
+
+        //取消按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll();
+        })
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    });
+</script>
+</body>
+</html>

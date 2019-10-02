@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>员工姓名：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="realName" lay-verify="required" placeholder="请输入员工姓名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">员工编号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userCode" placeholder="请输入员工编号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>所在部门：</label>
+                    <div class="layui-input-block">
+                        <select name="deptId" lay-verify="required"  lay-search>
+                            <option value="">请选择所在部门</option>
+                            <option th:each="obj:${deptList}" th:value="${obj.deptId}" th:text="${obj.deptName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;务：</label>
+                    <div class="layui-input-block">
+                        <select name="jobId" lay-search>
+                            <option value="">请选择职务</option>
+                            <option th:each="obj:${jobList}" th:value="${obj.jobId}" th:text="${obj.jobName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色：</label>
+                    <div class="layui-input-block">
+                        <select name="roleId" lay-verify="required"  lay-search>
+                            <option value="">请选择所属角色</option>
+                            <option th:each="obj:${roleList}" th:value="${obj.roleId}" th:text="${obj.roleName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="1" title="男" lay-filter="sex-select" checked="">
+                        <input type="radio" name="sex" value="2" title="女" lay-filter="sex-select">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>手&nbsp;&nbsp;机&nbsp;&nbsp;号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phone" lay-verify="required|phone" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">电子邮箱：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="email" placeholder="请输入电子邮箱" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs8 l_po">
+                    <label class="layui-form-label w_label ">家庭住址：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="address" placeholder="请输入家庭住址" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--账号设置-->
+        <div class="layui-row layui-form-item bc_msg">
+            <div class="mytitle">账号设置</div>
+            <div class="w_addpart l_shadow w_bccont">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>登录账号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userName" lay-verify="required" placeholder="请输入登录账号"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" id="password" name="password" lay-verify="required" placeholder="请输入密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>确认密码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" lay-verify="required|rePassword" placeholder="请再次输入密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--账号设置end-->
+        <!--备注-->
+        <div class="mytitle">
+            备注
+        </div>
+        <div class="w_addpart l_shadow mb-15">
+            <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                <textarea name="remarks" class="w_tzteaxer" placeholder="请输入备注..."></textarea>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--备注end-->
+        <div class="w_del_btnbox">
+            <input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+            <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+        </div>
+    </form>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        form.on('submit(commit)', function () {
+            var formData = $("#form").serializeObject();
+            $.ajax({
+                url: URL + "insertUser",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.table.reload('dataList');
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+            });
+        });
+
+        form.verify({
+            rePassword: function (value) {
+                if (value === "")
+                    return "请输入二次密码！";
+                if (value.length < 6) {
+                    return "密码不能少于六位！";
+                }
+                var pwd = $("#password").val();
+                if (pwd !== value) {
+                    return "二次输入的密码不一致！";
+                }
+            }
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    });
+</script>
+</body>
+</html>

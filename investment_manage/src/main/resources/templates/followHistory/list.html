@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-form">
+        <div class="layui-col-md12">
+
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">
+                            跟进记录
+                            <input type="button" value="新增记录" class="w_record btn" data-type="remind"/>
+                        </div>
+                        <div class="w_part" id="followHistory">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--        弹窗、模板                    -->
+<script type="text/html" id="remind">
+    <form id="subForm">
+        <div class="w_hosue_open">
+            <div class="w_dwcx layui-form">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">跟进时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="followTime" autocomplete="off" class="layui-input l_time test-laydate-item" placeholder="请选择跟进时间" >
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">跟进方式：</label>
+                    <div class="layui-input-block">
+                        <select name="followWay"  lay-verify="required" lay-search>
+                            <option value="">请选择跟进方式</option>
+                            <option th:each="obj:${typeList}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" name="temporaryId" th:value="${followHistory.temporaryId}">
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">跟进记录：</label>
+                    <div class="layui-input-block">
+                        <textarea class="w_tzteaxer" name="followContent" autocomplete="off" placeholder="请输入跟进记录"></textarea>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+
+            <div class="layui-form-item layui-layout-admin">
+                <div class="layui-footer w_type">
+                    <input type="button" value="确定" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="component-form-demo1"></input>
+                    <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"></input>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<!--跟进提醒-->
+<script type="text/html" id="noticeTemp">
+    <form id="noticeForm">
+        <div class="w_hosue_open">
+            <div class="w_dwcx layui-form">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">计划时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="followPlanTime" class="layui-input l_time test-laydate-item" placeholder="请选择计划时间" >
+                    </div>
+                </div>
+                <input type="hidden" name="temporaryId" th:value="${followHistory.temporaryId}">
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">提醒内容：</label>
+                    <div class="layui-input-block">
+                        <textarea class="w_tzteaxer" name="noticeContent" placeholder="请输入提醒内容"></textarea>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+
+            <div class="layui-form-item layui-layout-admin">
+                <div class="layui-footer w_type">
+                    <input type="button" value="确定" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="notice"></input>
+                    <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"></input>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<!--跟进历史-->
+<script type="text/html" id="followHistoryTemp">
+    <ul class="layui-timeline">
+        {{if followHistoryList.length>0}}
+        {{each followHistoryList as obj index}}
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis"></i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{{obj.followTime}}</h3>
+                <p>
+                    <span class="timelin_text">{{obj.followContent}}</span>
+                    <span class="timelin_tip">{{obj.followWay}}</span>
+                </p>
+            </div>
+        </li>
+        {{/each}}
+        {{else}}
+        <li style="text-align: center">暂无记录</li>
+        {{/if}}
+    </ul>
+</script>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script th:inline="javascript">
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate','upload','form'], function() {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            upload = layui.upload,
+            form = layui.form,
+            table = layui.table;
+        table.render('select');
+        //时间选择器
+        var w_date = function(){
+            lay('.test-laydate-item').each(function(){
+                laydate.render({
+                    elem: this
+                    ,trigger: 'click'
+                });
+            });
+        }
+
+        //跟进记录
+        queryFollowHistoryList();
+        var active = {
+            remind:function(){
+                layer.open({
+                    type: 1,
+                    title: '新增记录',
+                    content: $('#remind').html(),
+                    area: ['800px', '350px'],
+                    skin: 'opens',
+                    maxmin: false
+                });
+                form.render();
+                w_date();
+            },
+            notice:function(){
+                layer.open({
+                    type: 1,
+                    title: '跟进提醒',
+                    content: $('#noticeTemp').html(),
+                    area: ['90%', '60%'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success:function(){
+
+                    }
+                });
+                form.render();
+                w_date();
+            },
+
+        };
+        $('.btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //跟进记录
+        function queryFollowHistoryList(){
+            $.post(URL+"queryFollowHistoryList",{"temporaryId":[[${followHistory.temporaryId}]]},function (data) {
+                var html = template('followHistoryTemp', data);
+                $('#followHistory').html(html);
+            })
+        }
+
+
+        /* 监听提交 */
+        form.on('submit(component-form-demo1)', function(data) {
+            $.post(URL + "insertFollowHistory",$("#subForm").serialize(),function (d) {
+                queryFollowHistoryList();
+                layer.closeAll(); //关闭弹层
+                return false;
+            })
+        });
+        /* 监听提交 */
+        form.on('submit(notice)', function(data) {
+            $.post(URL + "insertFollowNotice",$("#noticeForm").serialize(),function (d) {
+                layer.msg(d.msg);
+                if(d.success){
+                    setTimeout(function () {
+                        layer.closeAll(); //关闭弹层
+                        return false;
+                    }, 1000);
+                }
+            })
+        });
+        //取消按钮
+        $('body').on('click','.cancel', function() {
+            layer.closeAll(); //关闭弹层
+        })
+
+    });
+
+</script>
+</body>
+</html>

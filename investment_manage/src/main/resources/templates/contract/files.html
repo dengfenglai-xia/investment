@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row ">
+        <div class="layui-col-md12">
+            <div class="layui-card l_shadow">
+                <div class="w_deltab">
+                    <ul>
+                        <a th:href="@{'/queryContractDetail/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>合同信息</li>
+                        </a>
+                        <a th:href="@{'/queryBills/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }" >
+                            <li>合同账单</li>
+                        </a>
+                        <a th:href="@{'/queryForwardDetail/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>结转明细</li>
+                        </a>
+                        <a th:href="@{'/queryContractHistoryList/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>合同轨迹</li>
+                        </a>
+                        <a th:href="@{'/queryContractFiles/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li class="delactive">相关文件</li>
+                        </a>
+                        <a th:href="@{'/queryAuditRecordList/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>审核记录</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="w_part">
+                            <div class="layui-col-xs12">
+                                <div class="layui-upload">
+                                    <div class="layui-upload-list">
+                                        <table class="layui-table">
+                                            <thead>
+                                            <tr>
+                                                <th>文件名称</th>
+                                                <th>大小</th>
+                                                <th>上传人</th>
+                                                <th>上传时间</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="fileList" >
+                                            <tr th:if="${#lists.size(docsList)==0}" class="ant"><td colspan="6">暂无相关文件</td></tr>
+                                            <tr th:if="${#lists.size(docsList)>0}" th:each="obj:${docsList}">
+                                                <td th:text="${obj.docOriginalName}"></td>
+                                                <td th:text="${obj.docSize} + ' KB'"></td>
+                                                <td th:text="${obj.uploader}"></td>
+                                                <td th:text="${#dates.format(obj.createTime, 'yyyy-MM-dd')}"></td>
+                                                <td><span style="color: #5FB878;">已上传</span></td>
+                                                <td>
+                                                    <button th:fileName="${obj.docOriginalName}" th:filePath="${obj.docPath}" class="layui-btn l_web_but_tj file-down">下载</button>
+                                                    <button th:fileId="${obj.docId}" class="layui-btn l_web_but_sc layui-btn-danger file-delete">删除</button>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <a id="fileUpload" class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe621;</i>选择文件</a>
+                                    <a id="uploadAction" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe681;</i>上传</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'upload', 'form'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            upload = layui.upload,
+            form = layui.form,
+            table = layui.table;
+
+        var fileListView = $('#fileList');
+        var uploadListIns = upload.render({
+            elem: '#fileUpload'
+            , url: URL + 'fileUpload'
+            , data: {
+                "linkId": [[${id}]],
+                "docType": 'contract'
+            }
+            , accept: 'file'
+            , multiple: true
+            , auto: false
+            , bindAction: '#uploadAction'
+            , choose: function (obj) {
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function (index, file, result) {
+                    if ($('#fileList tr').hasClass('ant')) {
+                        $('#fileList').find('tr').remove()
+                    }
+                    fileListView.append(tr);
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '</td>'
+                        , '<td>' + (file.size/1024).toFixed(2) + ' KB</td>'
+                        , '<td>--</td>'
+                        , '<td>--</td>'
+                        , '<td><span style="color: #ff983c;">等待上传</span></td>'
+                        , '<td>'
+                        , '<button class="layui-btn l_web_but_sc pre-file-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+                    fileListView.append(tr);
+                    //上传前文件删除
+                    tr.find('.pre-file-delete').on('click', function () {
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                        if ($('#fileList tr').length == 0) {
+                            $('#fileList').html('<tr class="ant"><td colspan="6">暂无相关文件</td></tr>')
+                        }
+                    });
+                });
+            }
+            , done: function (res, index, upload) {
+                layer.load(1);
+                if (res.success) { //上传成功
+                    var tr = fileListView.find('tr#upload-' + index);
+                    var tds = tr.children();
+                    tds.eq(2).text(res.uploader);
+                    tds.eq(3).text(res.uploadTime);
+                    tds.eq(4).html('<span style="color: #5FB878;">已上传</span>');
+                    tds.eq(5).html(
+                        '<button fileName="' + res.originalName + '" filePath="' + res.filePath + '" class="layui-btn l_web_but_tj file-down">下载</button>' +
+                        '<button fileId="' + res.fileId + '" class="layui-btn l_web_but_sc file-delete">删除</button>'
+                    );
+                    layer.closeAll('loading');
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }
+                this.error(index, upload);
+            }
+            , error: function (index, upload) {
+                var tr = fileListView.find('tr#upload-' + index);
+                var tds = tr.children();
+                tds.eq(4).html('<span style="color: #FF5722;">上传失败</span>');
+            }
+        });
+
+        //下载
+        $('body').on('click', '.file-down', function () {
+            var fileName = $(this).attr("fileName");
+            var filePath = $(this).attr("filePath");
+            downloadFile(filePath,fileName);
+        });
+
+        //删除按钮
+        $('body').on('click', '.file-delete', function () {
+            var tr = $(this).parent().parent('tr');
+            var fileId = $(this).attr("fileId");
+            layer.confirm('请确定是否删除？', function (index) {
+                $.ajax({
+                    type: 'post',
+                    url: URL + 'docs/deleteDocs',
+                    data: {"docId": fileId},
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            tr.remove();
+                            if ($('#fileList tr').length == 0) {
+                                $('#fileList').html('<tr class="ant"><td colspan="6">暂无相关文件</td></tr>')
+                            }
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

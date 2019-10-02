@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.RoomMapper">
+
+    <sql id="Base_Column_List">
+		r.room_id,
+		r.room_no,
+		r.floor_id,
+		r.floor_no,
+		r.building_id,
+		r.building_name,
+		r.project_id,
+		r.project_name,
+		r.use_area,
+		r.build_area,
+		r.purpose,
+		r.whether_open,
+		r.bottom_price,
+		r.charge_unit,
+		r.decorate,
+		r.orientation,
+		r.whether_street,
+		r.facilities,
+		r.tags,
+		r.imgs,
+		r.state,
+		r.company_code,
+		r.create_user_id,
+		r.create_time,
+		r.update_user_id,
+		r.update_time,
+		r.remarks,
+		r.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryRoomList" resultType="room">
+        select
+        <include refid="Base_Column_List"/>
+        from room r
+        where r.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and r.company_code = #{companyCode}
+        </if>
+        <if test="buildingId != null">
+            and r.building_id = #{buildingId}
+        </if>
+        <if test="startArea != null and endArea != null">
+            and r.build_area between #{startArea} and #{endArea}
+        </if>
+        <if test="whetherOpen != null and whetherOpen != '' ">
+            and r.whether_open = #{whetherOpen}
+        </if>
+        <if test="states != null and states != '' ">
+            and r.state in
+            <foreach collection="states" item="state" index="index" open="(" close=")" separator=",">
+                #{state}
+            </foreach>
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            r.project_name like concat('%',#{keyword},'%')
+            or
+            r.building_name like concat('%',#{keyword},'%')
+            or
+            r.floor_no like concat('%',#{keyword},'%')
+            or
+            r.room_no like concat('%',#{keyword},'%')
+            )
+        </if>
+        order by
+        r.project_id,
+        r.building_id,
+        cast( r.floor_no as signed ),
+        cast( r.room_no as signed )
+    </select>
+
+    <select id="queryRoomInfoList" resultType="room">
+        SELECT
+        cu.customer_name,
+        cv.start_date,
+        cv.end_date,
+        r.room_id,
+        r.room_no,
+        r.state,
+        r.whether_open,
+        r.build_area,
+        r.floor_id,
+        r.floor_no
+        FROM
+        room r
+        LEFT JOIN contract_view cv ON r.room_id = cv.room_id
+        LEFT JOIN customer cu ON cv.customer_id = cu.customer_id
+        WHERE
+        r.del_flag = '0'
+        and r.building_id = #{buildingId}
+        <if test="startDateRange1 != null and startDateRange1 != '' ">
+            and cv.start_date between #{startDateRange1} and #{startDateRange2}
+        </if>
+        <if test="endDateRange1 != null and endDateRange1 != '' ">
+            and cv.end_date between #{endDateRange1} and #{endDateRange2}
+        </if>
+        <if test="startArea != null and endArea != null">
+            and r.build_area between #{startArea} and #{endArea}
+        </if>
+        <if test="state != null and state != '' ">
+            and r.state = ${state}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and cu.customer_name like concat('%',#{keyword},'%')
+        </if>
+        order by
+        cast( r.floor_no as signed ),
+        r.room_no
+    </select>
+
+    <select id="queryRoomSumList" resultType="roomSum">
+        select
+        floor_id,
+        floor_no,
+        sum(build_area) total_area
+        from room
+        where building_id = #{buildingId}
+        group by floor_id
+        order by cast( floor_no AS signed )
+    </select>
+
+    <select id="queryRoomBaseList" resultType="room">
+        select
+        room_id,
+        room_no,
+        floor_id,
+        floor_no,
+        state
+        from room
+        where del_flag = '0'
+        <if test="floorId != null">
+            and floor_id = #{floorId}
+        </if>
+        <if test="buildingId != null">
+            and building_id = #{buildingId}
+        </if>
+        <if test="roomNo != null and roomNo != ''  ">
+            and room_no = #{roomNo}
+        </if>
+    </select>
+
+    <select id="queryRoomNoList" resultType="string">
+        select
+        room_no
+        from room
+        where del_flag = '0'
+        <if test="buildingId != null">
+            and building_id = #{buildingId}
+        </if>
+    </select>
+
+    <select id="queryRoomCount" resultType="int">
+        select
+        count(*) num
+        from room r
+        where r.del_flag = '0'
+        <if test="floorId != null">
+            and r.floor_id = #{floorId}
+        </if>
+        <if test="buildingId != null">
+            and r.building_id = #{buildingId}
+        </if>
+        <if test="states != null and states != '' ">
+            and r.state in
+            <foreach collection="states" item="state" index="index" open="(" close=")" separator=",">
+                #{state}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="queryRoomDetailByPrimarykey" resultType="room">
+        select
+        <include refid="Base_Column_List"/>
+        from room r
+        where
+        r.room_id = #{roomId}
+    </select>
+
+    <select id="queryRoomDetail" resultType="room">
+        select
+        <include refid="Base_Column_List"/>
+        from room r
+        where
+        r.room_id = #{roomId}
+    </select>
+
+    <insert id="insertRoom">
+        insert into room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roomId != null ">
+                room_id,
+            </if>
+            <if test="roomNo != null and roomNo != '' ">
+                room_no,
+            </if>
+            <if test="floorId != null ">
+                floor_id,
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no,
+            </if>
+            <if test="buildingId != null ">
+                building_id,
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="useArea != null ">
+                use_area,
+            </if>
+            <if test="buildArea != null ">
+                build_area,
+            </if>
+            <if test="purpose != null and purpose != '' ">
+                purpose,
+            </if>
+            <if test="whetherOpen != null and whetherOpen != '' ">
+                whether_open,
+            </if>
+            <if test="bottomPrice != null ">
+                bottom_price,
+            </if>
+            <if test="chargeUnit != null and chargeUnit != '' ">
+                charge_unit,
+            </if>
+            <if test="decorate != null and decorate != '' ">
+                decorate,
+            </if>
+            <if test="orientation != null and orientation != '' ">
+                orientation,
+            </if>
+            <if test="whetherStreet != null and whetherStreet != '' ">
+                whether_street,
+            </if>
+            <if test="facilities != null and facilities != '' ">
+                facilities,
+            </if>
+            <if test="tags != null and tags != '' ">
+                tags,
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs,
+            </if>
+            <if test="state != null and state != '' ">
+                state,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roomId != null ">
+                #{roomId},
+            </if>
+            <if test="roomNo != null and roomNo != '' ">
+                #{roomNo},
+            </if>
+            <if test="floorId != null ">
+                #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="useArea != null ">
+                #{useArea},
+            </if>
+            <if test="buildArea != null ">
+                #{buildArea},
+            </if>
+            <if test="purpose != null and purpose != '' ">
+                #{purpose},
+            </if>
+            <if test="whetherOpen != null and whetherOpen != '' ">
+                #{whetherOpen},
+            </if>
+            <if test="bottomPrice != null ">
+                #{bottomPrice},
+            </if>
+            <if test="chargeUnit != null and chargeUnit != '' ">
+                #{chargeUnit},
+            </if>
+            <if test="decorate != null and decorate != '' ">
+                #{decorate},
+            </if>
+            <if test="orientation != null and orientation != '' ">
+                #{orientation},
+            </if>
+            <if test="whetherStreet != null and whetherStreet != '' ">
+                #{whetherStreet},
+            </if>
+            <if test="facilities != null and facilities != '' ">
+                #{facilities},
+            </if>
+            <if test="tags != null and tags != '' ">
+                #{tags},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                #{imgs},
+            </if>
+            <if test="state != null and state != '' ">
+                #{state},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateRoom">
+        update room
+        <set>
+            <if test="roomNo != null and roomNo != '' ">
+                room_no = #{roomNo},
+            </if>
+            <if test="floorId != null ">
+                floor_id = #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no = #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                building_id = #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name = #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                project_id = #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name = #{projectName},
+            </if>
+            <if test="useArea != null ">
+                use_area = #{useArea},
+            </if>
+            <if test="buildArea != null ">
+                build_area = #{buildArea},
+            </if>
+            <if test="purpose != null and purpose != '' ">
+                purpose = #{purpose},
+            </if>
+            <if test="whetherOpen != null and whetherOpen != '' ">
+                whether_open = #{whetherOpen},
+            </if>
+            <if test="bottomPrice != null ">
+                bottom_price = #{bottomPrice},
+            </if>
+            <if test="chargeUnit != null and chargeUnit != '' ">
+                charge_unit = #{chargeUnit},
+            </if>
+            <if test="decorate != null and decorate != '' ">
+                decorate = #{decorate},
+            </if>
+            <if test="orientation != null and orientation != '' ">
+                orientation = #{orientation},
+            </if>
+            <if test="whetherStreet != null and whetherStreet != '' ">
+                whether_street = #{whetherStreet},
+            </if>
+            <if test="facilities != null and facilities != '' ">
+                facilities = #{facilities},
+            </if>
+            <if test="tags != null and tags != '' ">
+                tags = #{tags},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs = #{imgs},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        room_id = #{roomId}
+    </update>
+
+    <update id="updateRoomStateBatch">
+        update room set
+        state = #{state},
+        update_time = #{updateTime}
+        where room_id in
+        <foreach collection="roomIds" item="roomId" index="index" open="(" close=")" separator=",">
+            #{roomId}
+        </foreach>
+    </update>
+
+    <delete id="deleteRoomByPrimarykey">
+		delete
+		from
+			room
+		where
+			room_id = #{roomId}
+	</delete>
+
+</mapper>

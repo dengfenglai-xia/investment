@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+	<div class="w_addbox">
+		<form id="form" class="layui-form">
+			<!--基本信息-->
+			<div class="layui-row layui-form-item layui-form">
+				<div class="mytitle">
+					基本信息
+				</div>
+				<div class="w_addpart l_shadow">
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label "><b class="w_sur">*</b>项目名称：</label>
+						<div class="layui-input-block">
+							<input type="text" name="projectName" lay-verify="required" placeholder="请输入项目名称" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label "><b class="w_sur">*</b>项目业态：</label>
+						<div class="layui-input-block">
+							<select name="businessMode" lay-verify="required" lay-search>
+								<option value="">请选择项目业态</option>
+								<option th:each="obj:${businessModeList}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label "><b class="w_sur">*</b>管理公司：</label>
+						<div class="layui-input-block">
+							<input type="text" name="company" readonly th:value="${company}" lay-verify="required" placeholder="请输入管理公司" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label "><b class="w_sur">*</b>项目地点：</label>
+						<div class="layui-input-block">
+							<input type="text" id="address" name="address" lay-verify="required" placeholder="请输入所在位置" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg">总占地面积&nbsp;&nbsp;<br />（㎡）：</label>
+						<div class="layui-input-block">
+							<input type="text" name="coverArea" oninput="onlyNumber(this)" placeholder="请输入总占地面积" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg">总建筑面积&nbsp;&nbsp;<br />（㎡）：</label>
+						<div class="layui-input-block">
+							<input type="text" name="buildArea" oninput="onlyNumber(this)" placeholder="请输入总建筑面积" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-xs12 l_po">
+						<label class="layui-form-label w_label">备注：</label>
+						<div class="layui-input-block">
+							<textarea name="remarks" class="w_tzteaxer" placeholder="请输入备注信息"></textarea>
+						</div>
+					</div>
+					<div class="layui-col-xs12">
+						<label class="layui-form-label w_label "><b class="w_sur">*</b>项目图片：</label>
+						<div class="layui-input-block" style="margin-left:116px">
+							<a class="layui-btn layui-btn-normal upload-imgs"><i class="layui-icon">&#xe60d;</i>选择</a>
+							<div class="layui-upload wy_flex_wrap imgs" style="margin-top:10px;"></div>
+						</div>
+					</div>
+					<div class="layui-col-xs12">
+						<label class="layui-form-label w_label ">地理位置：</label>
+						<input type="hidden" id="longitude" name="longitude" />
+						<input type="hidden" id="latitude" name="latitude" />
+						<div class="layui-input-block" id="allmap" style="width:400px;height:300px;margin-left:116px">
+						</div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<!--基本信息end-->
+
+			<!--基础设置-->
+			<div class="layui-row layui-form-item layui-form">
+				<div class="mytitle">
+					基础设置
+				</div>
+				<div class="w_addpart l_shadow">
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg">电费单价&nbsp;&nbsp;<br />（元/度）：</label>
+						<div class="layui-input-block">
+							<input type="text" name="powerPrice" oninput="onlyNumber(this)" placeholder="请输入电费单价" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg">水费单价&nbsp;&nbsp;<br />（元/立方）：</label>
+						<div class="layui-input-block">
+							<input type="text" name="waterPrice" oninput="onlyNumber(this)" placeholder="请输入水费单价" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg">燃气单价&nbsp;&nbsp;<br />（元/立方）：</label>
+						<div class="layui-input-block">
+							<input type="text" name="gasPrice" oninput="onlyNumber(this)" placeholder="请输入燃气单价" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg"><b class="w_sur">*</b>账单提前&nbsp;&nbsp;<br />出单天数：</label>
+						<div class="layui-input-block">
+							<input type="text" name="billDays" lay-verify="required" oninput="onlyInteger(this)" placeholder="请输入提前出单天数" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs6 l_po">
+						<label class="layui-form-label w_label l_hg"><b class="w_sur">*</b>合同提前&nbsp;&nbsp;<br />提醒天数：</label>
+						<div class="layui-input-block">
+							<input type="text" name="remindDays" lay-verify="required|number" oninput="onlyInteger(this)" autocomplete="off"  placeholder="请输入合同提前提醒天数"class="layui-input">
+						</div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<!--基础设置end-->
+			<div class="w_del_btnbox">
+				<input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit" />
+				<input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+			</div>
+		</form>
+	</div>
+	<script th:replace="common/common-js::js"></script>
+	<script type="text/javascript" th:src="@{http://api.map.baidu.com/api(v=2.0,ak='ogP2l5HmS5bp8cP8m1NgeaY10ruCSEe0')}"></script>
+	<script>
+		layui.config({
+			base: URL + 'layuiadmin/'
+		}).extend({
+			index: 'lib/index' //主入口模块
+		}).use(['index', 'contlist','form','upload','laydate','table'], function() {
+			var form = layui.form,
+				layer = layui.layer,
+				upload = layui.upload;
+
+			/* 上传图片 */
+			var imgs=[];
+			lay('.upload-imgs').each(function(i,ele){
+				upload.render({
+					elem: this,
+					url: URL + 'imgUpload',
+					multiple: true,
+					before: function(obj){
+						obj.preview(function(index, file, result){
+							$('.imgs').eq(i).append('<div class="img">' +
+									'<div class="z_update_img">' +
+									'<img src="'+ result +'" class="z_full_width">' +
+									'<img class="colse remove-img" src="../img/sf.png">'+
+									'</div>' +
+									'</div>');
+						});
+					},
+					done: function(res){
+						//如果上传失败
+						if(res.code > 0) {
+							layer.msg('上传失败');
+						}else if(res.state == 'SUCCESS'){
+							imgs.push(res.url);
+						}
+					}
+				});
+			});
+
+			$('body').on('click','.remove-img',function(){
+				var obj=$(this).parents('.img');
+				imgs.splice(obj.index,1);
+				obj.remove();
+			});
+
+			form.on('submit(commit)', function(){
+				if(imgs.length < 1){
+					layer.msg('请选择项目图片');
+					return;
+				}
+				var formData = $("#form").serializeObject();
+				formData["imgs"] = imgs.join(",");
+				$.ajax({
+					url: URL + "project/insertProject",
+					type:"POST",
+					data: formData,
+					dataType:"json",
+					success:function(data){
+						if(data.success){
+							layer.msg(data.msg);
+							setTimeout(function(){
+								parent.location.reload();
+								var index = parent.layer.getFrameIndex(window.name);
+								parent.layer.close(index);
+							}, 1000);
+						}else{
+							layer.msg(data.msg);
+						}
+					}
+				});
+			});
+
+			var map = new BMap.Map("allmap");
+			map.centerAndZoom(new BMap.Point(116.4136103013, 39.915), 11);
+			// map.enableScrollWheelZoom(true);
+			var localSearch = new BMap.LocalSearch(map, {
+				renderOptions:{map: map}
+			});
+
+			var myCity = new BMap.LocalCity();
+			myCity.get(myFun);
+
+			var address = $("#address").val();
+			loadMapAddress(address);
+
+			$("#address").bind("input propertychange", function (event) {
+				address = $(this).val();
+				loadMapAddress(address);
+			});
+
+			function loadMapAddress(address){
+				if (address != '') {
+					localSearch.setSearchCompleteCallback(function (searchResult) {
+						var poi = searchResult.getPoi(0);
+						$('#longitude').val(poi.point.lng);
+						$('#latitude').val( poi.point.lat);
+					});
+					localSearch.search(address);
+				}
+			}
+
+			//根据IP定位到城市
+			function myFun(result){
+				var longitude = $('#longitude').val();
+				var latitude = $('#latitude').val();
+				if (longitude != '' && latitude != '') {
+					map.centerAndZoom(new BMap.Point(longitude, latitude), 11);
+					var marker=new BMap.Marker(new BMap.Point(longitude, latitude));
+					map.addOverlay(marker);
+				}else {
+					var cityName = result.name;
+					map.setCenter(cityName);
+				}
+			}
+
+			//取消按钮
+			$('body').on('click','.cancel', function() {
+				var index = parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index);
+			})
+		});
+	</script>
+</body>
+</html>

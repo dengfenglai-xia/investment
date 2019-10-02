@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.DeptMapper">
+ 
+	<sql id="Base_Column_List" >
+		d.dept_id,
+		d.company_code,
+		d.dept_name,
+		d.create_user_id,
+		d.create_time,
+		d.update_user_id,
+		d.update_time,
+		d.remarks,
+		d.del_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryDeptList" resultType="dept">
+		select
+			<include refid="Base_Column_List"/>
+		from dept d
+		where d.del_flag = '0'
+			<if test="companyCode != null and companyCode != '' " >
+				and d.company_code = #{companyCode}
+			</if>
+			<if test="deptName != null and deptName != '' " >
+				and d.dept_name like concat('%',#{deptName},'%')
+			</if>
+	</select>
+	
+	<select id="queryDeptDetailByPrimarykey" resultType="dept">
+		select
+			<include refid="Base_Column_List"/>
+		from dept d
+		where
+			d.dept_id = #{deptId}
+	</select>
+
+	<select id="queryDeptDetail" resultType="dept">
+		select
+			<include refid="Base_Column_List"/>
+		from dept d
+		where
+			d.dept_id = #{deptId}
+	</select>
+
+	<insert id="insertDept">
+		insert into dept
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="deptId != null " >
+			dept_id,
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			company_code,
+		</if>
+		<if test="deptName != null and deptName != '' " >
+			dept_name,
+		</if>
+		<if test="createUserId != null " >
+			create_user_id,
+		</if>
+		<if test="createTime != null " >
+			create_time,
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id,
+		</if>
+		<if test="updateTime != null " >
+			update_time,
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks,
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="deptId != null " >
+			#{deptId},	
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			#{companyCode},		
+		</if>
+		<if test="deptName != null and deptName != '' " >
+			#{deptName},		
+		</if>
+		<if test="createUserId != null " >
+			#{createUserId},	
+		</if>
+		<if test="createTime != null " >
+			#{createTime},	
+		</if>
+		<if test="updateUserId != null " >
+			#{updateUserId},	
+		</if>
+		<if test="updateTime != null " >
+			#{updateTime},	
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			#{remarks},		
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			#{delFlag},		
+		</if>
+		</trim>
+	</insert>
+
+	<update id="updateDept">
+	    update dept
+	    <set >
+		<if test="companyCode != null and companyCode != '' " >
+			company_code = #{companyCode},
+		</if>
+		<if test="deptName != null and deptName != '' " >
+			dept_name = #{deptName},
+		</if>
+		<if test="createUserId != null " >
+			create_user_id = #{createUserId},
+		</if>
+		<if test="createTime != null " >
+			create_time = #{createTime},
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id = #{updateUserId},
+		</if>
+		<if test="updateTime != null " >
+			update_time = #{updateTime},
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks = #{remarks},
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag = #{delFlag},
+		</if>
+	    </set>
+		where
+			dept_id = #{deptId}
+	</update>
+
+	<delete id="deleteDeptByPrimarykey">
+		delete
+		from
+			dept
+		where
+			dept_id = #{deptId}
+	</delete>
+
+</mapper>

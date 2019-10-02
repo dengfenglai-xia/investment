@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.CustomerTemporaryMapper">
+
+    <sql id="Base_Column_List">
+		temporary_id,
+        customer_name,
+        company_code,
+        customer_type,
+        state,
+        contacts_card,
+        contacts,
+        phone,
+        work_unit,
+        industry,
+        channel_source,
+        source_name,
+        link_address,
+        first_meet_time,
+        room_nos,
+        demand_end_time,
+        demand_park_max,
+        demand_park_min,
+        demand_station_min,
+        demand_station_max,
+        demand_area_max,
+        demand_area_min,
+        demand_start_time,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time,
+        follow_user_name,
+        remarks,
+        del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryCustomerBaseList" resultType="customerTemporary">
+        select
+            c.temporary_id,
+            c.customer_name,
+            c.company_code,
+            c.customer_type,
+            c.state,
+            c.contacts_card,
+            c.contacts,
+            c.phone,
+            c.work_unit,
+            c.industry,
+            c.channel_source,
+            c.source_name,
+            c.link_address,
+            c.first_meet_time,
+            c.demand_end_time,
+            c.demand_park_max,
+            c.demand_park_min,
+            c.demand_station_min,
+            c.demand_station_max,
+            c.demand_area_max,
+            c.demand_area_min,
+            c.demand_start_time,
+            c.create_user_id,
+            c.create_time,
+            c.update_user_id,
+            c.update_time,
+            c.follow_user_name,
+            c.remarks,
+            c.del_flag,
+            group_concat(ctr.room_no) room_nos
+        from customer_temporary c
+        left join customer_temporary_room ctr on c.temporary_id = ctr.temporary_id
+        where c.del_flag = '0'
+        and c.company_code = #{companyCode}
+        <if test="roomId != null ">
+            and ctr.room_id = #{roomId}
+        </if>
+        <if test="customerType != null and customerType != '' ">
+            and c.customer_type = #{customerType}
+        </if>
+        <if test="industry != null and industry != '' ">
+            and c.industry = #{industry}
+        </if>
+        <if test="state != null and state != '' ">
+            and c.state = #{state}
+        </if>
+        <if test="channelSource != null and channelSource != '' ">
+            and c.channel_source = #{channelSource}
+        </if>
+        <if test="startDate != null and startDate != '' ">
+            and c.first_meet_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != '' ">
+            and c.first_meet_time &lt;= #{endDate}
+        </if>
+        <if test="roomNos != null and roomNos != '' ">
+            and c.find_in_set(#{roomNos},room_nos)
+        </if>
+        <if test="param != null and param != '' ">
+            and (
+            c.customer_name like concat('%',#{param},'%')
+            or
+            c.follow_user_name like concat('%',#{param},'%')
+            or
+            c.contacts like concat('%',#{param},'%')
+            )
+        </if>
+        group by c.temporary_id
+        order by c.temporary_id desc
+    </select>
+
+    <select id="queryCustomerDetail" resultType="customerTemporary">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_temporary
+        where
+        temporary_id = #{temporaryId}
+    </select>
+
+    <select id="queryCustomerTemporaryNum" resultType="int">
+        select count(*) from customer_temporary where del_flag = '0' and company_code = #{companyCode}
+    </select>
+
+    <insert id="insertCustomer" useGeneratedKeys="true" keyProperty="temporaryId" keyColumn="temporary_id">
+        insert into customer_temporary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="temporaryId != null ">
+                temporary_id,
+            </if>
+            <if test="customerType != null and customerType != '' ">
+                customer_type,
+            </if>
+            <if test="customerName != null and customerName != '' ">
+                customer_name,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="contactsCard != null and contactsCard != '' ">
+                contacts_card,
+            </if>
+            <if test="state != null and state != '' ">
+                state,
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts,
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone,
+            </if>
+            <if test="workUnit != null and workUnit != '' ">
+                work_unit,
+            </if>
+            <if test="industry != null and industry != '' ">
+                industry,
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                channel_source,
+            </if>
+            <if test="sourceName != null and sourceName != '' ">
+                source_name,
+            </if>
+            <if test="linkAddress != null and linkAddress != '' ">
+                link_address,
+            </if>
+            <if test="firstMeetTime != null and firstMeetTime != '' ">
+                first_meet_time,
+            </if>
+            <if test="roomNos != null and roomNos != '' ">
+                room_nos,
+            </if>
+            <if test="demandEndTime != null and demandEndTime != '' ">
+                demand_end_time,
+            </if>
+            <if test="demandParkMax != null ">
+                demand_park_max,
+            </if>
+            <if test="demandParkMin != null ">
+                demand_park_min,
+            </if>
+            <if test="demandStationMin != null ">
+                demand_station_min,
+            </if>
+            <if test="demandStationMax != null  ">
+                demand_station_max,
+            </if>
+            <if test="demandAreaMax != null  ">
+                demand_area_max,
+            </if>
+            <if test="demandAreaMin != null  ">
+                demand_area_min,
+            </if>
+            <if test="demandStartTime != null and demandStartTime != '' ">
+                demand_start_time,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            create_time,
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            update_time,
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+            <if test="followUserName != null and followUserName != '' ">
+                follow_user_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="temporaryId != null ">
+                #{temporaryId},
+            </if>
+            <if test="customerType != null and customerType != '' ">
+                #{customerType},
+            </if>
+            <if test="customerName != null and customerName != '' ">
+                #{customerName},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="contactsCard != null and contactsCard != '' ">
+                #{contactsCard},
+            </if>
+            <if test="state != null and state != '' ">
+                #{state},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                #{phone},
+            </if>
+            <if test="workUnit != null and workUnit != '' ">
+                #{workUnit},
+            </if>
+            <if test="industry != null and industry != '' ">
+                #{industry},
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                #{channelSource},
+            </if>
+            <if test="sourceName != null and sourceName != '' ">
+                #{sourceName},
+            </if>
+            <if test="linkAddress != null and linkAddress != '' ">
+                #{linkAddress},
+            </if>
+            <if test="firstMeetTime != null and firstMeetTime != '' ">
+                #{firstMeetTime},
+            </if>
+            <if test="roomNos != null and roomNos != '' ">
+                #{roomNos},
+            </if>
+            <if test="demandEndTime != null and demandEndTime != '' ">
+                #{demandEndTime},
+            </if>
+            <if test="demandParkMax != null">
+                #{demandParkMax},
+            </if>
+            <if test="demandParkMin != null ">
+                #{demandParkMin},
+            </if>
+            <if test="demandStationMin != null ">
+                #{demandStationMin},
+            </if>
+            <if test="demandStationMax != null ">
+                #{demandStationMax},
+            </if>
+            <if test="demandAreaMax != null ">
+                #{demandAreaMax},
+            </if>
+            <if test="demandAreaMin != null ">
+                #{demandAreaMin},
+            </if>
+            <if test="demandStartTime != null and demandStartTime != '' ">
+                #{demandStartTime},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            now(),
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            now(),
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+            <if test="followUserName != null and followUserName != '' ">
+                #{followUserName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateCustomerTemporary">
+        update customer_temporary
+        <set>
+            <if test="followUserName != null and followUserName != '' ">
+                follow_user_name = #{followUserName},
+            </if>
+            <if test="customerType != null and customerType != '' ">
+                customer_type = #{customerType},
+            </if>
+            <if test="customerName != null and customerName != '' ">
+                customer_name = #{customerName},
+            </if>
+            <if test="contactsCard != null and contactsCard != '' ">
+                contacts_card = #{contactsCard},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts = #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="workUnit != null and workUnit != '' ">
+                work_unit = #{workUnit},
+            </if>
+            <if test="industry != null and industry != '' ">
+                industry = #{industry},
+            </if>
+            <if test="channelSource != null and channelSource != '' ">
+                channel_source = #{channelSource},
+            </if>
+            <if test="sourceName != null and sourceName != '' ">
+                source_name = #{sourceName},
+            </if>
+            <if test="linkAddress != null and linkAddress != '' ">
+                link_address = #{linkAddress},
+            </if>
+            <if test="firstMeetTime != null and firstMeetTime != '' ">
+                first_meet_time = #{firstMeetTime},
+            </if>
+            <if test="roomNos != null and roomNos != '' ">
+                room_nos = #{roomNos},
+            </if>
+            <if test="demandEndTime != null and demandEndTime != '' ">
+                demand_end_time = #{demandEndTime},
+            </if>
+            <if test="demandParkMax != null ">
+                demand_park_max = #{demandParkMax},
+            </if>
+            <if test="demandParkMin != null ">
+                demand_park_min = #{demandParkMin},
+            </if>
+            <if test="demandStationMin != null ">
+                demand_station_min = #{demandStationMin},
+            </if>
+            <if test="demandStationMax != null ">
+                demand_station_max = #{demandStationMax},
+            </if>
+            <if test="demandAreaMax != null ">
+                demand_area_max = #{demandAreaMax},
+            </if>
+            <if test="demandAreaMin != null ">
+                demand_area_min = #{demandAreaMin},
+            </if>
+            <if test="demandStartTime != null and demandStartTime != '' ">
+                demand_start_time = #{demandStartTime},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            update_time = now(),
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        temporary_id = #{temporaryId}
+    </update>
+
+    <delete id="deleteCustomerTemporary">
+		delete
+		from
+			customer_temporary
+		where
+			temporary_id = #{temporaryId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.FollowNoticeMapper">
+
+    <sql id="Base_Column_List">
+		notice_id,
+        follow_plan_time,
+        notice_content,
+        temporary_id,
+        is_show,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time,
+        remarks,
+        del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryFollowNoticeList" resultType="followNotice">
+        select
+        <include refid="Base_Column_List"/>
+        from follow_notice
+        where del_flag = '0'
+        <if test="createUserId != null ">
+            and create_user_id = #{createUserId}
+        </if>
+        <if test="followPlanTime != null and followPlanTime != ''">
+            and follow_plan_time = #{followPlanTime}
+        </if>
+    </select>
+
+    <select id="queryFollowDateList" resultType="string">
+        select
+        follow_plan_time
+        from follow_notice
+        where del_flag = '0'
+        <if test="createUserId != null ">
+            and create_user_id = #{createUserId}
+        </if>
+        <if test="today != null and today != '' ">
+            and date_format( follow_plan_time, '%Y-%m-%d') &gt; #{today}
+        </if>
+    </select>
+
+    <insert id="insertFollowNotice">
+        insert into follow_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="temporaryId != null ">
+                temporary_id,
+            </if>
+            <if test="followPlanTime != null and followPlanTime != ''  ">
+                follow_plan_time,
+            </if>
+            <if test="noticeContent != null and noticeContent != '' ">
+                notice_content,
+            </if>
+            <if test="isShow != null and isShow != ''">
+                is_show,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            create_time,
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            update_time,
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="temporaryId != null and temporaryId != '' ">
+                #{temporaryId},
+            </if>
+            <if test="followPlanTime != null and followPlanTime != '' ">
+                #{followPlanTime},
+            </if>
+            <if test="noticeContent != null and noticeContent != '' ">
+                #{noticeContent},
+            </if>
+            <if test="isShow != null and isShow != '' ">
+                #{isShow},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            now(),
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            now(),
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteFollowNoticeByTemporaryId">
+        delete
+        from
+        follow_notice
+        where temporary_id = #{temporaryId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.MeterMapper">
+ 
+	<sql id="Base_Column_List" >
+		m.id,
+		m.type,
+		m.company_code,
+		m.project_id,
+		m.project_name,
+		m.building_id,
+		m.building_name,
+		m.room_id,
+		m.room_no,
+		m.meter_no,
+		m.init_num,
+		m.now_num,
+		m.use_num,
+		m.cost,
+		m.start_date,
+		m.end_date,
+		m.operator,
+		m.create_user_id,
+		m.create_time,
+		m.update_user_id,
+		m.update_time,
+		m.remarks,
+		m.del_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryMeterList" resultType="meter">
+		select
+			<include refid="Base_Column_List"/>
+		from meter m
+		where m.del_flag = '0'
+			<if test="type != null and type != '' " >
+				and m.type = #{type}
+			</if>
+			<if test="companyCode != null and companyCode != '' " >
+				and m.company_code = #{companyCode}
+			</if>
+			<if test="buildingId != null " >
+				and m.building_id = #{buildingId}
+			</if>
+			<if test="startDate != null and startDate != '' " >
+				and m.start_date &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != '' " >
+				and m.end_date &lt;= #{endDate}
+			</if>
+			<if test="operator != null and operator != '' " >
+				and m.operator like concat('%',#{operator},'%')
+			</if>
+	</select>
+	
+	<select id="queryMeterDetailByPrimarykey" resultType="meter">
+		select
+			<include refid="Base_Column_List"/>
+		from meter m
+		where
+			m.id = #{id}
+	</select>
+
+	<select id="queryMeterDetail" resultType="meter">
+		select
+			<include refid="Base_Column_List"/>
+		from meter m
+		where
+			m.id = #{id}
+	</select>
+
+	<insert id="insertMeter">
+		insert into meter
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="type != null and type != '' " >
+			type,
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			company_code,
+		</if>
+		<if test="buildingId != null " >
+			building_id,
+		</if>
+		<if test="buildingName != null and buildingName != '' " >
+			building_name,
+		</if>
+		<if test="projectId != null " >
+			project_id,
+		</if>
+		<if test="projectName != null and projectName != '' " >
+			project_name,
+		</if>
+		<if test="roomId != null " >
+			room_id,
+		</if>
+		<if test="roomNo != null " >
+			room_no,
+		</if>
+		<if test="meterNo != null and meterNo != '' " >
+			meter_no,
+		</if>
+		<if test="initNum != null " >
+			init_num,
+		</if>
+		<if test="nowNum != null " >
+			now_num,
+		</if>
+		<if test="useNum != null " >
+			use_num,
+		</if>
+		<if test="cost != null " >
+			cost,
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			start_date,
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			end_date,
+		</if>
+		<if test="operator != null and operator != '' " >
+			operator,
+		</if>
+		<if test="createUserId != null " >
+			create_user_id,
+		</if>
+		<if test="createTime != null " >
+			create_time,
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id,
+		</if>
+		<if test="updateTime != null " >
+			update_time,
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks,
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="type != null and type != '' " >
+			#{type},		
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			#{companyCode},		
+		</if>
+		<if test="buildingId != null " >
+			#{buildingId},	
+		</if>
+		<if test="buildingName != null and buildingName != '' " >
+			#{buildingName},		
+		</if>
+		<if test="projectId != null " >
+			#{projectId},
+		</if>
+		<if test="projectName != null and projectName != '' " >
+			#{projectName},
+		</if>
+		<if test="roomId != null " >
+			#{roomId},	
+		</if>
+		<if test="roomNo != null " >
+			#{roomNo},	
+		</if>
+		<if test="meterNo != null and meterNo != '' " >
+			#{meterNo},		
+		</if>
+		<if test="initNum != null " >
+			#{initNum},	
+		</if>
+		<if test="nowNum != null " >
+			#{nowNum},	
+		</if>
+		<if test="useNum != null " >
+			#{useNum},
+		</if>
+		<if test="cost != null " >
+			#{cost},
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			#{startDate},		
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			#{endDate},		
+		</if>
+		<if test="operator != null and operator != '' " >
+			#{operator},		
+		</if>
+		<if test="createUserId != null " >
+			#{createUserId},	
+		</if>
+		<if test="createTime != null " >
+			#{createTime},	
+		</if>
+		<if test="updateUserId != null " >
+			#{updateUserId},	
+		</if>
+		<if test="updateTime != null " >
+			#{updateTime},	
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			#{remarks},		
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			#{delFlag},		
+		</if>
+		</trim>
+	</insert>
+
+	<update id="updateMeter">
+	    update meter
+	    <set >
+		<if test="type != null and type != '' " >
+			type = #{type},
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			company_code = #{companyCode},
+		</if>
+		<if test="buildingId != null " >
+			building_id = #{buildingId},
+		</if>
+		<if test="buildingName != null and buildingName != '' " >
+			building_name = #{buildingName},
+		</if>
+		<if test="roomId != null " >
+			room_id = #{roomId},
+		</if>
+		<if test="roomNo != null " >
+			room_no = #{roomNo},
+		</if>
+		<if test="meterNo != null and meterNo != '' " >
+			meter_no = #{meterNo},
+		</if>
+		<if test="initNum != null " >
+			init_num = #{initNum},
+		</if>
+		<if test="nowNum != null " >
+			now_num = #{nowNum},
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			start_date = #{startDate},
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			end_date = #{endDate},
+		</if>
+		<if test="operator != null and operator != '' " >
+			operator = #{operator},
+		</if>
+		<if test="createUserId != null " >
+			create_user_id = #{createUserId},
+		</if>
+		<if test="createTime != null " >
+			create_time = #{createTime},
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id = #{updateUserId},
+		</if>
+		<if test="updateTime != null " >
+			update_time = #{updateTime},
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks = #{remarks},
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag = #{delFlag},
+		</if>
+	    </set>
+		where
+			id = #{id}
+	</update>
+
+	<delete id="deleteMeterByPrimarykey">
+		delete
+		from
+			meter
+		where
+			id = #{id}
+	</delete>
+
+</mapper>

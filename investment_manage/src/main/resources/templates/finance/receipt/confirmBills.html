@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+    <link rel="stylesheet" th:href="@{/css/selectY.css}">
+<body>
+<div class="layui-fluid">
+    <form id="form" class="layui-row layui-form">
+        <input type="hidden" name="contractCode" th:value="${obj.contractCode}">
+        <input type="hidden" name="version" th:value="${obj.version}">
+        <input type="hidden" name="shouldDealDate" th:value="${obj.shouldDealDate}">
+        <input type="hidden" name="billCode" th:value="${obj.billCode}">
+        <div class="layui-col-md12">
+            <div class="layui-card l_shadow">
+                <div class="information" style="padding: 10px;">
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">客户名称</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd"><span class="w_fs_18" th:text="${obj.customerName}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">账单状态</div>
+                        <div class="information_list_zd">
+                            <span class="w_fs_18 w_fc_2" th:text="${obj.confirmState eq '1'?'待确认':'已确认'}"></span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">应收时间：</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd"><span class="w_fs_18"
+                                                                   th:text="${obj.shouldDealDate}"></span></div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">账单总金额（元）：</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd">
+                                <span class="w_fs_18" id="totalAmt"  th:text="${obj.costAmt} + ${obj.feeLateAmt} - ${obj.freeAmt}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">账单编号：</div>
+                        <div class="information_list_zd">
+                            <div class="information_list_zd"><span class="w_fs_18" th:text="${obj.billCode}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list_zd">合同编号：</div>
+                        <div class="information_list_zd"><a class="w_fs_18 w_fc_2" style="cursor:pointer;" th:text="${obj.contractCode}"></a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card l_shadow">
+                <div class="mytitle">资源信息</div>
+                <div class="w_part">
+                    <div class="w_colxs_5">
+                        <span class="htstyle">房源面积：</span>
+                        <span class="htcont" th:text="${#numbers.formatDecimal(totalArea, 0, 2)} + ' ㎡'"></span>
+                    </div>
+                    <div class="w_colxs_5" th:if="${carplaceList.size() > 0}">
+                        <span class="htstyle">车位数量：</span>
+                        <span class="htcont" th:text="${carplaceList.size()} + ' 个'"></span>
+                    </div>
+                    <div class="layui-col-xs12">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>房源</th>
+                                <th>面积</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item:${roomList}">
+                                <td th:text="${item.projectName}"></td>
+                                <td th:text="${item.buildingName}"></td>
+                                <td th:text="${item.roomNo}">
+                                    <!--<a class="tab_hous" th:text="${item.roomNo}"></a>-->
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(item.buildArea, 0, 2)} + ' ㎡'"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="layui-col-xs12" th:if="${carplaceList.size() > 0}">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>车位</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item:${carplaceList}">
+                                <td th:text="${item.projectName}"></td>
+                                <td th:text="${item.buildingName}"></td>
+                                <td th:text="${item.floorNo}+' - '+ ${item.buildArea}">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--费用信息-->
+            <div class="layui-card l_shadow">
+                <div class="mytitle">
+                    费用信息
+                    <div class="zd_btnbox">
+                        <a class="layui-btn layui-btn-primary edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+                    </div>
+                    <div class="zd_btnbox2">
+                        <a class="layui-btn layui-btn-primary complete"><i class="layui-icon">&#x1005;</i>完成</a>
+                    </div>
+                </div>
+                <div class="w_part">
+                    <div class="w_colxs_5" style="width: 25%">
+                        <span class="htstyle">计划应收总计：</span>
+                        <span class="htcont" id="shouldAmt" th:text="${obj.costAmt} + ${obj.feeLateAmt} - ${obj.freeAmt} + ' 元'"></span>
+                    </div>
+                    <div class="w_colxs_5" style="width: 25%">
+                        <span class="htstyle">滞纳金总计：</span>
+                        <span class="htcont" id="feeLateAmt" th:text="${obj.feeLateAmt}+ ' 元'"></span>
+                    </div>
+                    <div class="w_colxs_5" style="display: none;">
+                        <span class="htstyle">已收金额总计：</span>
+                        <span class="htcont" id="finishAmt" th:text="${obj.finishAmt}+ ' 元'"></span>
+                    </div>
+                    <div class="w_colxs_5" style="width: 25%">
+                        <span class="htstyle">减免金额总计：</span>
+                        <span class="htcont" id="freeAmt" th:text="${obj.freeAmt}+ ' 元'"></span>
+                    </div>
+                    <div class="w_colxs_5" style="width: 25%">
+                        <span class="htstyle">待收金额总计：</span>
+                        <span class="htcont" id="residualAmt" th:text="${obj.residualAmt}+ ' 元'"></span>
+                    </div>
+                    <div class="layui-col-xs12">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th style="display: none;">账单ID</th>
+                                <th>费用名称</th>
+                                <th>费用区间</th>
+                                <th>支付状态</th>
+                                <th>应收金额（元）</th>
+                                <th>滞纳金（元）</th>
+                                <th style="display: none;">已收金额（元）</th>
+                                <th>减免金额（元）</th>
+                                <th>待收金额（元）</th>
+                                <th>说明</th>
+                            </tr>
+                            </thead>
+                            <tbody id="billsList">
+                            <tr th:each="item:${billsList}">
+                                <td style="display: none;" th:text="${item.billId}"></td>
+                                <td class="htstyle" th:text="${item.costName}"></td>
+                                <td th:text="${item.startDate} + ' ~ ' + ${item.endDate}"></td>
+                                <td th:if="${item.state eq '1'}" style="color: red;">未收</td>
+                                <td th:if="${item.state eq '2'}" style="color: blue;">部分</td>
+                                <td th:if="${item.state eq '3'}" style="color: green;">已收</td>
+                                <td th:text="${item.costAmt} + ${item.feeLateAmt}"></td>
+                                <td th:text="${item.feeLateAmt}"></td>
+                                <td  style="display: none;" th:text="${item.finishAmt}"></td>
+                                <td th:text="${item.freeAmt}"></td>
+                                <td th:text="${item.residualAmt}"></td>
+                                <td th:text="${item.remarks}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--费用信息end-->
+            <!--新增临时费用-->
+            <div class="layui-row layui-form-item">
+                <a href="#tempCost" class="layui-btn layui-btn-normal addTempCost"><i class="layui-icon">&#xe61f;</i>新增临时费用</a>
+                <div class="layui-form tempCost"></div>
+                <a id="tempCost"></a>
+            </div>
+            <!--新增临时费用end-->
+            <div class="w_del_btnbox">
+                <input type="button" value="确认订单" lay-submit lay-filter="commit" class="layui-btn btn layui-btn-normal w_generate">
+                <input type="button" value="取消" class="layui-btn btn layui-btn-primary w_generate cancel">
+            </div>
+        </div>
+    </form>
+</div>
+<!--新增临时费用-->
+<script type="text/html" id="temp-templete">
+    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5">
+        <div class="wy_add_part_btnline">
+            <a class="layui-btn layui-btn-primary del-temp"><i class="layui-icon">&#xe640;</i>删除</a>
+        </div>
+        <div class="l_minlod">
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>费用类别：</label>
+                <div class="layui-input-block">
+                    <select name="tempBillsList[{{count}}].feeType" lay-verify="required" lay-search>
+                        <option value="">请选择费用类别</option>
+                        <option th:each="obj:${feeTypeList}" th:value="${obj.type}" th:text="${obj.type}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>费用名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="tempBillsList[{{count}}].costName" class="layui-input" lay-verify="required"
+                           autocomplete="off" placeholder="请输入费用名称">
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>费用金额：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <input type="text" name="tempBillsList[{{count}}].costAmt"  oninput="onlyNumber(this)" lay-verify="required|number"
+                               autocomplete="off" placeholder="请输入费用金额" class="layui-input tempCostAmt">
+                    </div>
+                    <div class="day_right">
+                        元
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <input type="text" name="tempBillsList[{{count}}].feeLateRatio" th:value="0" oninput="onlyNumber(this)" l lay-verify="required|number"
+                               autocomplete="off" placeholder="请输入滞纳金比例" class="layui-input">
+                    </div>
+                    <div class="day_right">
+                        %
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>费用区间：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="tempBillsList[{{count}}].dateRange" lay-verify="required"
+                           autocomplete="off" class="layui-input l_time laydate-control-range"
+                           placeholder="开始时间 ~ 结束时间">
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label ">说&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;明：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="tempBillsList[{{count}}].remarks" autocomplete="off" placeholder="请输入费用说明"
+                           class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>
+<!--新增临时费用end-->
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate;
+
+        var bool = true;
+        $('body').on('click', '.edit', function () {
+            bool = false;
+            $('.zd_btnbox').hide();
+            $('.zd_btnbox2').show()
+            $("#billsList tr").each(function () {
+                var freeAmt = $(this).find('td').eq(7);
+                var remarks = $(this).find('td').eq(9);
+                freeAmt.html("<input type='text' oninput=\"onlyNumber(this)\"  style=\"height: 25px;\" value='" + freeAmt.text() + "'/>");
+                remarks.html("<input type='text' style=\"height: 25px;\" value='" + remarks.text() + "'/>");
+            });
+        });
+
+        $('body').on('click', '.complete', function () {
+            bool = true;
+            $('.zd_btnbox').show();
+            $('.zd_btnbox2').hide()
+            $("#billsList tr").each(function () {
+                var shouldAmtVal = $(this).find('td').eq(4).text();
+                var freeAmt = $(this).find('td').eq(7);
+                var residualAmt = $(this).find('td').eq(8);
+                var remarks = $(this).find('td').eq(9);
+                var freeAmtVal = freeAmt.find("input").val();
+                var remarksVal = remarks.find("input").val();
+                freeAmt.text(Number(freeAmtVal).toFixed(2));
+                remarks.html(remarksVal);
+                residualAmt.text((Number(shouldAmtVal) - Number(freeAmtVal)).toFixed(2));
+                // var totalAmt = $("#totalAmt");
+                // totalAmt.text((Number(totalAmt.text()) - Number(freeAmtVal)).toFixed(2));
+            });
+
+            var shouldAmt = 0;
+            var feeLateAmt = 0;
+            var finishAmt = 0;
+            var freeAmt = 0;
+            var residualAmt = 0;
+            $("#billsList tr").each(function () {
+                shouldAmt += Number($(this).find('td').eq(4).text());
+                feeLateAmt += Number($(this).find('td').eq(5).text());
+                finishAmt += Number($(this).find('td').eq(6).text());
+                freeAmt += Number($(this).find('td').eq(7).text());
+                residualAmt += Number($(this).find('td').eq(8).text());
+            });
+            $("#shouldAmt").text(shouldAmt.toFixed(2) + ' 元');
+            $("#feeLateAmt").text(feeLateAmt.toFixed(2) + ' 元');
+            $("#finishAmt").text(finishAmt.toFixed(2) + ' 元');
+            $("#freeAmt").text(freeAmt.toFixed(2) + ' 元');
+            $("#residualAmt").text(residualAmt.toFixed(2) + ' 元');
+        });
+
+        var count = 0;
+        $('body').on('click', '.addTempCost', function () {
+            var data = {"count": count};
+            var html = template("temp-templete", data);
+            $(".tempCost").append(html);
+            count++;
+            w_date();
+            w_date_range();
+            form.render();
+        });
+
+        $('body').on('click', '.del-temp', function () {
+            count--;
+            $(this).parents('.l_add_part').remove()
+        });
+
+        form.on('submit(commit)', function (obj) {
+            var data = obj.elem;
+            if (bool == false) {
+                layer.msg("请点击完成")
+                return;
+            }
+            layer.confirm('请确定是否提交？', function (index) {
+                var i = 0;
+                var formData = $("#form").serializeObject();
+                $("#billsList tr").each(function () {
+                    formData['billsList[' + i + '].billId'] = $(this).find('td').eq(0).text();
+                    formData['billsList[' + i + '].freeAmt'] = Number($(this).find('td').eq(7).text());
+                    formData['billsList[' + i + '].remarks'] = $(this).find('td').eq(9).text();
+                    i++;
+                });
+                $.ajax({
+                    url: URL + "confirmBills",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                                // parent.$("input[name='state']").get(1).checked = true;
+                                // parent.form.render('radio');
+                                parent.table.reload('dataList', {
+                                    where: {
+                                        startDate: parent.$.trim($("#startDate").val()),
+                                        endDate: parent.$.trim($("#endDate").val()),
+                                        contractType: parent.$("#contractType").val(),
+                                        state: parent.$("input[name='state']:checked").val(),
+                                        keyword: parent.$.trim($("#keyword").val())
+                                    }
+                                });
+                                parent.layer.closeAll();
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            })
+        })
+
+        var w_date = function () {
+            lay('.laydate-control').each(function () {
+                laydate.render({
+                    elem: this,
+                    trigger: 'click'
+                });
+            });
+        }
+
+        var w_date_range = function () {
+            lay('.laydate-control-range').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                    , range: '~'
+                });
+            });
+        }
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);//关闭当前页
+        })
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);//关闭当前页
+        })
+    });
+</script>
+</body>
+
+</html>

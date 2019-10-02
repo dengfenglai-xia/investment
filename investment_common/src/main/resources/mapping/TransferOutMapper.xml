@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.TransferOutMapper">
+ 
+	<sql id="Base_Column_List" >
+		t.out_id,
+		t.enter_id,
+		t.bill_id,
+		t.customer_id,
+		t.contract_code,
+		t.company_code,
+		t.version,
+		t.room_nos,
+		t.cost_name,
+		t.start_date,
+		t.end_date,
+		t.transfer_amt,
+		t.operator,
+		t.create_user_id,
+		t.create_time,
+		t.update_user_id,
+		t.update_time,
+		t.remarks,
+		t.del_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryTransferOutList" resultType="transferOut">
+		select
+			<include refid="Base_Column_List"/>,
+			cu.customer_name,
+			b.building_name
+		from transfer_out t
+		left join customer cu on t.customer_id = cu.customer_id
+		left join contract c on t.contract_code = c.contract_code and t.version = c.version
+		left join building b on c.building_id = b.building_id
+		where t.del_flag = '0'
+			<if test="billId != null " >
+				and t.bill_id = #{billId}
+			</if>
+			<if test="enterId != null " >
+				and t.enter_id = #{enterId}
+			</if>
+			<if test="customerId != null " >
+				and t.customer_id = #{customerId}
+			</if>
+			<if test="contractCode != null and contractCode != '' " >
+				and t.contract_code = #{contractCode}
+			</if>
+			<if test="companyCode != null and companyCode != '' " >
+				and t.company_code = #{companyCode}
+			</if>
+			<if test="version != null " >
+				and t.version = #{version}
+			</if>
+			<if test="roomNos != null and roomNos != '' " >
+				and t.room_nos = #{roomNos}
+			</if>
+			<if test="costName != null and costName != '' " >
+				and t.cost_name like concat('%',#{costName},'%')
+			</if>
+			<if test="startDate != null and startDate != '' " >
+				and t.start_date = #{startDate}
+			</if>
+			<if test="endDate != null and endDate != '' " >
+				and t.end_date = #{endDate}
+			</if>
+			<if test="transferAmt != null " >
+				and t.transfer_amt = #{transferAmt}
+			</if>
+			<if test="operator != null and operator != '' " >
+				and t.operator = #{operator}
+			</if>
+	</select>
+	
+	<select id="queryTransferOutDetailByPrimarykey" resultType="transferOut">
+		select
+			<include refid="Base_Column_List"/>
+		from transfer_out t
+		where
+			t.out_id = #{outId}
+	</select>
+
+	<select id="queryTransferOutDetail" resultType="transferOut">
+		select
+			<include refid="Base_Column_List"/>
+		from transfer_out t
+		where
+			t.out_id = #{outId}
+	</select>
+
+	<insert id="insertTransferOut">
+		insert into transfer_out
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="outId != null " >
+			out_id,
+		</if>
+		<if test="billId != null " >
+			bill_id,
+		</if>
+		<if test="enterId != null " >
+			enter_id,
+		</if>
+		<if test="customerId != null " >
+			customer_id,
+		</if>
+		<if test="contractCode != null and contractCode != '' " >
+			contract_code,
+		</if>
+		<if test="version != null " >
+			version,
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			company_code,
+		</if>
+		<if test="roomNos != null and roomNos != '' " >
+			room_nos,
+		</if>
+		<if test="costName != null and costName != '' " >
+			cost_name,
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			start_date,
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			end_date,
+		</if>
+		<if test="transferAmt != null " >
+			transfer_amt,
+		</if>
+		<if test="operator != null and operator != '' " >
+			operator,
+		</if>
+		<if test="createUserId != null " >
+			create_user_id,
+		</if>
+		<if test="createTime != null " >
+			create_time,
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id,
+		</if>
+		<if test="updateTime != null " >
+			update_time,
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks,
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="outId != null " >
+			#{outId},	
+		</if>
+		<if test="billId != null " >
+			#{billId},	
+		</if>
+		<if test="enterId != null " >
+			#{enterId},
+		</if>
+		<if test="customerId != null " >
+			#{customerId},	
+		</if>
+		<if test="contractCode != null and contractCode != '' " >
+			#{contractCode},		
+		</if>
+		<if test="version != null " >
+			#{version},	
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			#{companyCode},
+		</if>
+		<if test="roomNos != null and roomNos != '' " >
+			#{roomNos},		
+		</if>
+		<if test="costName != null and costName != '' " >
+			#{costName},		
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			#{startDate},		
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			#{endDate},		
+		</if>
+		<if test="transferAmt != null " >
+			#{transferAmt},	
+		</if>
+		<if test="operator != null and operator != '' " >
+			#{operator},		
+		</if>
+		<if test="createUserId != null " >
+			#{createUserId},	
+		</if>
+		<if test="createTime != null " >
+			#{createTime},	
+		</if>
+		<if test="updateUserId != null " >
+			#{updateUserId},	
+		</if>
+		<if test="updateTime != null " >
+			#{updateTime},	
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			#{remarks},		
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			#{delFlag},		
+		</if>
+		</trim>
+	</insert>
+
+	<update id="updateTransferOut">
+	    update transfer_out
+	    <set >
+		<if test="billId != null " >
+			bill_id = #{billId},
+		</if>
+		<if test="enterId != null " >
+			enter_id = #{enterId},
+		</if>
+		<if test="customerId != null " >
+			customer_id = #{customerId},
+		</if>
+		<if test="contractCode != null and contractCode != '' " >
+			contract_code = #{contractCode},
+		</if>
+		<if test="version != null " >
+			version = #{version},
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			company_code = #{companyCode},
+		</if>
+		<if test="roomNos != null and roomNos != '' " >
+			room_nos = #{roomNos},
+		</if>
+		<if test="costName != null and costName != '' " >
+			cost_name = #{costName},
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			start_date = #{startDate},
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			end_date = #{endDate},
+		</if>
+		<if test="transferAmt != null " >
+			transfer_amt = #{transferAmt},
+		</if>
+		<if test="operator != null and operator != '' " >
+			operator = #{operator},
+		</if>
+		<if test="createUserId != null " >
+			create_user_id = #{createUserId},
+		</if>
+		<if test="createTime != null " >
+			create_time = #{createTime},
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id = #{updateUserId},
+		</if>
+		<if test="updateTime != null " >
+			update_time = #{updateTime},
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks = #{remarks},
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag = #{delFlag},
+		</if>
+	    </set>
+		where
+			out_id = #{outId}
+	</update>
+
+	<delete id="deleteTransferOutByPrimarykey">
+		delete
+		from
+			transfer_out
+		where
+			out_id = #{outId}
+	</delete>
+
+</mapper>

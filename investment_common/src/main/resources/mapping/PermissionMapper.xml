@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.PermissionMapper">
+
+	<sql id="Base_Column_List" >
+		permissionid,
+		permissionname,
+		type,
+		icon,
+		url,
+		percode,
+		parentid,
+		parentids,
+		sort,
+		levelNo
+	</sql>
+
+	<!-- 根据userid查询用户权限 -->
+	<select id="findPermissionListByUserid" resultType="permission">
+		select
+			<include refid="Base_Column_List" />
+		from
+			permission
+		where permissionid != 1
+		and permissionid in (
+				select
+					permissionid
+				from
+					role_permission
+				where
+					role_id = (
+						select
+							role_id
+						from
+							user
+						where
+							user_id = #{userId}))
+			order by levelNo,sort
+	</select>
+	<!-- 根据userid查询用户权限标识 -->
+	<select id="findPermissionPerCodeListByUserid" resultType="string">
+		select
+			percode
+		from
+			permission
+		where levelNo != '0'
+		and permissionid in (
+				select
+					permissionid
+				from
+					role_permission
+				where
+					role_id = (
+						select
+							role_id
+						from
+							admin_user_business
+						where
+							userId = #{userId}))
+	</select>
+
+	<!-- 查询菜单集合 -->
+	<select id="findPermissionList" resultType="permission">
+		select
+		<include refid="Base_Column_List" />
+		from
+		permission
+		<where>
+			<if test="permissionname != null  and permissionname != ''  " >
+				and permissionname = #{permissionname}
+			</if>
+			<if test="levelNo != null  and levelNo != ''  " >
+				and levelNo = #{levelNo}
+			</if>
+			<if test="parentid != null" >
+				and parentid = #{parentid}
+			</if>
+		</where>
+		order by sort
+	</select>
+
+	<!-- 查询相应端的菜单集合 for permissionTree -->
+	<select id="findPermissionTreeList" resultType="permissionTree">
+		select
+			permissionid id,
+			permissionname name,
+			parentid pId,
+			sort
+		from
+			permission
+		order by sort
+	</select>
+
+	<!-- 查询菜单明细 -->
+	<select id="findPermissionDetail" resultType="permission">
+		select
+			p1.permissionid,
+			p1.permissionname,
+			p1.type,
+			p1.icon,
+			p1.url,
+			p1.percode,
+			p1.parentid,
+			p1.parentids,
+			p1.sort,
+			p1.levelNo,
+			p2.permissionname parentname
+		from
+			permission p1 left join permission p2
+			on p1.parentid = p2.permissionid
+		where p1.permissionid = #{permissionid}
+	</select>
+
+	<!-- 查询同级菜单顺序 -->
+	<select id="findPermissionMaxSort" resultType="java.lang.Integer">
+		select
+			ISNULL(max(sort),0) sort
+		from
+			permission
+		where parentid = #{parentid}
+		and levelNo = #{levelNo}
+	</select>
+
+	<!-- 根据菜单id 查询菜单-角色 -->
+	<select id="findRolePermissionByPerId" resultType="rolePermission">
+		select
+			id,
+			role_id,
+			permissionid
+		from
+			role_permission
+		where permissionid = #{permissionid}
+	</select>
+
+	<insert id="insertPermission" useGeneratedKeys="true" keyProperty="permissionid">
+		insert into permission
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="permissionname != null" >
+				permissionname,
+			</if>
+			<if test="type != null" >
+				type,
+			</if>
+			<if test="icon != null" >
+				icon,
+			</if>
+			<if test="url != null" >
+				url,
+			</if>
+			<if test="percode != null" >
+				percode,
+			</if>
+			<if test="parentid != null" >
+				parentid,
+			</if>
+			<if test="parentids != null" >
+				parentids,
+			</if>
+			<if test="sort != null" >
+				sort,
+			</if>
+			<if test="levelNo != null" >
+				levelNo,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="permissionname != null" >
+				#{permissionname},
+			</if>
+			<if test="type != null" >
+				#{type},
+			</if>
+			<if test="icon != null" >
+				#{icon},
+			</if>
+			<if test="url != null" >
+				#{url},
+			</if>
+			<if test="percode != null" >
+				#{percode},
+			</if>
+			<if test="parentid != null" >
+				#{parentid},
+			</if>
+			<if test="parentids != null" >
+				#{parentids},
+			</if>
+			<if test="sort != null" >
+				#{sort},
+			</if>
+			<if test="levelNo != null" >
+				#{levelNo},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updatePermission">
+		update permission
+		<set>
+			<if test="permissionname != null and permissionname !='' " >
+				permissionname= #{permissionname},
+			</if>
+			<if test="type != null and type !='' " >
+				type= #{type},
+			</if>
+			<if test="icon != null and icon !='' ">
+				icon= #{icon},
+			</if>
+			<if test="url != null">
+				url= #{url},
+			</if>
+			<if test="percode != null">
+				percode = #{percode},
+			</if>
+			<if test="parentid != null and parentid !='' " >
+				parentid = #{parentid},
+			</if>
+			<if test="parentids != null and parentids !='' " >
+				parentids = #{parentids},
+			</if>
+		</set>
+		where permissionid = #{permissionid}
+	</update>
+
+	<delete id="deletePermission">
+		delete from permission where permissionid = #{permissionid}
+	</delete>
+
+	<delete id="deleteChildPermission">
+		delete from permission where charindex(CONVERT(varchar,#{permissionid}),parentids) &gt; 0;
+	</delete>
+
+	<select id="findPermissionByRoleId" resultType="rolePermission">
+		select
+			id,
+			role_id,
+			permissionid
+		from
+			role_permission
+		where role_id = #{roleId}
+	</select>
+
+	<!-- 根据url查询记录所隶属的菜单 -->
+	<select id="findPermissionByUrl" resultType="string">
+		select
+			GROUP_CONCAT(p1.permissionname separator ' / ')
+		from permission p1
+		where
+			FIND_IN_SET(
+				p1.permissionid,
+				(select
+					concat(p2.parentids,',',p2.permissionid)
+				 from permission p2
+				 where p2.url like concat(#{url},'%')
+				 )
+			) and p1.permissionid>1
+	</select>
+
+	<delete id="deleteRolePermission" >
+		delete from role_permission where role_id = #{role_id}
+	</delete>
+
+	<insert id="insertRolePermission" >
+		insert into role_permission(role_id,permissionid)
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(#{item.role_id},#{item.permissionid})
+		</foreach>
+	</insert>
+
+</mapper>

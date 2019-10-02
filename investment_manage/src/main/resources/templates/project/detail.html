@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<style type="text/css">
+    .swiper-container{
+        width: 100%;
+        height: 100%;
+    }
+    .swiper-wrapper .swiper-slide img{
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-form">
+        <div class="layui-col-md12">
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">基本信息</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs8">
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">项目名称：</span>
+                                    <span class="htcont" th:text="${project.projectName}"></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">项目业态：</span>
+                                    <span class="htcont" th:text="${project.businessMode}"></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">管理公司：</span>
+                                    <span class="htcont" th:text="${project.company}"></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">楼宇数量：</span>
+                                    <span class="htcont" th:text="${project.buildingNum}"></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">总占地面积：</span>
+                                    <span class="htcont" th:text="${#numbers.formatDecimal(project.coverArea, 1, 2)} + ' ㎡' "></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">总建筑面积：</span>
+                                    <span class="htcont" th:text="${#numbers.formatDecimal(project.buildArea, 1, 2)} + ' ㎡' "></span>
+                                </div>
+                                <div class="layui-col-xs12">
+                                    <span class="htstyle">项目地址：</span>
+                                    <span class="htcont" th:text="${project.address}"></span><i
+                                        class="layui-icon show-map" style="cursor:pointer;">&#xe715;</i>
+                                </div>
+                                <div class="layui-col-xs12">
+                                    <span class="htstyle">备注：</span>
+                                    <span class="htcont" th:text="${project.remarks}"></span>
+                                </div>
+                            </div>
+                            <div class="layui-col-xs4">
+                                <div class="pro_ban">
+                                    <div class="swiper-container banntr">
+                                        <div class="swiper-wrapper">
+                                            <div class="swiper-slide" th:each="item:${#strings.setSplit(project.imgs,',')}"><img th:src="${item}"/></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">基础设置</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs8">
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">电费单价：</span>
+                                    <span class="htcont" th:text="${#numbers.formatDecimal(project.powerPrice, 1, 2)} + ' 元/度' "></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">水费单价：</span>
+                                    <span class="htcont" th:text="${#numbers.formatDecimal(project.waterPrice, 1, 2)} + ' 元/立方' "></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">燃气单价：</span>
+                                    <span class="htcont" th:text="${#numbers.formatDecimal(project.gasPrice, 1, 2)} + ' 元/立方' "></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">账单提前出单天数：</span>
+                                    <span class="htcont" th:text="${project.billDays}+ ' 天'"></span>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <span class="htstyle">合同提前提醒天数：</span>
+                                    <span class="htcont" th:text="${project.remindDays}+ ' 天'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">相关文件</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs12">
+                                <div class="layui-upload">
+                                    <div class="layui-upload-list">
+                                        <table class="layui-table">
+                                            <thead>
+                                            <tr>
+                                                <th>文件名称</th>
+                                                <th>大小</th>
+                                                <th>上传人</th>
+                                                <th>上传时间</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="fileList" >
+                                                <tr th:if="${#lists.size(docsList)==0}" class="ant"><td colspan="6">暂无相关文件</td></tr>
+                                                <tr th:if="${#lists.size(docsList)>0}" th:each="obj:${docsList}">
+                                                    <td th:text="${obj.docOriginalName}"></td>
+                                                    <td th:text="${obj.docSize} + ' KB'"></td>
+                                                    <td th:text="${obj.uploader}"></td>
+                                                    <td th:text="${#dates.format(obj.createTime, 'yyyy-MM-dd')}"></td>
+                                                    <td><span style="color: #5FB878;">已上传</span></td>
+                                                    <td>
+                                                        <button th:fileName="${obj.docOriginalName}" th:filePath="${obj.docPath}" class="layui-btn l_web_but_tj file-down">下载</button>
+                                                        <button th:fileId="${obj.docId}" class="layui-btn l_web_but_sc layui-btn-danger file-delete">删除</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <a id="fileUpload" class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe621;</i>选择文件</a>
+                                    <a id="uploadAction" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe681;</i>上传</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="w_del_btnbox">
+                        <input type="button" value="编辑" class="layui-btn layui-btn-primary edit">
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/layuiadmin/js/swiper-3.4.2.min.js}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" th:src="@{http://api.map.baidu.com/api(v=2.0,ak='ogP2l5HmS5bp8cP8m1NgeaY10ruCSEe0')}"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'upload', 'form'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            upload = layui.upload,
+            form = layui.form,
+            table = layui.table;
+
+        var fileListView = $('#fileList');
+        var uploadListIns = upload.render({
+            elem: '#fileUpload'
+            , url: URL + 'fileUpload'
+            , data: {
+                "linkId": [[${project.projectId}]],
+                "docType": 'project'
+            }
+            , accept: 'file'
+            , multiple: true
+            , auto: false
+            , bindAction: '#uploadAction'
+            , choose: function (obj) {
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function (index, file, result) {
+                    if ($('#fileList tr').hasClass('ant')) {
+                        $('#fileList').find('tr').remove()
+                    }
+                    fileListView.append(tr);
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '</td>'
+                        , '<td>' + (file.size/1024).toFixed(2) + ' KB</td>'
+                        , '<td>--</td>'
+                        , '<td>--</td>'
+                        , '<td><span style="color: #ff983c;">等待上传</span></td>'
+                        , '<td>'
+                        , '<button class="layui-btn l_web_but_sc pre-file-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+                    fileListView.append(tr);
+                    //上传前文件删除
+                    tr.find('.pre-file-delete').on('click', function () {
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                        if ($('#fileList tr').length == 0) {
+                            $('#fileList').html('<tr class="ant"><td colspan="6">暂无相关文件</td></tr>')
+                        }
+                    });
+                });
+            }
+            , done: function (res, index, upload) {
+                if (res.success) { //上传成功
+                    var tr = fileListView.find('tr#upload-' + index);
+                    var tds = tr.children();
+                    tds.eq(2).text(res.uploader);
+                    tds.eq(3).text(res.uploadTime);
+                    tds.eq(4).html('<span style="color: #5FB878;">已上传</span>');
+                    tds.eq(5).html(
+                        '<button fileName="' + res.originalName + '" filePath="' + res.filePath + '" class="layui-btn l_web_but_tj file-down">下载</button>' +
+                        '<button fileId="' + res.fileId + '" class="layui-btn l_web_but_sc file-delete">删除</button>'
+                    );
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }
+                this.error(index, upload);
+            }
+            , error: function (index, upload) {
+                var tr = fileListView.find('tr#upload-' + index);
+                var tds = tr.children();
+                tds.eq(4).html('<span style="color: #FF5722;">上传失败</span>');
+            }
+        });
+
+        //下载
+        $('body').on('click', '.file-down', function () {
+            var fileName = $(this).attr("fileName");
+            var filePath = $(this).attr("filePath");
+            downloadFile(filePath,fileName);
+        });
+
+        $('body').on('click', '.edit', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+            parent.layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>编辑项目信息</b>',
+                content: URL + 'project/toEditProject/'+[[${project.projectId}]],
+                area: ['100%', '100%']
+            });
+        })
+
+        //删除按钮
+        $('body').on('click', '.file-delete', function () {
+            var tr = $(this).parent().parent('tr');
+            var fileId = $(this).attr("fileId");
+            layer.confirm('请确定是否删除？', function (index) {
+                $.ajax({
+                    type: 'post',
+                    url: URL + 'docs/deleteDocs',
+                    data: {"docId": fileId},
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            tr.remove();
+                            if ($('#fileList tr').length == 0) {
+                                $('#fileList').html('<tr class="ant"><td colspan="6">暂无相关文件</td></tr>')
+                            }
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            });
+        });
+    });
+
+    //轮播
+    var mySwiper = new Swiper('.banntr', {
+        autoplay: 2000,
+        autoplayDisableOnInteraction: false,
+        loop: true,
+        slidesPerView: 1,
+        centeredSlides: true,
+        speed: 2000,
+        pagination: '.swiper-pagination',
+    });
+
+    //地图
+    var longitude = '[[${project.longitude}]]';
+    var latitude = '[[${project.latitude}]]';
+    var address = '[[${project.address}]]';
+    $('.show-map').on('click', function () {
+        layer.open({
+            type: 2,
+            title: '地理位置',
+            content: URL + "project/showMap?longitude=" + longitude + '&latitude=' + latitude + '&address=' + address,
+            skin: 'opens',
+            shadeClose: true,
+            area: ['600px', '400px']
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}"  media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/css.css}">
+    <style type="text/css">
+        .jz_tabtit {
+            width: 100%;
+            height: 42px;
+            line-height: 42px;
+            background-color: #f2f2f2;
+            padding: 0 15px 0 35px;
+            box-sizing: border-box;
+        }
+
+        .w_col_z {
+            width: 14.22%;
+            float: left;
+            text-align: center;
+            /*font-weight: 600;*/
+        }
+
+        .jz_tab {
+            width: 14.22%;
+            float: left;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row ">
+        <div class="layui-col-md12">
+            <div class="layui-card l_shadow">
+                <div class="w_deltab">
+                    <ul>
+                        <a th:href="@{'/queryContractDetail/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>合同信息</li>
+                        </a>
+                        <a th:href="@{'/queryBills/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>合同账单</li>
+                        </a>
+                        <a th:href="@{'/queryForwardDetail/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li class="delactive">结转明细</li>
+                        </a>
+                        <a th:href="@{'/queryContractHistoryList/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>合同轨迹</li>
+                        </a>
+                        <a th:href="@{'/queryContractFiles/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>相关文件</li>
+                        </a>
+                        <a th:href="@{'/queryAuditRecordList/' + ${contractCode} + '/' +${version} + '/' + ${searchType} }">
+                            <li>审核记录</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card-body l_shadow">
+                        <ul class="jz_tabtit">
+                            <li class="w_col_z">结转时间</li>
+                            <!--<li class="w_col_z">区间</li>-->
+                            <li class="w_col_z">租客姓名</li>
+                            <li class="w_col_z">费用名称</li>
+                            <li class="w_col_z">楼宇</li>
+                            <li class="w_col_z">房号</li>
+                            <li class="w_col_z">结转</li>
+                        </ul>
+                        <div class="layui-collapse" th:if="${transferRecords.size() > 0}">
+                            <div class="layui-colla-item">
+                                <ul class="layui-colla-title transferRecords" th:transferId="${item.transferId}" th:transferType="${item.transferType}" th:each="item:${transferRecords}">
+                                    <li class="jz_tab" th:text="${item.transferTime}"></li>
+                                    <!--<li class="jz_tab" th:text="${item.startDate} + '至' + ${item.endDate}"></li>-->
+                                    <li class="jz_tab" th:text="${item.customerName}"></li>
+                                    <li class="jz_tab" th:text="${item.costName}"></li>
+                                    <li class="jz_tab" th:text="${item.buildingName}"></li>
+                                    <li class="jz_tab" th:text="${item.roomNos}"></li>
+                                    <li class="jz_tab"><span class="col_zc" th:if="${item.transferType == '1'}" th:text="'转入' +  ${item.transferAmt} + '元'"></span></li>
+                                    <li class="jz_tab"><span class="col_lq" th:if="${item.transferType == '2'}" th:text="'转出' +  ${item.transferAmt} + '元'"></span></li>
+                                </ul>
+                                <div class="layui-colla-content info" >
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align:center;margin-top: 10px;" th:if="${transferRecords.size() == 0}">
+                            无数据
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/layuiadmin/js/jquery.min.js}" type="text/javascript" charset="utf-8" ></script>
+<script th:src="@{/layuiadmin/layui/layui.js}" type="text/javascript" charset="utf-8" ></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['element', 'layer'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+
+        $('body').on('click', '.transferRecords', function () {
+            debugger;
+            var transferType = $(this).attr('transferType');
+            var transferId = $(this).attr('transferId');
+            var content = $(this).parent().find('.info');
+            $.ajax({
+                url: URL + "querytransferInfoList",
+                type: "POST",
+                data: {
+                    transferType: transferType,
+                    transferId: transferId
+                },
+                dataType: "json",
+                success: function (data) {
+                    var info = "";
+                    for(var i=0;i<data.length;i++){
+                        info += "<p>"+data[i]+"</p>";
+                    }
+                    content.html(info)
+                }
+            });
+        })
+    });
+
+    $('body').on('click', '.w_deltab li', function () {
+        $(this).addClass('delactive').siblings().removeClass('delactive');
+    })
+</script>
+</body>
+
+</html>

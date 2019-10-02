@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ContractReceiptPlanMapper">
+
+    <sql id="Base_Column_List">
+		c.id,
+		c.bill_code,
+		c.contract_code,
+		c.version,
+        c.project_id,
+		c.company_code,
+		c.customer_id,
+		c.cost_name,
+		c.receivable_date,
+		c.start_date,
+		c.end_date,
+		c.cost_amt,
+        c.fee_late_ratio,
+		c.whether_out,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryContractReceiptPlanSumList" resultType="contractReceiptPlanSum">
+        select
+        bill_code,
+        receivable_date,
+        sum( cost_amt ) cost_amt_sum
+        from
+        contract_receipt_plan
+        where del_flag = '0'
+        <if test="contractCode != null and contractCode != '' ">
+            and contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and version = #{version}
+        </if>
+        group by receivable_date
+    </select>
+
+    <select id="queryContractReceiptPlanList" resultType="contractReceiptPlan">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_receipt_plan c
+        where c.del_flag = '0'
+        <if test="contractCode != null and contractCode != '' ">
+            and c.contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and c.version = #{version}
+        </if>
+        <if test="costName != null and costName != '' ">
+            and c.cost_name = #{costName}
+        </if>
+        <if test="startDate != null and startDate != '' ">
+            and c.receivable_date &lt;= #{startDate}
+        </if>
+        <if test="whetherOut != null and whetherOut != '' ">
+            and c.whether_out = #{whetherOut}
+        </if>
+    </select>
+
+    <select id="queryReceiptPlanInfoList" resultType="contractReceiptPlan">
+        select
+        ct.state_one,
+        ct.state_two,
+        ct.oper_type,
+        ct.change_date,
+        <include refid="Base_Column_List"/>
+        from contract_receipt_plan c
+        left join contract ct on c.contract_code = ct.contract_code
+        and c.version = ct.version
+        where c.del_flag = '0'
+        <if test="whetherOut != null and whetherOut != '' ">
+            and c.whether_out = #{whetherOut}
+        </if>
+        <if test="stateOne != null and stateOne != '' ">
+            and ct.state_one = #{stateOne}
+        </if>
+    </select>
+
+    <select id="queryExpectantReceiptPlanList" resultType="contractReceiptPlan">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        contract_receipt_plan c
+        where
+        c.del_flag = '0'
+        and c.contract_code = #{contractCode}
+        and c.version = #{version}
+        and c.receivable_date = (
+        select
+        min( receivable_date )
+        from
+        contract_receipt_plan
+        where
+        contract_code = #{contractCode} and version = #{version} and whether_out = #{whetherOut}
+        )
+    </select>
+
+    <select id="queryContractReceiptPlanDetailByPrimarykey" resultType="contractReceiptPlan">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_receipt_plan c
+        where
+        c.id = #{id}
+    </select>
+
+    <select id="queryContractReceiptPlanDetail" resultType="contractReceiptPlan">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_receipt_plan c
+        where
+        c.id = #{id}
+    </select>
+
+    <insert id="insertContractReceiptPlan">
+        insert into contract_receipt_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billCode != null and billCode != '' ">
+                bill_code,
+            </if>
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code,
+            </if>
+            <if test="version != null ">
+                version,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="companyCode != null  and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="customerId != null ">
+                customer_id,
+            </if>
+            <if test="costName != null and costName != '' ">
+                cost_name,
+            </if>
+            <if test="receivableDate != null and receivableDate != '' ">
+                receivable_date,
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date,
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date,
+            </if>
+            <if test="costAmt != null ">
+                cost_amt,
+            </if>
+            <if test="feeLateRatio != null ">
+                fee_late_ratio,
+            </if>
+            <if test="whetherOut != null and whetherOut != '' ">
+                whether_out,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billCode != null and billCode != '' ">
+                #{billCode},
+            </if>
+            <if test="contractCode != null and contractCode != '' ">
+                #{contractCode},
+            </if>
+            <if test="version != null ">
+                #{version},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="companyCode != null  and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="customerId != null ">
+                #{customerId},
+            </if>
+            <if test="costName != null and costName != '' ">
+                #{costName},
+            </if>
+            <if test="receivableDate != null and receivableDate != '' ">
+                #{receivableDate},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                #{endDate},
+            </if>
+            <if test="costAmt != null ">
+                #{costAmt},
+            </if>
+            <if test="feeLateRatio != null ">
+                #{feeLateRatio},
+            </if>
+            <if test="whetherOut != null and whetherOut != '' ">
+                #{whetherOut},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertContractReceiptPlanBatch">
+        insert into contract_receipt_plan
+        (
+        bill_code,
+        contract_code,
+        version,
+        project_id,
+        company_code,
+        customer_id,
+        cost_name,
+        receivable_date,
+        start_date,
+        end_date,
+        cost_amt,
+        fee_late_ratio,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.billCode},
+            #{item.contractCode},
+            #{item.version},
+            #{item.projectId},
+            #{item.companyCode},
+            #{item.customerId},
+            #{item.costName},
+            #{item.receivableDate},
+            #{item.startDate},
+            #{item.endDate},
+            #{item.costAmt},
+            #{item.feeLateRatio},
+            #{item.createUserId},
+            #{item.createTime},
+            #{item.updateUserId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateContractReceiptPlanBatch">
+        update contract_receipt_plan
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="bill_code = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.billCode}
+                </foreach>
+            </trim>
+            <!--<trim prefix="receivable_date =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.receivableDate}
+                </foreach>
+            </trim>-->
+            <trim prefix="cost_amt = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.costAmt}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <update id="updateContractReceiptPlan">
+        update contract_receipt_plan
+        <set>
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code = #{contractCode},
+            </if>
+            <if test="version != null ">
+                version = #{version},
+            </if>
+            <if test="costName != null and costName != '' ">
+                cost_name = #{costName},
+            </if>
+            <if test="receivableDate != null and receivableDate != '' ">
+                receivable_date = #{receivableDate},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date = #{endDate},
+            </if>
+            <if test="costAmt != null ">
+                cost_amt = #{costAmt},
+            </if>
+            <if test="whetherOut != null and whetherOut != '' ">
+                whether_out = #{whetherOut},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        <where>
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="billCode != null and billCode != '' ">
+                and bill_code = #{billCode}
+            </if>
+        </where>
+    </update>
+
+    <delete id="deleteContractReceiptPlan">
+		delete
+		from
+			contract_receipt_plan
+		where
+			contract_code = #{contractCode}
+			and version = #{version}
+	</delete>
+
+</mapper>

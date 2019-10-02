@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                员工信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <input type="hidden" name="userId" th:value="${obj.userId}">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">员工姓名：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.realName}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">员工编号：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.userCode}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">所在部门：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.deptName}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;务：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.jobName}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.roleName}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.sex eq '1'?'男':'女'}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">手&nbsp;&nbsp;机&nbsp;&nbsp;号：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.phone}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">电子邮箱：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.email}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs8 l_po">
+                    <label class="layui-form-label w_label ">家庭住址：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.address}"></span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--备注-->
+        <div class="layui-row layui-form-item" th:if="${not #strings.isEmpty(obj.remarks)}">
+            <div class="mytitle">
+                备注
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                    <span class="htcont" th:text="${obj.remarks}"></span>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--备注end-->
+    </form>
+</div>
+</body>
+</html>

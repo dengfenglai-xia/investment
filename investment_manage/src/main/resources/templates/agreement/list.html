@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<!--搜索-->
+<div class="sear_head">
+    <div class="clear"></div>
+</div>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">楼宇名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="buildingId" lay-verify="required" lay-search
+                                lay-filter="building-select">
+                            <option value="">请选择楼宇</option>
+                            <option th:each="obj:${buildingList}" th:value="${obj.buildingId}"
+                                    th:text="${obj.buildingName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">起租时间区间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="startDateRange" class="layui-input l_time laydate-control w_timeinp_l"
+                               autocomplete="off" placeholder="请选择起租时间区间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">到期时间区间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="endDateRange" class="layui-input l_time laydate-control w_timeinp_l"
+                               autocomplete="off" placeholder="请选择到期时间区间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">剩余天数</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="remainderDays" placeholder="合同剩余几天到期" autocomplete="off" class="w_seartext">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="keyword" placeholder="楼宇名称/客户名称/协议编号" autocomplete="off" class="w_seartext"
+                           style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-warm add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--搜索end-->
+        <!--合同状态-->
+        <div class="w_htstate layui-form l_shadow">
+            <div class="htstate_left">
+                状态&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="state" value="1" title="草稿" lay-filter="state-select" checked="">
+                <input type="radio" name="state" value="2" title="正式" lay-filter="state-select">
+                <input type="radio" name="state" value="3" title="归档" lay-filter="state-select">
+            </div>
+        </div>
+        <!--合同状态end-->
+        <!--合同状态end-->
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">房源协议列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                {{#  if(d.stateOne === '0' ){ }}
+                                <a class="layui-btn layui-btn-xs l_web_but_tj" lay-event="sub">提交</a>
+                                {{#  } }}
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--合同列表end-->
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script type="text/html" id="state">
+    {{#  if(d.stateOne === '0' ){ }}
+    草稿
+    {{#  } else if(d.stateOne === '1'){ }}
+    {{#  if(d.stateTwo === '1' ){ }}
+    正式【待执行】
+    {{#  } else if(d.stateTwo === '2'){ }}
+    正式【执行中】
+    {{#  } else{ }}
+    正式【已退租】
+    {{#  } }}
+    {{#  } }}
+</script>
+<script>
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        table = layui.table;
+        var laydate = layui.laydate,
+            admin = layui.admin,
+            form = layui.form;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'queryAgreementList',
+            where: {
+                state: $("input[name='state']:checked").val()
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    unresize: true,
+                    fixed: 'left',
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'contractCode',
+                    title: '协议编号',
+                    width: 180,
+                    fixed: 'left'
+                }, {
+                    field: 'version',
+                    title: '版本号',
+                    hide: true
+                }, {
+                    field: 'customerName',
+                    title: '客户',
+                    width: 200,
+                    fixed: 'left'
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称',
+                    width: 180
+                }, {
+                    field: 'roomNos',
+                    title: '签约房间',
+                    width: 150
+                }, {
+                    field: 'startDate',
+                    title: '起租时间',
+                    width: 120
+
+                }, {
+                    field: 'endDate',
+                    title: '到期时间',
+                    width: 120
+                }, {
+                    field: 'remainderDays',
+                    title: '剩余天数',
+                    width: 120
+                }, {
+                    field: 'state',
+                    title: '状态',
+                    templet: '#state',
+                    width: 150
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#operation',
+                    width: 200
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('radio(state-select)', function (data) {
+            var state = data.value;
+            table.reload('dataList', {
+                where: {
+                    buildingId: $("#buildingId").val(),
+                    startDateRange: $("#startDateRange").val(),
+                    endDateRange: $("#endDateRange").val(),
+                    keyword: $("#keyword").val(),
+                    state: state
+                }
+            });
+        });
+
+        form.on('select(building-select)', function (data) {
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    buildingId: val,
+                    startDateRange: $("#startDateRange").val(),
+                    endDateRange: $("#endDateRange").val(),
+                    remainderDays: $.trim($("#remainderDays").val()),
+                    keyword: $.trim($("#keyword").val()),
+                    state: $("input[name='state']:checked").val()
+                }
+            });
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    buildingId: $("#buildingId").val(),
+                    startDateRange: $("#startDateRange").val(),
+                    endDateRange: $("#endDateRange").val(),
+                    remainderDays: $("#remainderDays").val(),
+                    keyword: $("#keyword").val(),
+                    state: $("input[name='state']:checked").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#buildingId').val('');
+            $('#startDateRange').val('');
+            $('#endDateRange').val('');
+            $("#remainderDays").val(''),
+                $('#keyword').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>新建协议</b>',
+                content: URL + 'toAddAgreement',
+                area: ['100%', '100%']
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var contractCode = data.contractCode;
+            var version = data.version;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>协议详情</b>',
+                    content: URL + 'queryAgreementDetail?contractCode='+contractCode+'&version=' + version,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'sub') {
+                layer.confirm('是否要提交？', function (index) {
+                    $.ajax({
+                        url: URL + "updateAgreement",
+                        type: "POST",
+                        data: {
+                            contractCode: contractCode,
+                            version: version
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                layer.closeAll();
+                                layer.msg(data.msg);
+                                table.reload('dataList', {
+                                    where: {
+                                        buildingId: $("#buildingId").val(),
+                                        startDateRange: $("#startDateRange").val(),
+                                        endDateRange: $("#endDateRange").val(),
+                                        remainderDays: $("#remainderDays").val(),
+                                        keyword: $("#keyword").val(),
+                                        state: $("input[name='state']:checked").val()
+                                    }
+                                });
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('是否要删除？', function (index) {
+                    $.ajax({
+                        url: URL + "deleteContract",
+                        type: "POST",
+                        data: {
+                            contractCode: contractCode,
+                            version: version
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                layer.closeAll();
+                                layer.msg("删除成功");
+                                table.reload('dataList', {
+                                    where: {
+                                        buildingId: $("#buildingId").val(),
+                                        startDateRange: $("#startDateRange").val(),
+                                        endDateRange: $("#endDateRange").val(),
+                                        remainderDays: $("#remainderDays").val(),
+                                        keyword: $("#keyword").val(),
+                                        state: $("input[name='state']:checked").val()
+                                    }
+                                });
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+            ;
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                range: '~'
+            });
+        });
+
+        //关闭按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll(); //关闭弹层
+        })
+    });
+</script>
+</body>
+
+</html>

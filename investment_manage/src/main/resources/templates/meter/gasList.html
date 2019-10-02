@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<!--搜索-->
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <!--合同列表-->
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">楼宇名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="buildingId" lay-verify="required" lay-search
+                                lay-filter="building-select">
+                            <option value="">请选择楼宇</option>
+                            <option th:each="obj:${buildingList}" th:value="${obj.buildingId}" th:text="${obj.buildingName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">抄表时间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="dateRange" class="layui-input l_time laydate-control w_timeinp_l" autocomplete="off" placeholder="请选择抄表时间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">录入人</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="operator" placeholder="请输入录入人" autocomplete="off" class="w_seartext">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm import"><i class="layui-icon">&#xe681;</i>导入</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--搜索end-->
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">抄表（用气）数据列表</div>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--合同列表end-->
+    </div>
+    <div class="layui-tab-item">
+        <!--退租记录-->
+    </div>
+</div>
+<!--导入弹窗start-->
+<div class="dr dr-shade"></div>
+<div class="dr-box">
+    <div class="dr-tit">
+        导入
+    </div>
+    <div class="dr-body">
+        <form id="uploadForm">
+            <input type="hidden" name="type" value="3">
+            <div class="laylists w_scb">
+                <input type="file" name="file" class="web_file_1 myfile"
+                       accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <input type="button" value="选择附件" class="layui-btn web_inp_s ffil layui-btn-normal chooseBtn">
+            </div>
+        </form>
+        <div class="laylists" style="cursor:pointer;">
+            <a class="web_cor_1" th:href="@{/meter/download(type='3')}">
+                <input type="button" value="下载导入模板" class="layui-btn xzfjw web_inp_s">
+            </a>
+        </div>
+        <div class="butorde1">
+            <input type="button" value="上传" class="minbut1 site-demo-active uploadFile" data-type="loading">
+            <input type="button" value="取消" class="minbut2 cancel">
+        </div>
+    </div>
+</div>
+<!--导入弹窗end-->
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        table = layui.table;
+        var laydate = layui.laydate,
+            admin = layui.admin,
+            form = layui.form;
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                range: '~'
+            });
+        });
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: false,
+            url: URL + 'queryMeterList',
+            where: {
+                type: "3"
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    unresize: true,
+                    fixed: 'left',
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'projectName',
+                    title: '项目名称'
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称'
+                }, {
+                    field: 'roomNo',
+                    title: '房间号'
+                }, {
+                    field: 'meterNo',
+                    title: '表号'
+                }, {
+                    field: 'initNum',
+                    title: '上期抄表读数',
+                    templet: function (d) {
+                        return (d.initNum).toFixed(2);
+                    }
+                }, {
+                    field: 'startDate',
+                    title: '上期抄表时间',
+                    templet: function (d) {
+                        return d.startDate;
+                    }
+                }, {
+                    field: 'nowNum',
+                    title: '本期抄表读数',
+                    templet: function (d) {
+                        return (d.nowNum).toFixed(2);
+                    }
+                }, {
+                    field: 'endDate',
+                    title: '本期抄表时间',
+                    templet: function (d) {
+                        return d.endDate;
+                    }
+                }, {
+                    field: 'cost',
+                    title: '本期费用（元）',
+                    templet: function (d) {
+                        return (d.cost).toFixed(2);
+                    }
+                }, {
+                    field: 'operator',
+                    title: '抄表人'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('select(building-select)', function (data) {
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    type: "3",
+                    buildingId: val,
+                    dateRange: $("#dateRange").val(),
+                    operator: $("#operator").val()
+                }
+            });
+        });
+
+        $('.import').on('click', function () {
+            $('.dr-shade').show();
+            $('.dr-box').show()
+        });
+
+        $('body').on('click', '.cancel', function () {
+            $('.dr-shade').hide();
+            $('.dr-box').hide()
+        });
+
+        $('body').on('change', '.myfile', function () {
+            //获取文件的value值
+            var file = $(".myfile").val();
+            //获取文件名+扩展名
+            var fileName = file.split("\\").pop();
+            //获取文件的扩展名
+            var fileExt = file.substr(file.indexOf("."));
+            $(".chooseBtn").val(fileName);
+            if (fileExt != '.xls' && fileExt != '.xlsx') {
+                layer.msg('导入文件格式不正确', {offset: '100px'});
+            }
+        });
+
+        $(".uploadFile").click(function () {
+            //获取文件的value值
+            var file = $(".myfile").val();
+            //获取文件的扩展名
+            var fileExt = file.substr(file.indexOf("."));
+            if (file == '') {
+                layer.msg('请选择导入文件');
+                return false;
+            } else {
+                if (fileExt != '.xls' && fileExt != '.xlsx') {
+                    layer.msg('导入文件格式不正确', {offset: '100px'});
+                    return false;
+                }
+            }
+            layer.closeAll();
+            layer.load(1);
+            setTimeout(function () {
+                var formData = new FormData($("#uploadForm")[0]);
+                $.ajax({
+                    url: URL + 'meter/importInfo',
+                    type: 'POST',
+                    data: formData,
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        layer.closeAll('loading');
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            $('.dr-shade').hide();
+                            $('.dr-box').hide()
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                                table.reload('dataList', {
+                                    where: {
+                                        type: "3",
+                                        buildingId: $("#buildingId").val(),
+                                        dateRange: $("#dateRange").val(),
+                                        operator: $("#operator").val()
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg, {time: 5000});
+                        }
+                    }
+                });
+            }, 2000);
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    type: "3",
+                    buildingId: $("#buildingId").val(),
+                    dateRange: $("#dateRange").val(),
+                    operator: $("#operator").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#buildingId').val('');
+            $('#dateRange').val('');
+            $('#operator').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        /* 监听提交 */
+        form.on('submit(confirm)', function (d) {
+            $.ajax({
+                url: URL + "updateContractBaseInfo",
+                type: "POST",
+                data: $("#subForm").serialize(),
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            layer.closeAll(); //关闭弹层
+                            table.reload('dataList', {
+                                where: {
+                                    type: "3",
+                                    buildingId: $("#buildingId").val(),
+                                    dateRange: $("#dateRange").val(),
+                                    operator: $("#operator").val()
+                                }
+                            });
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        //关闭按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll(); //关闭弹层
+        })
+    });
+
+    $('body').on('click', '.sc', function () {
+        $('.dr-box').hide();
+        $('.jdt-box').show()
+    })
+
+    $('body').on('click', '.dy', function () {
+        $('.dr').show();
+        $('.dr-box').show()
+    })
+
+    $('body').on('click', '.drqx', function () {
+        $('.dr').hide();
+        $('.dr-box').hide()
+    })
+</script>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">公司编号：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.companyCode}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">公司名称：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.company}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">联&nbsp;&nbsp;系&nbsp;&nbsp;人：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.realName}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">联系电话：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.phone}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md8 layui-col-xs8 l_po">
+                    <label class="layui-form-label w_label ">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.address}"></span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--账号设置-->
+        <div class="layui-row layui-form-item bc_msg">
+            <div class="mytitle">账号信息</div>
+            <div class="w_addpart l_shadow w_bccont">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.accountType eq '1'?'试用':'正式'}"></span>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">截止日期：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${obj.endDate}"></span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--账号设置end-->
+        <!--备注-->
+        <div class="mytitle">
+            备注
+        </div>
+        <div class="w_addpart l_shadow mb-15">
+            <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                <span class="htcont" th:text="${obj.remarks}"></span>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--备注end-->
+    </form>
+</div>
+</body>
+</html>

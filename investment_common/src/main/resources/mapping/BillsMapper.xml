@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.BillsMapper">
+
+    <sql id="Base_Column_List">
+		b.bill_id,
+		b.contract_code,
+		b.version,
+		b.project_id,
+		b.customer_id,
+		b.company_code,
+		b.bill_code,
+		b.bill_type,
+		b.fee_type,
+		b.cost_name,
+		b.start_date,
+		b.end_date,
+		b.cost_amt,
+		b.finish_amt,
+		b.transfer_amt,
+		b.residual_amt,
+		b.free_amt,
+		b.fee_late_amt,
+        b.fee_late_ratio,
+		b.should_deal_date,
+		b.days,
+		b.state,
+		b.bill_property,
+		b.confirm_state,
+		b.confirmer,
+		b.create_user_id,
+		b.create_time,
+		b.update_user_id,
+		b.update_time,
+		b.remarks,
+		b.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+        left join contract c on b.contract_code = c.contract_code and b.version = c.version
+        left join building bu on c.building_id = bu.building_id
+        left join project p on c.project_id = p.project_id
+        left join customer cu on c.customer_id = cu.customer_id
+    </sql>
+
+    <select id="queryBillsList" resultType="bills">
+        select
+        <include refid="Base_Column_List"/>
+        from bills b
+        where b.del_flag = '0'
+        <if test="billType != null and billType != '' ">
+            and b.bill_type = #{billType}
+        </if>
+        <if test="billCode != null and billCode != '' ">
+            and b.bill_code = #{billCode}
+        </if>
+        <if test="projectId != null ">
+            and b.project_id = #{projectId}
+        </if>
+        <if test="companyCode != null and companyCode != ''  ">
+            and b.company_code = #{companyCode}
+        </if>
+        <if test="customerId != null ">
+            and b.customer_id = #{customerId}
+        </if>
+        <if test="contractCode != null and contractCode != ''  ">
+            and b.contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and b.version = #{version}
+        </if>
+        <if test="billProperty != null and billProperty != ''  ">
+            and b.bill_property = #{billProperty}
+        </if>
+        <if test="confirmState != null and confirmState != ''  ">
+            and b.confirm_state = #{confirmState}
+        </if>
+        <if test="states != null and states != '' ">
+            and b.state in
+            <foreach collection="states" item="state" index="index" open="(" close=")" separator=",">
+                #{state}
+            </foreach>
+        </if>
+        <if test="changeDate != null and changeDate != ''  ">
+            and b.end_date &gt; #{changeDate}
+        </if>
+    </select>
+
+    <select id="queryTransferBillsList" resultType="bills">
+        select
+        bu.building_name,
+        c.room_nos,
+        cu.customer_name,
+        <include refid="Base_Column_List"/>
+        from bills b
+        <include refid="Link_Column_List"/>
+        where b.del_flag = '0'
+        <if test="companyCode != null and companyCode != ''  ">
+            and b.company_code = #{companyCode}
+        </if>
+        <if test="customerId != null ">
+            and b.customer_id = #{customerId}
+        </if>
+        <if test="contractCode != null and contractCode != ''  ">
+            and b.contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and b.version = #{version}
+        </if>
+        <if test="billType != null and billType != ''  ">
+            and b.bill_type = #{billType}
+        </if>
+        <if test="confirmState != null and confirmState != ''  ">
+            and b.confirm_state = #{confirmState}
+        </if>
+        <if test="billProperty != null and billProperty != '' ">
+            and b.bill_property = #{billProperty}
+        </if>
+        <if test="states != null and states != '' ">
+            and b.state in
+            <foreach collection="states" item="state" index="index" open="(" close=")" separator=",">
+                #{state}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="queryFinanceBillsList" resultType="billsSum">
+        select
+        b.*,
+        c.room_nos,
+        c.contract_type,
+        p.project_name,
+        bu.building_name,
+        cu.customer_name
+        from bills_view b
+        <include refid="Link_Column_List"/>
+        where b.company_code = #{companyCode}
+        <if test="billType != null and billType != '' ">
+            and b.bill_type = #{billType}
+        </if>
+        <if test="billProperty != null and billProperty != ''  ">
+            and b.bill_property = #{billProperty}
+        </if>
+        <if test="confirmState != null and confirmState != ''  ">
+            and b.confirm_state = #{confirmState}
+        </if>
+        <if test="startDate !=null and startDate !=''and endDate !=null and endDate !=''">
+            and date_format(b.should_deal_date,'%Y-%m-%d') between #{startDate} and #{endDate}
+        </if>
+        <!-- 未结算 -->
+        <if test="state != null and state == '1'.toString() ">
+            and b.finish_amt = 0
+        </if>
+        <!-- 部分结清 -->
+        <if test="state != null and state == '2'.toString() ">
+            and b.finish_amt > 0 and b.residual_amt > 0
+        </if>
+        <!-- 已结清 -->
+        <if test="state != null and state == '3'.toString() ">
+            and b.residual_amt = 0
+        </if>
+        <if test="customerId != null ">
+            and c.customer_id = #{customerId}
+        </if>
+        <if test="contractCode != null and contractCode != ''  ">
+            and c.contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and c.version = #{version}
+        </if>
+        <if test="contractType != null and contractType != ''  ">
+            and c.contract_type = #{contractType}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            bu.building_name like concat('%',#{keyword},'%')
+            or
+            cu.customer_name like concat('%',#{keyword},'%')
+            or
+            c.contract_code like concat('%',#{keyword},'%')
+            or
+            b.bill_code like concat('%',#{keyword},'%')
+            )
+        </if>
+        order by c.create_time desc
+    </select>
+
+    <select id="queryBillsNoticeList" resultType="Bills">
+        select
+            b.bill_code ,
+            b.customer_id,
+            c.customer_name,
+            b.contract_code,
+            b.cost_name,
+            b.start_date,
+            b.end_date,
+            b.should_deal_date,
+            b.cost_amt,
+            b.free_amt,
+            b.fee_late_amt,
+            b.finish_amt,
+            b.residual_amt,
+            b.price,
+            b.volume
+        from
+            bills b
+            left join customer c on c.customer_id = b.customer_id
+        where bill_code = #{billCode}
+    </select>
+
+    <select id="queryBillsSumDetail" resultType="billsSum">
+        select
+        b.*,
+        c.contract_type,
+        p.project_name,
+        cu.customer_name
+        from bills_view b
+        <include refid="Link_Column_List"/>
+        where b.company_code = #{companyCode}
+        <if test="billType != null and billType != '' ">
+            and b.bill_type = #{billType}
+        </if>
+        <if test="billCode != null and billCode != '' ">
+            and b.bill_code = #{billCode}
+        </if>
+    </select>
+
+    <select id="queryLoseCustomer" resultType="int">
+        select count(distinct company_code) from bills where company_code = #{companyCode} and bill_type = #{billType} and state != '3'
+    </select>
+
+    <select id="queryResidualAmt" resultType="bigDecimal">
+        select  ifnull(sum(residual_amt),0) from bills where company_code = #{companyCode} and bill_type = #{billType}
+    </select>
+
+    <select id="queryBillsDetailByPrimarykey" resultType="bills">
+        select
+        <include refid="Base_Column_List"/>
+        from bills b
+        where b.bill_id = #{billId}
+    </select>
+
+    <select id="queryBillsDetail" resultType="bills">
+        select
+        <include refid="Base_Column_List"/>
+        from bills b
+        <where>
+            <if test="billId != null ">
+                b.bill_id = #{billId}
+            </if>
+            <if test="companyCode != null and companyCode != ''  ">
+                and b.company_code = #{companyCode}
+            </if>
+            <if test="contractCode != null and contractCode != ''  ">
+                and b.contract_code = #{contractCode}
+            </if>
+            <if test="version != null ">
+                and b.version = #{version}
+            </if>
+            <if test="costName != null and costName != ''  ">
+                and b.cost_name = #{costName}
+            </if>
+            <if test="confirmState != null and confirmState != ''  ">
+                and b.confirm_state = #{confirmState}
+            </if>
+            <if test="changeDate != null and changeDate != ''  ">
+                and b.end_date &gt; #{changeDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBillsCostDetail" resultType="bills">
+        select
+		    cost_amt,
+		    finish_amt,
+		    transfer_amt,
+		    residual_amt,
+		    free_amt,
+		    fee_late_amt
+        from bills
+        where company_code = #{companyCode}
+        and contract_code = #{contractCode}
+        and version = #{version}
+        and cost_name = #{costName}
+    </select>
+
+    <insert id="insertBills">
+        insert into bills
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyCode != null and companyCode != ''  ">
+                company_code,
+            </if>
+            <if test="billType != null and billType != '' ">
+                bill_type,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code,
+            </if>
+            <if test="version != null ">
+                version,
+            </if>
+            <if test="customerId != null ">
+                customer_id,
+            </if>
+            <if test="billCode != null and billCode != '' ">
+                bill_code,
+            </if>
+            <if test="feeType != null and feeType != '' ">
+                fee_type,
+            </if>
+            <if test="costName != null and costName != '' ">
+                cost_name,
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date,
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date,
+            </if>
+            <if test="costAmt != null ">
+                cost_amt,
+            </if>
+            <if test="finishAmt != null ">
+                finish_amt,
+            </if>
+            <if test="transferAmt != null ">
+                transfer_amt,
+            </if>
+            <if test="residualAmt != null ">
+                residual_amt,
+            </if>
+            <if test="freeAmt != null ">
+                free_amt,
+            </if>
+            <if test="feeLateAmt != null ">
+                fee_late_amt,
+            </if>
+            <if test="feeLateRatio != null ">
+                fee_late_ratio,
+            </if>
+            <if test="shouldDealDate != null and shouldDealDate != '' ">
+                should_deal_date,
+            </if>
+            <if test="days != null ">
+                days,
+            </if>
+            <if test="state != null and state != '' ">
+                state,
+            </if>
+            <if test="billProperty != null and billProperty != '' ">
+                bill_property,
+            </if>
+            <if test="confirmState != null and confirmState != '' ">
+                confirm_state,
+            </if>
+            <if test="confirmer != null and confirmer != '' ">
+                confirmer,
+            </if>
+            <if test="price != null ">
+                price,
+            </if>
+            <if test="volume != null ">
+                volume,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="billType != null and billType != '' ">
+                #{billType},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="contractCode != null and contractCode != '' ">
+                #{contractCode},
+            </if>
+            <if test="version != null ">
+                #{version},
+            </if>
+            <if test="customerId != null ">
+                #{customerId},
+            </if>
+            <if test="billCode != null and billCode != '' ">
+                #{billCode},
+            </if>
+            <if test="feeType != null and feeType != '' ">
+                #{feeType},
+            </if>
+            <if test="costName != null and costName != '' ">
+                #{costName},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                #{endDate},
+            </if>
+            <if test="costAmt != null ">
+                #{costAmt},
+            </if>
+            <if test="finishAmt != null ">
+                #{finishAmt},
+            </if>
+            <if test="transferAmt != null ">
+                #{transferAmt},
+            </if>
+            <if test="residualAmt != null ">
+                #{residualAmt},
+            </if>
+            <if test="freeAmt != null ">
+                #{freeAmt},
+            </if>
+            <if test="feeLateAmt != null ">
+                #{feeLateAmt},
+            </if>
+            <if test="feeLateRatio != null ">
+                #{feeLateRatio},
+            </if>
+            <if test="shouldDealDate != null and shouldDealDate != '' ">
+                #{shouldDealDate},
+            </if>
+            <if test="days != null ">
+                #{days},
+            </if>
+            <if test="state != null and state != '' ">
+                #{state},
+            </if>
+            <if test="billProperty != null and billProperty != '' ">
+                #{billProperty},
+            </if>
+            <if test="confirmState != null and confirmState != '' ">
+                #{confirmState},
+            </if>
+            <if test="confirmer != null and confirmer != '' ">
+                #{confirmer},
+            </if>
+            <if test="price != null ">
+                #{price},
+            </if>
+            <if test="volume != null ">
+                #{volume},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBillsBatch">
+        insert into bills
+        (
+        company_code,
+        bill_type,
+        project_id,
+        contract_code,
+        version,
+        customer_id,
+        bill_code,
+        fee_type,
+        cost_name,
+        start_date,
+        end_date,
+        cost_amt,
+        finish_amt,
+        residual_amt,
+        fee_late_amt,
+        fee_late_ratio,
+        should_deal_date,
+        days,
+        state,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.companyCode},
+            #{item.billType},
+            #{item.projectId},
+            #{item.contractCode},
+            #{item.version},
+            #{item.customerId},
+            #{item.billCode},
+            #{item.feeType},
+            #{item.costName},
+            #{item.startDate},
+            #{item.endDate},
+            #{item.costAmt},
+            #{item.finishAmt},
+            #{item.residualAmt},
+            #{item.feeLateAmt},
+            #{item.feeLateRatio},
+            #{item.shouldDealDate},
+            #{item.days},
+            #{item.state},
+            #{item.createUserId},
+            #{item.createTime},
+            #{item.updateUserId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBills">
+        update bills
+        <set>
+            <if test="billType != null and billType != '' ">
+                bill_type = #{billType},
+            </if>
+            <if test="projectId != null ">
+                project_id = #{projectId},
+            </if>
+            <if test="customerId != null ">
+                customer_id = #{customerId},
+            </if>
+            <if test="billCode != null and billCode != '' ">
+                bill_code = #{billCode},
+            </if>
+            <if test="costName != null and costName != '' ">
+                cost_name = #{costName},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date = #{endDate},
+            </if>
+            <if test="costAmt != null ">
+                cost_amt = #{costAmt},
+            </if>
+            <if test="floatFinishAmt != null ">
+                finish_amt = finish_amt + #{floatFinishAmt},
+            </if>
+            <if test="floatTransferAmt != null ">
+                transfer_amt = transfer_amt + #{floatTransferAmt},
+            </if>
+            <if test="floatResidualAmt != null ">
+                residual_amt = residual_amt - #{floatResidualAmt},
+            </if>
+            <if test="freeAmt != null ">
+                free_amt = #{freeAmt},
+            </if>
+            <if test="floatFeeLateAmt != null ">
+                fee_late_amt = fee_late_amt + #{floatFeeLateAmt},
+            </if>
+            <if test="shouldDealDate != null and shouldDealDate != '' ">
+                should_deal_date = #{shouldDealDate},
+            </if>
+            <if test="days != null ">
+                days = #{days},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="billProperty != null and billProperty != '' ">
+                bill_property = #{billProperty},
+            </if>
+            <if test="confirmState != null and confirmState != '' ">
+                confirm_state = #{confirmState},
+            </if>
+            <if test="confirmer != null and confirmer != '' ">
+                confirmer = #{confirmer},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where bill_id = #{billId}
+        <if test="companyCode != null and companyCode != '' ">
+            and company_code = #{companyCode}
+        </if>
+        <if test="contractCode != null and contractCode != '' ">
+            and contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and version = #{version}
+        </if>
+    </update>
+
+    <update id="updateBillInfo">
+        update bills set
+        end_date = #{endDate},
+        cost_amt = #{costAmt},
+        residual_amt = #{residualAmt}
+        where bill_id = #{billId}
+        <if test="companyCode != null and companyCode != '' ">
+            and company_code = #{companyCode}
+        </if>
+        <if test="contractCode != null and contractCode != '' ">
+            and contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and version = #{version}
+        </if>
+    </update>
+
+    <update id="updateConfirmBillsBatch">
+        update bills set
+        confirm_state = #{confirmState},
+        confirmer = #{confirmer},
+        update_user_id = #{updateUserId},
+        update_time = #{updateTime}
+        where bill_code in
+        <foreach collection="billCodeArr" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="querySettleBillsListByCode"  resultType="bills">
+        select
+        <include refid="Base_Column_List"/>
+        from bills b
+        where b.bill_code in
+        <foreach collection="billCodeArr" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateSettleBillsBatch">
+        update bills set
+        finish_amt = cost_amt + fee_late_amt - free_amt,
+        residual_amt = 0,
+        state = #{state},
+        update_user_id = #{updateUserId},
+        update_time = #{updateTime}
+        where bill_code in
+        <foreach collection="billCodeArr" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateBillsBatch">
+        update bills
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="days = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when bill_id=#{item.billId} then #{item.days}
+                </foreach>
+            </trim>
+            <trim prefix="fee_late_amt = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when bill_id=#{item.billId} then fee_late_amt + #{item.floatFeeLateAmt}
+                </foreach>
+            </trim>
+        </trim>
+        where bill_id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.billId}
+        </foreach>
+    </update>
+
+    <!-- 删除账单 -->
+    <delete id="deleteBills">
+        delete
+        from
+        bills
+        where contract_code = #{contractCode}
+        and version = #{version}
+        <if test="billProperty != null and billProperty != ''  ">
+            and bill_property = #{billProperty}
+        </if>
+    </delete>
+
+    <!-- 删除账单 -->
+    <delete id="deleteBillsById">
+        delete from bills where bill_id = #{billId}
+    </delete>
+
+    <select id="queryDepositBillsInfo" resultType="deposit">
+        SELECT
+        c.customer_name,
+        b.cost_name,
+        b.cost_amt,
+        date_format(b.create_time, '%Y-%m-%d') pay_time,
+        date_format(sr.create_time, '%Y-%m-%d') return_time
+        FROM
+        bills b
+        LEFT JOIN customer c ON b.customer_id = c.customer_id
+        LEFT JOIN settel_record sr ON b.contract_code = sr.contract_code
+        AND b.version = sr.version
+        AND sr.bill_type = '2'
+        WHERE
+        b.fee_type = '押金'
+        AND b.bill_type = '1'
+        AND b.state = '3'
+        AND b.company_code = #{companyCode}
+        <if test="customerName != null and customerName != '' ">
+            AND c.customer_name like concat('%',#{customerName},'%')
+        </if>
+        <if test="projectId != null ">
+            AND b.project_id = #{projectId}
+        </if>
+        <if test="startDate != null and startDate != '' ">
+            AND date_format( b.create_time, '%Y-%m') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != '' ">
+            AND date_format( b.create_time, '%Y-%m') &lt;= #{endDate}
+        </if>
+        order by b.customer_id
+    </select>
+
+</mapper>

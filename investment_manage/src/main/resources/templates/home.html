@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<link rel="stylesheet" type="text/css" th:href="@{/css/FlexoCalendar.css}"/>
+<head th:include="common/common-head::head">
+<body>
+<div class="layui-fluid">
+    <div class="layui-col-xs12">
+        <div class="w_col_7" onselectstart="return false" id="customerTemporaryNum" style="cursor:pointer;">
+            <div class="w_tit_block w_block1">
+                <div class="blc_left blc_1"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        临时客户<br/> <span class="w_spannum" th:text="${customerTemporaryNum}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w_col_7" onselectstart="return false" id="contractNum" style="cursor:pointer;">
+            <div class="w_tit_block w_block2">
+                <div class="blc_left blc_2"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        即将到期房源合同<br/> <span class="w_spannum" th:text="${contractNum}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w_col_7" onselectstart="return false" id="roomCount" style="cursor:pointer;">
+            <div class="w_tit_block w_block3">
+                <div class="blc_left blc_3"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        即将到期房源<br/> <span class="w_spannum" th:text="${roomCount}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w_col_7" onselectstart="return false" id="workplaceCount" style="cursor:pointer;">
+            <div class="w_tit_block w_block4">
+                <div class="blc_left blc_4"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        即将到期工位<br/> <span class="w_spannum" th:text="${workplaceCount}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w_col_7" onselectstart="return false" id="carplaceCount" style="cursor:pointer;">
+            <div class="w_tit_block w_block5">
+                <div class="blc_left blc_5"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        即将到期车位<br/> <span class="w_spannum" th:text="${carplaceCount}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w_col_7" onselectstart="return false" id="unReceivablesAmt" style="cursor:pointer;">
+            <div class="w_tit_block w_block6">
+                <div class="blc_left blc_6"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        未收金额<br/> <span class="w_spannum" th:text="${unReceivablesAmt}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w_col_7" onselectstart="return false" id="unPayAmt" style="cursor:pointer;">
+            <div class="w_tit_block w_block7">
+                <div class="blc_left blc_7"></div>
+                <div class="blc_right">
+                    <div class="w_text">
+                        未付金额<br/> <span class="w_spannum" th:text="${unPayAmt}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs8">
+        <div class="layui-row wpd_box">
+            <div class="layui-col-xs6">
+                <div class="layui-card w_blockw">
+                    <div class="w_coltit">
+                        审核事项
+                        <!--<a href="#" class="wtit_a btn" data-type="edit_peo">More></a>-->
+                    </div>
+                    <ul class="w_sxtab">
+                        <li class="act_sx done" dealState="1">待审事项</li>
+                        <li class="nodone" dealState="2">已审事项</li>
+                    </ul>
+                    <div class="clear"></div>
+                    <ul class="w_col4_tit">
+                        <li>审核类别</li>
+                        <li>客户名称</li>
+                        <li>发件人</li>
+                        <li>发件时间</li>
+                    </ul>
+                    <div class="w_hitbox sx_bigbox" id="matterList">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs6">
+                <div class="layui-card w_blockw">
+                    <div class="w_coltit">
+                        预警合同
+                        <!--<a href="#" class="wtit_a btn" data-type="edit_peo">More></a>-->
+                    </div>
+                    <ul class="w_col3_tit">
+                        <li>客户名称</li>
+                        <li>合同类型</li>
+                        <li>到期时间</li>
+                    </ul>
+                    <div class="clear"></div>
+                    <div class="w_htbox" th:if="${warnContractList.size() > 0}">
+                        <ul class="wht_ul warming" th:contractCode="${obj.contractCode}" th:version="${obj.version}"
+                            th:if="${objStat.count < 7}" th:each="obj:${warnContractList}">
+                            <li th:text="${obj.customerName}"></li>
+                            <li th:text="${obj.contractType}"></li>
+                            <li th:text="${obj.endDate}"></li>
+                        </ul>
+                    </div>
+                    <div th:if="${warnContractList.size() == 0}">
+                        <div class="w_none">暂无数据</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="layui-card w_blockzd">
+                    <div class="w_coltit">
+                        应收账单
+                    </div>
+                    <div class="layui-col-xs12">
+                        <div id="myChart" style="width: 100%; height:400px; text-align: right; "></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs4">
+        <div class="layui-col-xs12" style="padding: 7.5px;box-sizing: border-box;">
+            <div class="layui-card w_block_date">
+                <div class="w_coltit w_bor_bt">
+                    日历日程
+                    <a href="#" class="wtit_a btn db_add">+</a>
+                </div>
+                <div class="calendar-wrapper">
+                    <div id="calendar"></div>
+                </div>
+                <div class="layui-card-body w_rchig" id="notice"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="noticeTemp">
+        {{if followNoticeList.length>0}}
+        {{each followNoticeList as obj index}}
+        <div class="rc_list">
+            <p class="rc_time">{{obj.followPlanTime}} </p>
+            <p class="rc_cont">{{obj.noticeContent}}</p>
+        </div>
+        {{/each}}
+        {{else}}
+        <div class="w_none">无记录</div>
+        {{/if}}
+    </script>
+    <script type="text/html" id="remind">
+        <form id="noticeForm">
+            <div class="">
+                <div class="w_dwcx layui-form">
+                    <div class="layui-col-xs12 l_po">
+                        <label class="layui-form-label w_label_date">时间：</label>
+                        <div class="layui-input-block-date">
+                            <input type="text" name="followPlanTime" autocomplete="off" lay-verify="required"
+                                   th:value="${cerrentDate}" class="layui-input l_time test-laydate-item"
+                                   placeholder="请选择时间">
+                        </div>
+                    </div>
+                    <div class="layui-col-xs12 l_po">
+                        <label class="layui-form-label w_label_date ">内容：</label>
+                        <div class="layui-input-block-date">
+                            <textarea class="w_tzteaxer" name="noticeContent" autocomplete="off" lay-verify="required" placeholder="请输入内容"></textarea>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+                <div class="layui-form-item layui-layout-admin">
+                    <div class="layui-footer w_type">
+                        <input type="button" value="提交" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="notice">
+                        <input type="button" value="取消" class="layui-btn layui-btn-primary cancel">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script th:replace="common/common-js::js"></script>
+    <script th:src="@{/layuiadmin/js/FlexoCalendar.js}" type="text/javascript"></script>
+    <script th:src="@{/layuiadmin/js/echarts.min.js}" type="text/javascript" charset="utf-8"></script>
+    <script th:src="@{/js/template.js}"></script>
+    <script id="matter-templete" type="text/html">
+        <div class="w_sxbox">
+            {{if list.length>0}}
+            {{each list as obj index}}
+            <ul class="w_sxul audit" contractCode="{{obj.code}}" version="{{obj.version}}" id="{{obj.id}}" >
+                <li>{{obj.operType}}</li>
+                <li>{{obj.customerName}}</li>
+                <li>{{obj.submitter}}</li>
+                <li>{{obj.subtimeStr}}</li>
+            </ul>
+            {{/each}}
+        </div>
+        {{else}}
+        <div>
+            <div class="w_none">暂无数据</div>
+        </div>
+        {{/if}}
+    </script>
+    <script>
+        $("#calendar").flexoCalendar({selectDate: 'each-each-each'});
+        //初始化消息
+        var time = $(".current-day").attr("data-time")
+        getNotice(time);
+
+        //日历点击事件
+        $("#calendar").click(function () {
+            var time = $(".selected").attr("data-time");
+            if (time == undefined){
+                time = $(".current-year").attr("data-year")+'-01';
+                $.post(URL + "getDates", time, function (d) {
+                    $('.flexoCalendar tr').each(function (i) {
+                        $(this).children('td').each(function (j) {
+                            var date = $(this).attr("data-time");
+                            if (d.indexOf(date) != -1) {
+                                $(this).css("color", "red");
+                            }
+                        });
+                    });
+                })
+            }else{
+                getNotice(time);
+            }
+        });
+
+        var dates = '[[${dates}]]';
+        $('.flexoCalendar tr').each(function (i) {
+            $(this).children('td').each(function (j) {
+                var date = $(this).attr("data-time");
+                if (dates.indexOf(date) != -1) {
+                    $(this).css("color", "red");
+                }
+            });
+        });
+
+        function getNotice(time) {
+            $.post(URL + "queryFollowNoticeList", {'followPlanTime': time}, function (data) {
+                var html = template('noticeTemp', data);
+                $('#notice').html(html);
+            })
+        }
+
+        //代办事项选项卡
+        $(".w_sxtab li").on('click', function () {
+            $(this).addClass('act_sx').siblings().removeClass('act_sx');
+            var index = $(this).index();
+            $('.sx_bigbox .w_sxbox').eq(index).show().siblings().hide();
+        })
+        layui.config({
+            base: URL + 'layuiadmin/'
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'laydate', 'upload', 'form'], function () {
+            var laydate = layui.laydate;
+            var admin = layui.admin,
+                upload = layui.upload,
+                form = layui.form,
+                table = layui.table;
+            // 待审审核，可见
+            done('1','1');
+
+            $('body').on('click', '.done', function () {
+                var dealState = $(this).attr("dealState");
+                done(dealState,'1');
+            });
+
+            $('body').on('click', '.nodone', function () {
+                var dealState = $(this).attr("dealState");
+                done(dealState);
+            });
+
+            $('body').on('click', '.audit', function () {
+                var code = $(this).attr("contractCode");
+                var version = $(this).attr("version");
+                var id = $(this).attr("id");
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>合同详情</b>',
+                    content: URL + 'queryAuditContractDetail?code=' + code + '&version=' + version + '&id=' + id,
+                    area: ['100%', '100%']
+                });
+            });
+
+            $('body').on('click', '.warming', function () {
+                var contractCode = $(this).attr("contractCode");
+                var version = $(this).attr("version");
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>合同详情</b>',
+                    content: URL + 'queryContractDetail/' + contractCode + '/' + version + '/3',
+                    area: ['100%', '100%']
+                });
+            });
+
+            // 临时客户
+            $('body').on('click', '#customerTemporaryNum', function () {
+                location.href = URL + "customerTemporary/list";
+            });
+
+            // 即将到期合同
+            $('body').on('click', '#contractNum', function () {
+                location.href = URL + "toContractList?expireState=2";
+            });
+
+            // 即将到期房源
+            $('body').on('click', '#roomCount', function () {
+                location.href = URL + "room/toRoomList?state=2";
+            });
+
+
+            $('body').on('click', '#workplaceCount', function () {
+                location.href = URL + "workplace/toWorkplaceList?state=2";
+            });
+
+            $('body').on('click', '#carplaceCount', function () {
+                location.href = URL + "carplace/toCarplaceList?state=2";
+            });
+
+            $('body').on('click', '#unReceivablesAmt', function () {
+                location.href = URL + "receiptList";
+            });
+
+            $('body').on('click', '#unPayAmt', function () {
+                location.href = URL + "paymentList";
+            });
+
+            /* 监听提交 */
+            form.on('submit(notice)', function (data) {
+                $.post(URL + "insertFollowNotice", $("#noticeForm").serialize(), function (d) {
+                    layer.msg(d.msg);
+                    if (d.success) {
+                        setTimeout(function () {
+                            location.reload();
+                            return false;
+                        }, 1000);
+                    }
+                })
+            });
+
+            $('body').on('click', '.db_add', function () {
+                layer.open({
+                    type: 1,
+                    title: '新增日程',
+                    content: $('#remind').html(),
+                    area: ['500px', 'auto'],
+                    skin: 'opens',
+                    maxmin: false
+                });
+                form.render();
+                w_date();
+            });
+
+            var w_date = function () {
+                lay('.test-laydate-item').each(function () {
+                    laydate.render({
+                        elem: this
+                        , trigger: 'click'
+                    });
+                });
+            }
+
+            //取消按钮
+            $('body').on('click', '.cancel', function () {
+                layer.closeAll(); //关闭弹层
+            })
+
+            function done(dealState,lightenUp) {
+                $.ajax({
+                    url: URL + "queryAuditOperListForHome",
+                    type: "POST",
+                    data: {
+                        dealState: dealState,
+                        lightenUp: lightenUp
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var html = template('matter-templete', data);
+                        $('#matterList').html(html);
+                    }
+                });
+            }
+        });
+
+        //租赁走势图
+        var dayArray = [];
+        var cNumArray = [];
+        var pumArray = [];
+        $.ajax({
+            url: URL + "settleListStatistics",
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                var dayList = data.dayList;
+                $.each(dayList, function(i,item){
+                    dayArray.push(item.month);
+                    cNumArray.push(item.cnum);
+                    pumArray.push(item.pnum);
+                });
+                debugger;
+                loadEcharts();
+            }
+        });
+
+        function loadEcharts(){
+            var myChart = echarts.init(document.getElementById('myChart'));
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    data: ['应收账单', '应付账单']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '10%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: dayArray
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '应收账单',
+                        type: 'line',
+                        stack: '总量',
+                        areaStyle: {},
+                        smooth: true,
+                        data: cNumArray,
+                        color: '#d8aac7'
+                    },
+                    {
+                        name: '应付账单',
+                        type: 'line',
+                        stack: '总量',
+                        areaStyle: {},
+                        smooth: true,
+                        data: pumArray,
+                        color: '#c6e5fb'
+                    }
+
+                ]
+            };
+            myChart.setOption(option);
+            //初始化图形表
+            window.onresize = function () {
+                myChart.resize();
+            }
+        }
+    </script>
+</body>
+</html>

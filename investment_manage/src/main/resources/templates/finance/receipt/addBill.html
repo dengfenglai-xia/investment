@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<form id="form" class="w_addbox layui-form">
+    <div class="w_addpart l_shadow mb-15">
+        <input type="hidden" name="companyCode" th:value="${companyCode}">
+        <input type="hidden" name="billCode" th:value="${billCode}">
+        <input type="hidden" name="billType" th:value="1">
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>关联合同：</label>
+            <div class="layui-input-block">
+                <select id="linkContract" lay-verify="required" lay-search>
+                    <option value="">请选择关联合同</option>
+                    <option th:each="obj:${contractList}"
+                            th:value="${obj.contractCode}+','+${obj.version}+','+${obj.projectId}+','+${obj.customerId}"
+                            th:text="${obj.contractCode} + '（' + ${obj.customerName} + '）'"></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>费用类别：</label>
+            <div class="layui-input-block">
+                <select name="feeType" lay-verify="required" lay-search>
+                    <option value="">请选择费用类别</option>
+                    <option th:each="obj:${feeTypeList}" th:value="${obj.type}" th:text="${obj.type}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>费用名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="costName" class="layui-input" lay-verify="required"
+                       autocomplete="off" placeholder="请输入费用名称">
+            </div>
+        </div>
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>费用金额：</label>
+            <div class="layui-input-block">
+                <div class="day_left">
+                    <input type="text" name="costAmt" oninput="onlyNumber(this)" lay-verify="required|number"
+                           autocomplete="off" placeholder="请输入费用金额" class="layui-input">
+                </div>
+                <div class="day_right">
+                    元
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>应缴日期：</label>
+            <div class="layui-input-block">
+                <input type="text" name="shouldDealDate" class="layui-input l_time laydate-control"
+                       lay-verify="required"
+                       autocomplete="off" placeholder="请输入应缴日期">
+            </div>
+        </div>
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+            <div class="layui-input-block">
+                <div class="day_left">
+                    <input type="text" name="feeLateRatio" th:value="0" oninput="onlyNumber(this)" l
+                           lay-verify="required|number"
+                           autocomplete="off" placeholder="请输入滞纳金比例" class="layui-input">
+                </div>
+                <div class="day_right">
+                    %
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label "><b class="w_sur">*</b>费用区间：</label>
+            <div class="layui-input-block">
+                <input type="text" name="dateRange" lay-verify="required"
+                       autocomplete="off" class="layui-input l_time laydate-control-range"
+                       placeholder="开始时间 ~ 结束时间">
+            </div>
+        </div>
+        <div class="layui-col-md8 layui-col-xs6 l_po">
+            <label class="layui-form-label w_label ">说&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;明：</label>
+            <div class="layui-input-block">
+                <input type="text" name="remarks" autocomplete="off" placeholder="请输入费用说明"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="w_del_btnbox mt-20">
+        <input type="button" value="提交" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+        <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+    </div>
+</form>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form', 'table', 'laydate'], function () {
+        var form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate;
+
+        form.on('submit(commit)', function () {
+            var formData = $("#form").serializeObject();
+            var info = $('#linkContract').val().split(",");
+            formData["contractCode"] = info[0];
+            formData["version"] = parseInt(info[1]);
+            formData["projectId"] = parseInt(info[2]);
+            formData["customerId"] = parseInt(info[3]);
+            $.ajax({
+                url: URL + "insertBills",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.table.reload('dataList');
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+            });
+        });
+
+        lay('.laydate-control-range').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+                , range: '~'
+            });
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+
+    });
+</script>
+</body>
+
+</html>

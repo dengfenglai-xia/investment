@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<!--搜索-->
+<div class="sear_head">
+    <div class="clear"></div>
+</div>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <!--合同列表-->
+        <div class="layui-card l_shadow" style="margin-bottom: 15px;">
+            <div class="layui-row ">
+                <div class="information">
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list">在租工位合同：</div>
+                        <div class="information_list"><span class="w_fs_28">500</span>份</div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list">在租工位数量：</div>
+                        <div class="information_list"><span class="w_fs_28">25</span>个</div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list">即将到期工位合同：</div>
+                        <div class="information_list"><span class="w_fs_28">100</span>份</div>
+                    </div>
+                    <div class="layui-col-sm2 w_bor">
+                        <div class="information_list">即将到期工位数量：</div>
+                        <div class="information_list"><span class="w_fs_28">10</span>个</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">楼宇名称 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" id="buildingId" lay-verify="required" lay-search lay-filter="building-select">
+                            <option value="">请选择楼宇</option>
+                            <option th:each="obj:${buildingList}" th:value="${obj.buildingId}" th:text="${obj.buildingName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">起租时间区间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="startDateRange" class="layui-input l_time laydate-control w_timeinp_l"
+                               autocomplete="off" placeholder="请选择起租时间区间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">到期时间区间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="endDateRange" class="layui-input l_time laydate-control w_timeinp_l"
+                               autocomplete="off" placeholder="请选择到期时间区间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="keyword" placeholder="楼宇名称/客户名称/合同编号" autocomplete="off" class="w_seartext"
+                           style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <!--<div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm import">导入<i class="layui-icon">&#xe65b;</i></a>
+            </div>-->
+            <div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--搜索end-->
+        <!--合同状态-->
+        <div class="w_htstate layui-form l_shadow">
+            <div class="htstate_left">
+                合同状态&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="search-type" value="1" title="草稿" lay-filter="type-select" checked="">
+                <input type="radio" name="search-type" value="2" title="待审批" lay-filter="type-select">
+                <input type="radio" name="search-type" value="3" title="正式" lay-filter="type-select">
+                <input type="radio" name="search-type" value="4" title="待修改" lay-filter="type-select">
+                <input type="radio" name="search-type" value="5" title="已归档" lay-filter="type-select">
+            </div>
+        </div>
+        <!--合同状态end-->
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">工位合同列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                {{#  if(d.auditState === '0' ){ }}
+                                <a class="layui-btn layui-btn-xs l_web_but_tj" lay-event="sub">提交</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                                {{#  } else if(d.auditState === '3'){ }}
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                                {{#  } }}
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--合同列表end-->
+    </div>
+    <div class="layui-tab-item">
+        <!--退租记录-->
+    </div>
+</div>
+<!--导入弹窗start-->
+<div class="dr dr-shade"></div>
+<div class="dr-box">
+    <div class="dr-tit">
+        导入
+    </div>
+    <div class="dr-body">
+        <form id="uploadForm">
+            <div class="laylists w_scb">
+                <input type="file" name="file" class="web_file_1 myfile"
+                       accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <input type="button" value="选择附件" class="layui-btn web_inp_s ffil layui-btn-normal chooseBtn">
+            </div>
+        </form>
+        <div class="laylists" style="cursor:pointer;">
+            <a class="web_cor_1" th:href="@{/contract/download}">
+                <input type="button" value="下载导入模板" class="layui-btn xzfjw web_inp_s">
+            </a>
+        </div>
+        <div class="butorde1">
+            <input type="button" value="上传" class="minbut1 site-demo-active uploadFile" data-type="loading">
+            <input type="button" value="取消" class="minbut2 cancel">
+        </div>
+    </div>
+</div>
+<!--导入弹窗end-->
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['index', 'contlist', 'table', 'laydate'], function () {
+        table = layui.table;
+        var laydate = layui.laydate,
+            admin = layui.admin,
+            form = layui.form;
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                range: '~'
+            });
+        });
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'queryWorkplaceContractList',
+            where: {
+                searchType: $("input[name='search-type']:checked").val()
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    unresize: true,
+                    fixed: 'left',
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'contractCode',
+                    title: '合同编号',
+                    width: 180,
+                    fixed: 'left'
+                }, {
+                    field: 'version',
+                    title: '版本号',
+                    hide: true
+                }, {
+                    field: 'customerName',
+                    title: '客户',
+                    width: 200,
+                    fixed: 'left'
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称',
+                    width: 180
+                }, {
+                    field: 'roomNos',
+                    title: '签约工位',
+                    width: 150
+                }, {
+                    field: 'startDate',
+                    title: '起租时间',
+                    sort: true,
+                    width: 120
+
+                }, {
+                    field: 'endDate',
+                    title: '到期时间',
+                    sort: true,
+                    width: 120
+                }, {
+                    field: 'state',
+                    title: '合同状态',
+                    width: 150
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#operation',
+                    width: 200
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('select(building-select)', function(data){
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    buildingId: val,
+                    startDateRange: $("#startDateRange").val(),
+                    endDateRange: $("#endDateRange").val(),
+                    keyword: $("#keyword").val(),
+                    searchType: $("input[name='search-type']:checked").val()
+                }
+            });
+        });
+
+        $('.import').on('click', function () {
+            $('.dr-shade').show();
+            $('.dr-box').show()
+        });
+
+        $('body').on('click', '.cancel', function () {
+            $('.dr-shade').hide();
+            $('.dr-box').hide()
+        });
+
+        $('body').on('change', '.myfile', function () {
+            //获取文件的value值
+            var file = $(".myfile").val();
+            //获取文件名+扩展名
+            var fileName = file.split("\\").pop();
+            //获取文件的扩展名
+            var fileExt = file.substr(file.indexOf("."));
+            $(".chooseBtn").val(fileName);
+            if (fileExt != '.xls' && fileExt != '.xlsx') {
+                layer.msg('导入文件格式不正确', {offset: '100px'});
+            }
+        });
+
+        $(".uploadFile").click(function () {
+            //获取文件的value值
+            var file = $(".myfile").val();
+            //获取文件的扩展名
+            var fileExt = file.substr(file.indexOf("."));
+            if (file == '') {
+                layer.msg('请选择导入文件');
+                return false;
+            } else {
+                if (fileExt != '.xls' && fileExt != '.xlsx') {
+                    layer.msg('导入文件格式不正确', {offset: '100px'});
+                    return false;
+                }
+            }
+            layer.closeAll();
+            layer.load(1);
+            setTimeout(function () {
+                var formData = new FormData($("#uploadForm")[0]);
+                $.ajax({
+                    url: URL + 'contract/importInfo',
+                    type: 'POST',
+                    data: formData,
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        layer.closeAll('loading');
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            $('.dr-shade').hide();
+                            $('.dr-box').hide()
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                                table.reload('dataList', {
+                                    where: {
+                                        buildingId: $("#buildingId").val(),
+                                        startDateRange: $("#startDateRange").val(),
+                                        endDateRange: $("#endDateRange").val(),
+                                        keyword: $("#keyword").val(),
+                                        searchType: $("input[name='search-type']:checked").val()
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg, {time: 5000});
+                        }
+                    }
+                });
+            }, 2000);
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    buildingId: $("#buildingId").val(),
+                    startDateRange: $("#startDateRange").val(),
+                    endDateRange: $("#endDateRange").val(),
+                    keyword: $("#keyword").val(),
+                    searchType: $("input[name='search-type']:checked").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#buildingId').val('');
+            $('#startDateRange').val('');
+            $('#endDateRange').val('');
+            $('#keyword').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>新建合同</b>',
+                content: URL + 'toAddWorkplaceContract',
+                area: ['100%', '100%']
+            });
+        });
+
+        form.on('radio(type-select)', function (data) {
+            var searchType = data.value;
+            table.reload('dataList', {
+                where: {
+                    buildingId: $("#buildingId").val(),
+                    startDateRange: $("#startDateRange").val(),
+                    endDateRange: $("#endDateRange").val(),
+                    keyword: $("#keyword").val(),
+                    searchType: searchType
+                }
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var searchType = $("input[name='search-type']:checked").val();
+            var data = obj.data;
+            var contractCode = data.contractCode;
+            var version = data.version;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>合同详情</b>',
+                    content: URL + 'queryContractDetail/' + contractCode + '/' + version + '/' + searchType,
+                    area: ['100%', '100%']
+                });
+            }
+            ;
+
+            if (obj.event === 'sub') {
+                layer.confirm('请确认是否提交？', function (index) {
+                    $("input[name='state']:eq(1)").attr("checked", 'checked');
+                    form.render();
+                    $.ajax({
+                        url: URL + "updateContract",
+                        type: "POST",
+                        data: {
+                            operFlag: '2',
+                            contractCode: contractCode,
+                            version: version
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                layer.closeAll();
+                                layer.msg("提交成功");
+                                table.reload('dataList', {
+                                    where: {
+                                        startDateRange: $("#startDateRange").val(),
+                                        endDateRange: $("#endDateRange").val(),
+                                        keyword: $("#keyword").val(),
+                                        searchType: $("input[name='search-type']:checked").val()
+                                    }
+                                });
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+            ;
+            if (obj.event === 'del') {
+                layer.confirm('是否要删除？', function (index) {
+                    obj.del();
+                    layer.close(index);
+                    layer.msg('提交成功');
+                });
+            }
+            ;
+        });
+    });
+
+    $('body').on('click', '.sc', function () {
+        $('.dr-box').hide();
+        $('.jdt-box').show()
+    })
+
+    $('body').on('click', '.dy', function () {
+        $('.dr').show();
+        $('.dr-box').show()
+    })
+
+    $('body').on('click', '.drqx', function () {
+        $('.dr').hide();
+        $('.dr-box').hide()
+    })
+</script>
+</body>
+
+</html>

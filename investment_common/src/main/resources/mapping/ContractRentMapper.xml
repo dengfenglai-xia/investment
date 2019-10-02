@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ContractRentMapper">
+ 
+	<sql id="Base_Column_List" >
+		c.contract_code,
+		c.version,
+		c.cost_name,
+		c.start_date,
+		c.end_date,
+		c.unit_price,
+		c.charge_unit,
+		c.day_price,
+		c.month_count_type,
+		c.month_price,
+		c.advance_pay_days,
+		c.advance_pay_type,
+		c.pay_cycle,
+		c.fee_late_ratio,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryContractRentList" resultType="contractRent">
+		select
+			<include refid="Base_Column_List"/>
+		from contract_rent c
+		where c.del_flag = '0'
+			<if test="contractCode != null and contractCode != '' " >
+				and c.contract_code = #{contractCode}
+			</if>
+			<if test="version != null " >
+				and c.version = #{version}
+			</if>
+	</select>
+	
+	<select id="queryContractRentDetailByPrimarykey" resultType="contractRent">
+		select
+			<include refid="Base_Column_List"/>
+		from contract_rent c
+		where
+			c.contract_code = #{contractCode}
+	</select>
+
+	<select id="queryContractRentDetail" resultType="contractRent">
+		select
+			<include refid="Base_Column_List"/>
+		from contract_rent c
+		where
+			c.contract_code = #{contractCode}
+	</select>
+
+	<insert id="insertContractRent">
+		insert into contract_rent
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="contractCode != null and contractCode != '' " >
+			contract_code,
+		</if>
+		<if test="version != null " >
+			version,
+		</if>
+		<if test="costName != null and costName != '' " >
+			cost_name,
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			start_date,
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			end_date,
+		</if>
+		<if test="unitPrice != null " >
+			unit_price,
+		</if>
+		<if test="chargeUnit != null and chargeUnit != '' " >
+			charge_unit,
+		</if>
+		<if test="dayPrice != null " >
+			day_price,
+		</if>
+		<if test="monthCountType != null and monthCountType != '' " >
+			month_count_type,
+		</if>
+		<if test="monthPrice != null " >
+			month_price,
+		</if>
+		<if test="advancePayDays != null " >
+			advance_pay_days,
+		</if>
+		<if test="advancePayType != null and advancePayType != '' " >
+			advance_pay_type,
+		</if>
+		<if test="payCycle != null " >
+			pay_cycle,
+		</if>
+		<if test="feeLateRatio != null " >
+			fee_late_ratio,
+		</if>
+		<if test="createUserId != null " >
+			create_user_id,
+		</if>
+		<if test="createTime != null " >
+			create_time,
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id,
+		</if>
+		<if test="updateTime != null " >
+			update_time,
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks,
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="contractCode != null and contractCode != '' " >
+			#{contractCode},		
+		</if>
+		<if test="version != null " >
+			#{version},	
+		</if>
+		<if test="costName != null and costName != '' " >
+			#{costName},
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			#{startDate},		
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			#{endDate},		
+		</if>
+		<if test="unitPrice != null " >
+			#{unitPrice},	
+		</if>
+		<if test="chargeUnit != null and chargeUnit != '' " >
+			#{chargeUnit},		
+		</if>
+		<if test="dayPrice != null " >
+			#{dayPrice},	
+		</if>
+		<if test="monthCountType != null and monthCountType != '' " >
+			#{monthCountType},		
+		</if>
+		<if test="monthPrice != null " >
+			#{monthPrice},	
+		</if>
+		<if test="advancePayDays != null " >
+			#{advancePayDays},	
+		</if>
+		<if test="advancePayType != null and advancePayType != '' " >
+			#{advancePayType},		
+		</if>
+		<if test="payCycle != null " >
+			#{payCycle},	
+		</if>
+		<if test="feeLateRatio != null " >
+			#{feeLateRatio},	
+		</if>
+		<if test="createUserId != null " >
+			#{createUserId},	
+		</if>
+		<if test="createTime != null " >
+			#{createTime},	
+		</if>
+		<if test="updateUserId != null " >
+			#{updateUserId},	
+		</if>
+		<if test="updateTime != null " >
+			#{updateTime},	
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			#{remarks},		
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			#{delFlag},		
+		</if>
+		</trim>
+	</insert>
+
+	<insert id="insertContractRentBatch">
+		insert into contract_rent
+		(
+		contract_code,
+		version,
+		cost_name,
+		start_date,
+		end_date,
+		unit_price,
+		charge_unit,
+		day_price,
+		month_count_type,
+		month_price,
+		advance_pay_days,
+		advance_pay_type,
+		pay_cycle,
+		fee_late_ratio,
+		create_user_id,
+		create_time,
+		update_user_id,
+		update_time
+		)values
+		<foreach collection="list" item="item" separator=",">
+			(
+			#{item.contractCode},
+			#{item.version},
+			#{item.costName},
+			#{item.startDate},
+			#{item.endDate},
+			#{item.unitPrice},
+			#{item.chargeUnit},
+			#{item.dayPrice},
+			#{item.monthCountType},
+			#{item.monthPrice},
+			#{item.advancePayDays},
+			#{item.advancePayType},
+			#{item.payCycle},
+			#{item.feeLateRatio},
+			#{item.createUserId},
+			#{item.createTime},
+			#{item.updateUserId},
+			#{item.updateTime}
+			)
+		</foreach>
+	</insert>
+
+	<update id="updateContractRent">
+	    update contract_rent
+	    <set >
+		<if test="version != null " >
+			version = #{version},
+		</if>
+		<if test="costName != null and costName != '' " >
+			cost_name = #{costName},
+		</if>
+		<if test="startDate != null and startDate != '' " >
+			start_date = #{startDate},
+		</if>
+		<if test="endDate != null and endDate != '' " >
+			end_date = #{endDate},
+		</if>
+		<if test="unitPrice != null " >
+			unit_price = #{unitPrice},
+		</if>
+		<if test="chargeUnit != null and chargeUnit != '' " >
+			charge_unit = #{chargeUnit},
+		</if>
+		<if test="dayPrice != null " >
+			day_price = #{dayPrice},
+		</if>
+		<if test="monthCountType != null and monthCountType != '' " >
+			month_count_type = #{monthCountType},
+		</if>
+		<if test="monthPrice != null " >
+			month_price = #{monthPrice},
+		</if>
+		<if test="advancePayDays != null " >
+			advance_pay_days = #{advancePayDays},
+		</if>
+		<if test="advancePayType != null and advancePayType != '' " >
+			advance_pay_type = #{advancePayType},
+		</if>
+		<if test="payCycle != null " >
+			pay_cycle = #{payCycle},
+		</if>
+		<if test="feeLateRatio != null " >
+			fee_late_ratio = #{feeLateRatio},
+		</if>
+		<if test="createUserId != null " >
+			create_user_id = #{createUserId},
+		</if>
+		<if test="createTime != null " >
+			create_time = #{createTime},
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id = #{updateUserId},
+		</if>
+		<if test="updateTime != null " >
+			update_time = #{updateTime},
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks = #{remarks},
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag = #{delFlag},
+		</if>
+	    </set>
+		where
+			contract_code = #{contractCode}
+	</update>
+
+	<delete id="deleteContractRent">
+		delete
+		from
+			contract_rent
+		where
+			contract_code = #{contractCode}
+			and version = #{version}
+	</delete>
+
+</mapper>

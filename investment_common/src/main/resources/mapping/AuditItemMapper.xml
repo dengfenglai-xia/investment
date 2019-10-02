@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.AuditItemMapper">
+ 
+	<sql id="Base_Column_List" >
+		a.id,
+		a.name,
+		a.sign,
+		a.switch_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryAuditItemList" resultType="auditItem">
+		select
+			<include refid="Base_Column_List"/>
+		from audit_item a
+		<where>
+			<if test="name != null and name != '' " >
+				and a.name like concat('%',#{name},'%')
+			</if>
+			<if test="sign != null and sign != '' " >
+				and a.sign = #{sign}
+			</if>
+			<if test="switchFlag != null and switchFlag != '' " >
+				and a.switch_flag = #{switchFlag}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryAuditItemDetailByPrimarykey" resultType="auditItem">
+		select
+			<include refid="Base_Column_List"/>
+		from audit_item a
+		where
+			a.id = #{id}
+	</select>
+
+	<select id="queryAuditItemDetail" resultType="auditItem">
+		select
+			<include refid="Base_Column_List"/>
+		from audit_item a
+		where
+			a.id = #{id}
+	</select>
+
+	<insert id="insertAuditItem">
+		insert into audit_item
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="name != null and name != '' " >
+			name,
+		</if>
+		<if test="sign != null and sign != '' " >
+			sign,
+		</if>
+		<if test="switchFlag != null and switchFlag != '' " >
+			switch_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="name != null and name != '' " >
+			#{name},		
+		</if>
+		<if test="sign != null and sign != '' " >
+			#{sign},		
+		</if>
+		<if test="switchFlag != null and switchFlag != '' " >
+			#{switchFlag},
+		</if>
+		</trim>
+	</insert>
+
+	<update id="updateAuditItem">
+	    update audit_item
+	    <set >
+		<if test="name != null and name != '' " >
+			name = #{name},
+		</if>
+		<if test="sign != null and sign != '' " >
+			sign = #{sign},
+		</if>
+		<if test="switchFlag != null and switchFlag != '' " >
+			switch_flag = #{switchFlag},
+		</if>
+	    </set>
+		where
+			id = #{id}
+	</update>
+
+	<delete id="deleteAuditItemByPrimarykey">
+		delete
+		from
+			audit_item
+		where
+			id = #{id}
+	</delete>
+
+</mapper>

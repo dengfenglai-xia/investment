@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼宇名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="buildingName" lay-verify="required" placeholder="请输入项目名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>所属项目：</label>
+                    <div class="layui-input-block">
+                        <select id="projectId" name="projectId" lay-verify="required" lay-search>
+                            <option value="">请选择所属项目</option>
+                            <option th:each="obj:${list}" th:value="${obj.projectId}" th:text="${obj.projectName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">建成时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="buildTime" class="layui-input l_time laydate-control" autocomplete="off" placeholder="请选择建成时间">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">使用年限&nbsp;&nbsp;<br/>（年）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="yearNum" oninput="onlyInteger(this)" placeholder="请输入使用年限" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">联 系 人：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="contacts" placeholder="请输入联系人" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">联系电话：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phone" placeholder="请输入联系电话" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">所有权人：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="owner" placeholder="请输入所有权人" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">占地面积&nbsp;&nbsp;<br/>（㎡）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="coverArea" oninput="onlyNumber(this)" placeholder="请输入总占地面积" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">建筑面积&nbsp;&nbsp;<br/>（㎡）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="buildArea" oninput="onlyNumber(this)" placeholder="请输入总建筑面积" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md8 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">用&nbsp;&nbsp;&nbsp;&nbsp;途：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="purpose" placeholder="请输入用途" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label">备注：</label>
+                    <div class="layui-input-block">
+                        <textarea name="remarks" class="w_tzteaxer" autocomplete="off"  placeholder="请输入备注信息"></textarea>
+                    </div>
+                </div>
+                <div class="layui-col-xs12">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼宇照片：</label>
+                    <div class="layui-input-block" style="margin-left:116px">
+                        <a class="layui-btn layui-btn-normal upload-imgs"><i class="layui-icon">&#xe60d;</i>选择</a>
+                        <div class="layui-upload wy_flex_wrap imgs" style="margin-top:10px;"></div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <!--其他信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">其他信息</div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">地上层数：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="upNum" oninput="onlyInteger(this)" placeholder="请输入地上层数" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">地下层数：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="downNum" oninput="onlyInteger(this)" placeholder="请输入地下层数" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">建筑高度&nbsp;&nbsp;<br/>（m）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="height" oninput="onlyNumber(this)" placeholder="请输入建筑高度" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">标准层高&nbsp;&nbsp;<br/>（m）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="floorHeight" oninput="onlyNumber(this)" placeholder="请输入标准层高" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">得&nbsp;&nbsp;房&nbsp;&nbsp;率&nbsp;&nbsp;<br/>（%）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="roomRate" oninput="onlyNumber(this)" placeholder="请输入得房率" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">电&nbsp;&nbsp;梯&nbsp;&nbsp;数：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="elevatorNum" oninput="onlyInteger(this)" placeholder="请输入电梯数" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">开&nbsp;&nbsp;发&nbsp;&nbsp;商：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="developers" placeholder="请输入开发商" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--其他信息end-->
+        <!--楼层信息-->
+        <div class="layui-row layui-form-item bc_msg" style="display: none;">
+            <div class="mytitle w_bc_tit w_bc_down" onselectstart="return false">楼层信息</div>
+            <div class="w_addpart l_shadow w_bccont">
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">添加楼层：</label>
+                    <div class="layui-input-block">
+                        <a class="layui-btn layui-btn-normal add-floor"><i class="layui-icon">&#xe61f;</i>添加</a>
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">已添楼层：</label>
+                    <div class="layui-input-block">
+                        <table class="layui-table" style="width: auto;">
+                            <colgroup>
+                                <col width="200">
+                                <col width="300">
+                                <col width="200">
+                                <col width="120">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>楼层</th>
+                                <th>楼层名称</th>
+                                <th>平面图</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="floors"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--楼层信息end-->
+
+        <div class="w_del_btnbox">
+            <input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+            <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+        </div>
+    </form>
+</div>
+<script th:replace="common/common-js::js"></script>
+<!--添加楼层模板-->
+<script type="text/html" id="add-floor-template">
+    <div class="w_addbox layui-form">
+        <div class="layui-row layui-form-item">
+            <div class="l_shadow">
+                <div class="layui-col-md12 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">添加方式：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="type" value="single" title="单层" lay-filter="type-select" checked="">
+                        <input type="radio" name="type" value="multiple" title="多层" lay-filter="type-select">
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs6 l_po single">
+                    <label class="layui-form-label w_label ">楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="floorNo" name="floorNo" lay-verify="required" placeholder="请输入楼层"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs6 l_po multiple" style="display: none;">
+                    <label class="layui-form-label w_label ">楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
+                    <div class="layui-input-block">
+                        <div style="display: inline-block;">
+                            <input type="text" id="floorNo1" oninput="onlyInteger(this)" placeholder="起始层" autocomplete="off" class="layui-input">
+                        </div>
+                        <div style="display: inline-block;">&nbsp;&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div style="display: inline-block;">
+                            <input type="text" id="floorNo2" oninput="onlyInteger(this)" placeholder="结束层" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">楼层名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="floorName" name="floorName" lay-verify="required" placeholder="请输入楼层名称"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs12">
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">平&nbsp;&nbsp;面&nbsp;&nbsp;图：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-upload wy_flex_wrap wy_update_img_wrap add-floor-img show-img">
+                                <img th:src="@{/img/q_jc_fy_shangchuan.png}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" class="floor-img" name="imgs">
+            </div>
+        </div>
+        <hr/>
+        <div style="text-align: center;">
+            <input type="button" value="确定" class="layui-btn layui-btn-normal save"/>
+            <input type="button" value="取消" class="layui-btn btn layui-btn-primary close"/>
+        </div>
+    </div>
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        /* 上传图片 */
+        var imgs = [];
+        lay('.upload-imgs').each(function (i, ele) {
+            upload.render({
+                elem: this,
+                url: URL + 'imgUpload',
+                multiple: true,
+                before: function (obj) {
+                    obj.preview(function (index, file, result) {
+                        $('.imgs').eq(i).append('<div class="img">' +
+                            '<div class="z_update_img">' +
+                            '<img src="' + result + '" class="z_full_width">' +
+                            '<img class="colse remove-img" src="../img/sf.png">' +
+                            '</div>' +
+                            '</div>');
+                    });
+                },
+                done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        layer.msg('上传失败');
+                    } else if (res.state == 'SUCCESS') {
+                        imgs.push(res.url);
+                    }
+                }
+            });
+        });
+
+        $('body').on('click', '.remove-img', function () {
+            var obj = $(this).parents('.img');
+            imgs.splice(obj.index, 1);
+            obj.remove();
+        });
+
+        $('body').on('click', '.add-floor', function () {
+            layer.open({
+                type: 1,
+                title: '添加楼层',
+                content: $('#add-floor-template').html(),
+                maxmin: false,
+                skin: 'opens',
+                shadeClose: true,
+                area: ['600px', '460px']
+            });
+            form.render('radio');
+            $("#floorNo").focus();
+            uploadImg();
+        });
+
+        form.on("radio(type-select)", function (data) {
+            var type = data.value;
+            if (type == 'single') { // 单层
+                $(".single").show();
+                $(".multiple").hide();
+                $("#floorNo1").val('');
+                $("#floorNo2").val('');
+                $("#floorNo").focus();
+            } else if (type == 'multiple') { // 多层
+                $(".multiple").show();
+                $(".single").hide();
+                $("#floorNo").val('');
+                $("#floorNo1").focus();
+            }
+        });
+
+        var uploadImg = function () {
+            upload.render({
+                elem: '.add-floor-img'
+                , url: URL + 'imgUpload'
+                , done: function (res) {
+                    $(".show-img").html('<img style="width:auto;height:150px;" src="' + res.url + '" />');
+                    $(".floor-img").val(res.url);
+                }
+                , accept: 'images'
+            });
+        }
+
+        $('body').on('click', '.save', function () {
+            var type = $("input[name='type']:checked").val();
+            var floorNo = $.trim($("#floorNo").val());
+            var floorName = $.trim($("#floorName").val());
+            var floorImg = $(".floor-img").val();
+            var floorNo1 = $.trim($("#floorNo1").val());
+            var floorNo2 = $.trim($("#floorNo2").val());
+            var bool = true;
+            var reg = /^[1-9]\d*$/;
+
+            //获取楼层数组
+            var floorNoArr = [];
+            $("#floors").find("tr").each(function (i) {
+                floorNoArr[i] = $(this).children('td:eq(0)').text();
+            });
+
+            if (type == 'single') { // 单层
+                bool = true;
+                if (floorNo == '') {
+                    layer.msg('楼层不能为空', {offset: '30px'});
+                    return;
+                }
+                if (!reg.test(floorNo)) {
+                    layer.msg('楼层只能是数字', {offset: '30px'});
+                    return;
+                }
+                if (floorNoArr.includes(floorNo)){
+                    bool = false;
+                }
+                if (bool == true) {
+                    if(floorName == '') floorName = floorNo +'层';
+                    var tr = '<tr class="rm">' +
+                        '<td>' + floorNo + '</td>' +
+                        '<td>' + floorName + '</td>' +
+                        '<td><input type="hidden" value="'+ floorImg +'"><img style="cursor:pointer;" class="enlarge" src="' + floorImg + '" /></td>' +
+                        '<td>' +
+                        '<a title="删除" class="btn w_sc_btn del"></a>' +
+                        '</td>' +
+                        '</tr>';
+                    $('#floors').append(tr);
+                }
+            } else if (type == 'multiple') { // 多层
+                if (floorNo1 == '' || floorNo2 == '') {
+                    layer.msg('楼层不能为空', {offset: '30px'});
+                    return;
+                }
+                if (!reg.test(floorNo1) || !reg.test(floorNo2)) {
+                    layer.msg('楼层只能是数字', {offset: '30px'});
+                    return;
+                }
+                floorNo1 = parseInt(floorNo1);
+                floorNo2 = parseInt(floorNo2);
+                if (floorNo1 >= floorNo2) {
+                    layer.msg('起始楼层不能大于结束楼层数', {offset: '30px'});
+                    return false;
+                }
+                for (var i = floorNo1; i <= floorNo2; i++) {
+                    bool = true;
+                    if (floorNoArr.includes(i + '')){
+                        bool = false;
+                    }
+                    if (bool == true) {
+                        var name = '';
+                        if(floorName == ''){
+                            name = i+'层';
+                        }else{
+                            name = floorName;
+                        }
+                        var tr = '<tr class="rm">' +
+                            '<td>' + i + '</td>' +
+                            '<td>' + name + '</td>' +
+                            '<td><input type="hidden" value="'+ floorImg +'"><img style="cursor:pointer;" class="enlarge" src="' + floorImg + '" /></td>' +
+                            '<td>' +
+                            '<a title="删除" class="btn w_sc_btn del"></a>' +
+                            '</td>' +
+                            '</tr>';
+                        $('#floors').append(tr);
+                    }
+                }
+            }
+            layer.closeAll();
+        });
+
+        //图片放大
+        $('body').on('click', '.enlarge', function () {
+            var path = $(this)[0].src;
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                skin: 'opens',
+                shadeClose: true,
+                area: ['700px', 'auto'], //宽高
+                content: "<img style='width: 100%;height：100%;' src=" + path + " />"
+            });
+        });
+
+        $('body').on('click', '.del', function () {
+            $(this).parents('.rm').remove();
+        })
+
+        form.on('submit(commit)', function () {
+            if (imgs.length < 1) {
+                layer.msg('请选择楼宇照片');
+                return;
+            }
+            //获取楼层对象数组
+            var floorArr = [];
+            $("#floors").find("tr").each(function (i) {
+                var obj = {};
+                obj.floorNo = $(this).children('td:eq(0)').text();
+                obj.floorName = $(this).children('td:eq(1)').text();
+                obj.imgs = $(this).children('td:eq(2)').children('input').val();
+                floorArr.push(obj);
+            });
+            var formData = $("#form").serializeObject();
+            formData["projectName"] = $("#projectId").find("option:selected").text();
+            formData["imgs"] = imgs.join(",");
+            $.each(floorArr, function (i, item) {
+                formData['floorList[' + i + '].floorNo'] = item.floorNo;
+                formData['floorList[' + i + '].floorName'] = item.floorName;
+                formData['floorList[' + i + '].imgs'] = item.imgs;
+            });
+            $.ajax({
+                url: URL + "building/insertBuilding",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+            });
+        });
+
+        //取消按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll();
+        })
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+
+        $('body').on('click', '.w_bc_tit', function () {
+            if ($(this).hasClass('w_bc_down')) {
+                $(this).removeClass('w_bc_down')
+                $('.w_bccont').hide()
+            } else {
+                $(this).addClass('w_bc_down')
+                $('.w_bccont').show()
+            }
+        });
+    });
+</script>
+</body>
+</html>

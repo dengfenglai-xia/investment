@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row ">
+        <div class="layui-col-md12">
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">协议信息</div>
+                        <div class="w_part">
+                            <div class="w_colxs_4">
+                                <span class="htstyle">协议编号：</span>
+                                <span class="htcont" th:text="${contract.contractCode}"></span>
+                            </div>
+                            <div class="w_colxs_4">
+                                <span class="htstyle">签订日期：</span>
+                                <span class="htcont" th:text="${contract.signDate}"></span>
+                            </div>
+                            <div class="w_colxs_4">
+                                <span class="htstyle">生效时间：</span>
+                                <span class="htcont" th:text="${contract.startDate}"></span>
+                            </div>
+                            <div class="w_colxs_4">
+                                <span class="htstyle">截止时间：</span>
+                                <span class="htcont" th:text="${contract.endDate}"></span>
+                            </div>
+                            <div class="w_colxs_4">
+                                <span class="htstyle">状态：</span>
+                                <span class="htcont" th:text="${contract.state}"></span>
+                            </div>
+                            <div class="w_colxs_4" th:if="${not #strings.isEmpty(contract.changeDate)}">
+                                <span class="htstyle">退租时间：</span>
+                                <span class="htcont" th:text="${contract.changeDate}"></span>
+                            </div>
+                            <div class="w_colxs_4">
+                                <span class="htstyle">租金：</span>
+                                <span class="htcont" th:text="${#numbers.formatDecimal(contract.rentAmt, 1, 2)} + ' 元'"></span>
+                            </div>
+                            <div class="w_colxs_4">
+                                <span class="htstyle">押金：</span>
+                                <span class="htcont" th:text="${#numbers.formatDecimal(contract.deposit, 1, 2)} + ' 元'"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow" th:if="${contract.customerType eq '1'}">
+                        <div class="mytitle">租客信息</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">客户类型：</span>
+                                <span class="htcont">公司</span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">客户：</span>
+                                <span class="htcont" th:text="${contract.customerName}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">所属行业：</span>
+                                <span class="htcont" th:text="${contract.industry}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">统一社会信用代码：</span>
+                                <span class="htcont" th:text="${contract.unifiedCode}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">法人：</span>
+                                <span class="htcont" th:text="${contract.legalPerson}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">联系人：</span>
+                                <span class="htcont" th:text="${contract.contacts}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">联系电话：</span>
+                                <span class="htcont" th:text="${contract.phone}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">渠道来源：</span>
+                                <span class="htcont" th:text="${contract.channelSource}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">渠道名称：</span>
+                                <span class="htcont" th:text="${contract.sourceName}"></span>
+                            </div>
+                            <div class="layui-col-xs6">
+                                <span class="htstyle">通讯地址：</span>
+                                <span class="htcont" th:text="${contract.linkAddress}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow" th:if="${contract.customerType eq '2'}">
+                        <div class="mytitle">租客信息</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">客户类型：</span>
+                                <span class="htcont">个人</span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">客户：</span>
+                                <span class="htcont" th:text="${contract.customerName}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">联系电话：</span>
+                                <span class="htcont" th:text="${contract.phone}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">身份证号：</span>
+                                <span class="htcont" th:text="${contract.contactsCard}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">所属行业：</span>
+                                <span class="htcont" th:text="${contract.industry}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">渠道来源：</span>
+                                <span class="htcont" th:text="${contract.channelSource}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">渠道名称：</span>
+                                <span class="htcont" th:text="${contract.sourceName}"></span>
+                            </div>
+                            <div class="layui-col-xs6">
+                                <span class="htstyle">通讯地址：</span>
+                                <span class="htcont" th:text="${contract.linkAddress}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">资源信息</div>
+                        <div class="w_part">
+                            <div class="w_colxs_5">
+                                <span class="htstyle">房源面积：</span>
+                                <span class="htcont" th:text="${#numbers.formatDecimal(totalArea, 1, 2)} + ' ㎡'"></span>
+                            </div>
+                            <div class="layui-col-xs12">
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="150">
+                                        <col width="150">
+                                        <col width="150">
+                                        <col width="150">
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>项目</th>
+                                        <th>楼宇</th>
+                                        <th>房间号</th>
+                                        <th>面积（㎡）</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="obj:${roomList}">
+                                        <td th:text="${obj.projectName}"></td>
+                                        <td th:text="${obj.buildingName}"></td>
+                                        <td th:text="${obj.roomNo}"></td>
+                                        <td th:text="${#numbers.formatDecimal(obj.buildArea, 1, 2)}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow" th:if="${not #strings.isEmpty(contract.remarks)}">
+                        <div class="mytitle">备注信息</div>
+                        <div class="w_part">
+                            <span class="htcont" th:text="${contract.remarks}"></span>
+                        </div>
+                    </div>
+                    <div class="w_del_btnbox">
+                        <a th:if="${contract.stateOne eq '0'}" class="ml_10 edit">
+                            <input type="button" value="修改" class="layui-btn layui-btn-warm"/>
+                        </a>
+                        <a th:if="${contract.stateOne eq '1' && contract.stateTwo eq '2'}"
+                           class="ml_10 return"><input type="button" value="退租" class="layui-btn"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script>
+    $('body').on('click', '.edit', function () {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+        parent.layer.open({
+            type: 2,
+            title: '<b>修改</b>',
+            content: URL + 'toEditContract/[[${contract.contractCode}]]/[[${contract.version}]]',
+            area: ['100%', '100%']
+        });
+    });
+
+    $('body').on('click', '.return', function () {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+        parent.layer.open({
+            type: 2,
+            title: '<b>退租</b>',
+            content: URL + 'toReturnAgreement?contractCode=[[${contract.contractCode}]]&version=[[${contract.version}]]',
+            area: ['100%', '100%']
+        });
+    });
+</script>
+</body>
+</html>

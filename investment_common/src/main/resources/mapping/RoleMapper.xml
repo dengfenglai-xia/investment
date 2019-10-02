@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.RoleMapper">
+ 
+	<sql id="Base_Column_List" >
+		r.role_id,
+		r.company_code,
+		r.role_name,
+		r.create_user_id,
+		r.create_time,
+		r.update_user_id,
+		r.update_time,
+		r.remarks,
+		r.del_flag
+	</sql>
+
+	<sql id="Link_Column_List" >
+	</sql>
+	
+	<select id="queryRoleList" resultType="role">
+		select
+			<include refid="Base_Column_List"/>
+		from role r
+		where r.del_flag = '0'
+			<if test="companyCode != null and companyCode != '' " >
+				and r.company_code = #{companyCode}
+			</if>
+			<if test="roleName != null and roleName != '' " >
+				and r.role_name like concat('%',#{roleName},'%')
+			</if>
+	</select>
+	
+	<select id="queryRoleDetailByPrimarykey" resultType="role">
+		select
+			<include refid="Base_Column_List"/>
+		from role r
+		where
+			r.role_id = #{roleId}
+	</select>
+
+	<select id="queryRoleDetail" resultType="role">
+		select
+			<include refid="Base_Column_List"/>
+		from role r
+		where
+			r.role_id = #{roleId}
+	</select>
+
+	<insert id="insertRole">
+		insert into role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="roleId != null " >
+			role_id,
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			company_code,
+		</if>
+		<if test="roleName != null and roleName != '' " >
+			role_name,
+		</if>
+		<if test="createUserId != null " >
+			create_user_id,
+		</if>
+		<if test="createTime != null " >
+			create_time,
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id,
+		</if>
+		<if test="updateTime != null " >
+			update_time,
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks,
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag,
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="roleId != null " >
+			#{roleId},	
+		</if>
+		<if test="companyCode != null and companyCode != '' " >
+			#{companyCode},		
+		</if>
+		<if test="roleName != null and roleName != '' " >
+			#{roleName},		
+		</if>
+		<if test="createUserId != null " >
+			#{createUserId},	
+		</if>
+		<if test="createTime != null " >
+			#{createTime},	
+		</if>
+		<if test="updateUserId != null " >
+			#{updateUserId},	
+		</if>
+		<if test="updateTime != null " >
+			#{updateTime},	
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			#{remarks},		
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			#{delFlag},		
+		</if>
+		</trim>
+	</insert>
+
+	<update id="updateRole">
+	    update role
+	    <set >
+		<if test="companyCode != null and companyCode != '' " >
+			company_code = #{companyCode},
+		</if>
+		<if test="roleName != null and roleName != '' " >
+			role_name = #{roleName},
+		</if>
+		<if test="createUserId != null " >
+			create_user_id = #{createUserId},
+		</if>
+		<if test="createTime != null " >
+			create_time = #{createTime},
+		</if>
+		<if test="updateUserId != null " >
+			update_user_id = #{updateUserId},
+		</if>
+		<if test="updateTime != null " >
+			update_time = #{updateTime},
+		</if>
+		<if test="remarks != null and remarks != '' " >
+			remarks = #{remarks},
+		</if>
+		<if test="delFlag != null and delFlag != '' " >
+			del_flag = #{delFlag},
+		</if>
+	    </set>
+		where
+			role_id = #{roleId}
+	</update>
+
+	<delete id="deleteRoleByPrimarykey">
+		delete
+		from
+			role
+		where
+			role_id = #{roleId}
+	</delete>
+
+</mapper>

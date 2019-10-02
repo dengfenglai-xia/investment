@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">渠道来源</label>
+                    <div class="layui-input-inline">
+                        <select id="channelSource" lay-verify="required" lay-search>
+                            <option value="">请选择渠道来源</option>
+                            <option th:each="obj:${sourceList}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left "
+                           style="text-align: left;">成交面积（㎡） </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="startArea" class="layui-input w_timeinp" autocomplete="off"
+                               placeholder="请输入成交面积">
+                        <p class="btw">至</p>
+                        <input type="text" id="endArea" class="layui-input w_timeinp" autocomplete="off"
+                               placeholder="请输入成交面积">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left "
+                           style="text-align: left;">成交金额 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="startAmt" class="layui-input w_timeinp" autocomplete="off"
+                               placeholder="请输入成交金额">
+                        <p class="btw">至</p>
+                        <input type="text" id="endAmt" class="layui-input w_timeinp" autocomplete="off"
+                               placeholder="请输入成交金额">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">渠道名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="channelName" placeholder="请输入渠道名称" autocomplete="off" class="w_seartext"
+                           style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist" style="float: right">
+                <a class="layui-btn layui-btn-warm add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">渠道列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'queryChannelList',
+            where: {
+                state: 1
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    fixed: 'left',
+                    unresize: true,
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'channelId',
+                    title: 'ID',
+                    hide: true
+                }, {
+                    field: 'channelSource',
+                    fixed: 'left',
+                    title: '渠道来源',
+                    width: 150
+                }, {
+                    field: 'channelName',
+                    title: '渠道名称',
+                    width: 150
+                }, {
+                    field: 'contacts',
+                    title: '联系人',
+                    width: 100
+                }, {
+                    field: 'phone',
+                    title: '联系电话',
+                    width: 100
+                }, {
+                    field: 'orderNum',
+                    title: '成交单数',
+                    width: 100
+                },{
+                    field: 'totalArea',
+                    title: '成交面积（㎡）',
+                    width: 150
+                },{
+                    field: 'placeNum',
+                    title: '成交工位',
+                    width: 100
+                }, {
+                    field: 'totalAmt',
+                    title: '成交金额（元）',
+                    width: 150
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 230,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    channelSource: $.trim($("#channelSource").val()),
+                    startArea: $.trim($("#startArea").val()),
+                    endArea: $.trim($("#endArea").val()),
+                    startAmt: $("#startAmt").val(),
+                    endAmt: $("#endAmt").val(),
+                    channelName: $.trim($("#channelName").val())
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#channelSource').val('');
+            $('#startArea').val('');
+            $('#endArea').val('');
+            $('#startAmt').val('');
+            $('#endAmt').val('');
+            $('#channelName').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>新建渠道</b>',
+                content: URL + 'toAddChannel',
+                area: ['100%', '100%']
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.channelId;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>渠道详情</b>',
+                    content: URL + 'queryChannelDetail?ChannelId=' + id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'deleteChannel',
+                        data: {"channelId": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                setTimeout(function () {
+                                    table.reload('dataList');
+                                }, 1000);
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ContractCarplaceMapper">
+
+    <sql id="Base_Column_List">
+		c.id,
+		c.contract_code,
+		c.version,
+		c.place_id,
+		c.place_no,
+		c.floor_id,
+		c.floor_no,
+		c.building_id,
+		c.building_name,
+		c.project_id,
+		c.project_name,
+		c.start_date,
+		c.end_date,
+		c.create_user_id,
+		c.create_time,
+		c.update_user_id,
+		c.update_time,
+		c.remarks,
+		c.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryContractCarplaceList" resultType="contractCarplace">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_carplace c
+        where c.del_flag = '0'
+        <if test="contractCode != null and contractCode != '' ">
+            and c.contract_code = #{contractCode}
+        </if>
+        <if test="version != null ">
+            and c.version = #{version}
+        </if>
+        <if test="placeId != null ">
+            and c.place_id = #{placeId}
+        </if>
+        <if test="placeNo != null and placeNo != '' ">
+            and c.place_no = #{placeNo}
+        </if>
+        <if test="floorId != null ">
+            and c.floor_id = #{floorId}
+        </if>
+        <if test="floorNo != null and floorNo != '' ">
+            and c.floor_no = #{floorNo}
+        </if>
+        <if test="buildingId != null ">
+            and c.building_id = #{buildingId}
+        </if>
+        <if test="buildingName != null and buildingName != '' ">
+            and c.building_name like concat('%',#{buildingName},'%')
+        </if>
+        <if test="projectId != null ">
+            and c.project_id = #{projectId}
+        </if>
+        <if test="projectName != null and projectName != '' ">
+            and c.project_name like concat('%',#{projectName},'%')
+        </if>
+    </select>
+
+    <select id="queryContractCarplaceDetailByPrimarykey" resultType="contractCarplace">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_carplace c
+        where
+        c.id = #{id}
+    </select>
+
+    <select id="queryContractCarplaceDetail" resultType="contractCarplace">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_carplace c
+        where
+        c.id = #{id}
+    </select>
+
+    <insert id="insertContractCarplace">
+        insert into contract_carplace
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code,
+            </if>
+            <if test="version != null ">
+                version,
+            </if>
+            <if test="placeId != null ">
+                place_id,
+            </if>
+            <if test="placeNo != null and placeNo != '' ">
+                place_no,
+            </if>
+            <if test="floorId != null ">
+                floor_id,
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no,
+            </if>
+            <if test="buildingId != null ">
+                building_id,
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                start_date,
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                end_date,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="contractCode != null and contractCode != '' ">
+                #{contractCode},
+            </if>
+            <if test="version != null ">
+                #{version},
+            </if>
+            <if test="placeId != null ">
+                #{placeId},
+            </if>
+            <if test="placeNo != null and placeNo != '' ">
+                #{placeNo},
+            </if>
+            <if test="floorId != null ">
+                #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                #{startDate},
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                #{endDate},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateContractCarplace">
+        update contract_carplace
+        <set>
+            <if test="contractCode != null and contractCode != '' ">
+                contract_code = #{contractCode},
+            </if>
+            <if test="version != null ">
+                version = #{version},
+            </if>
+            <if test="placeId != null ">
+                place_id = #{placeId},
+            </if>
+            <if test="placeNo != null and placeNo != '' ">
+                place_no = #{placeNo},
+            </if>
+            <if test="floorId != null ">
+                floor_id = #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no = #{floorNo},
+            </if>
+            <if test="buildingId != null ">
+                building_id = #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name = #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                project_id = #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name = #{projectName},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <select id="queryContractCarplaceCount" resultType="int">
+        select
+        count(cc.contract_code) num
+        from contract c
+        left join contract_carplace cc on c.contract_code = cc.contract_code and c.version = cc.version
+        where c.del_flag = '0'
+        <if test="stateOne != null and stateOne != '' ">
+            and c.state_one = #{stateOne}
+        </if>
+        <if test="customerId != null">
+            and c.customer_id = #{customerId}
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            and c.contract_type = #{contractType}
+        </if>
+    </select>
+
+    <delete id="deleteContractCarplace">
+		delete
+		from
+			contract_carplace
+		where
+			contract_code = #{contractCode}
+			and version = #{version}
+	</delete>
+
+</mapper>

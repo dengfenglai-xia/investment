@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<form id="form" class="w_zddel layui-form">
+    <div class="layui-row layui-form-item">
+        <!--基本信息-->
+        <div class="mytitle">
+            基本信息
+        </div>
+        <div class="w_addpart l_shadow mb-15">
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">协议编号：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.contractCode}"></span>
+                    <input type="hidden" name="contractCode" th:value="${contract.contractCode}">
+                    <input type="hidden" name="version" th:value="${contract.version}">
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">签订日期：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.signDate}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">客户：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.customerName}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">生效日期：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.startDate}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">截止日期：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.endDate}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">状态：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.state}"></span>
+                </div>
+            </div>
+            <div  class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">租金：</label>
+                <span class="htcont" th:text="${#numbers.formatDecimal(contract.rentAmt, 1, 2)} + ' 元'"></span>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">押金：</label>
+                <span class="htcont" th:text="${#numbers.formatDecimal(contract.deposit, 1, 2)} + ' 元'"></span>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--基本信息end-->
+        <!--资源信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">资源信息</div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">租赁房源：</label>
+                    <div class="layui-input-block">
+                        <table class="layui-table" style="width: auto;">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>楼层</th>
+                                <th>房间</th>
+                                <th>面积（㎡）</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="rm" th:each="obj:${roomList}">
+                                <td th:text="${obj.projectName}"></td>
+                                <td th:text="${obj.buildingName}"></td>
+                                <td th:text="${obj.floorNo}"></td>
+                                <td th:text="${obj.roomNo}"></td>
+                                <td th:text="${#numbers.formatDecimal(obj.buildArea, 1, 2)}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--资源信息end-->
+        <!--变更设置信息start-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                退租设置
+            </div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>退租日期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="changeDate" name="changeDate" lay-verify="required"
+                               th:value="${currentDate}" autocomplete="off" placeholder="请选择退租日期"class="layui-input">
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--变更设置信息end-->
+        <div class="ht_change_box">
+            <!--退租说明-->
+            <div class="mytitle">
+                退租原因
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">退租原因：</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="changeReason" th:value="正常到期" lay-skin="primary" title="正常到期"/>
+                        <input type="checkbox" name="changeReason" th:value="价格因素" lay-skin="primary" title="价格因素">
+                        <input type="checkbox" name="changeReason" th:value="物业服务" lay-skin="primary" title="物业服务"/>
+                        <input type="checkbox" name="changeReason" th:value="交通不便" lay-skin="primary" title="交通不便"/>
+                        <input type="checkbox" name="changeReason" th:value="设施配置" lay-skin="primary" title="设施配置"/>
+                        <input type="checkbox" name="changeReason" th:value="其他" lay-skin="primary" title="其他"/>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <!--退租说明end-->
+            <!--备注-->
+            <div class="mytitle">
+                备注
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                    <textarea name="remarks" class="w_tzteaxer" placeholder="请输入备注信息"></textarea>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <!--备注end-->
+            <div class="w_del_btnbox">
+                <button type="button" lay-submit lay-filter="commit" class="layui-btn layui-btn-warm">提交</button>
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['form', 'index', 'contlist', 'table', 'laydate'], function () {
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            table = layui.table,
+            form = layui.form;
+
+        lay('#changeDate').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+            });
+        });
+
+        form.on('submit(commit)', function () {
+            layer.confirm('请确定是否提交？', function (index) {
+                var formData = $("#form").serializeObject();
+                formData["operType"] = 'return';
+                $.ajax({
+                    url: URL + "updateContract",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                                parent.table.reload('dataList');
+                                parent.layer.closeAll();
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            })
+        });
+    });
+</script>
+</body>
+</html>

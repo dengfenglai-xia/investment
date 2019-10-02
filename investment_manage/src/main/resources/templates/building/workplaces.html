@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-form">
+        <div class="layui-col-md12">
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="mytab">
+                        <ul class="ly_tab">
+                            <a th:href="@{'/building/queryBuildingDetail/' + ${buildingId} }">
+                                <li>楼宇信息</li>
+                            </a>
+                            <a th:href="@{'/building/toFloors/' + ${buildingId} }">
+                                <li>楼层信息</li>
+                            </a>
+                            <a th:href="@{'/building/toRooms/' + ${buildingId} }">
+                                <li>房源信息</li>
+                            </a>
+                            <a th:href="@{'/building/toWorkplaces/' + ${buildingId} }">
+                                <li class="ly_active">工位信息</li>
+                            </a>
+                            <a th:href="@{'/building/toCarplaces/' + ${buildingId} }">
+                                <li>车位信息</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="layui-card tab_boxs l_shadow">
+                        <div class="mytitle">工位列表</div>
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="clear"></div>
+                                <div class="layui-card">
+                                    <div class="layui-card-body">
+                                        <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                                        <script type="text/html" id="toolbar">
+                                            <a class="layui-btn layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe61f;</i>新增</a>
+                                        </script>
+                                        <script type="text/html" id="operation">
+                                            <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                            <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="editor">编辑</a>
+                                            <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script type="text/html" id="state">
+    {{#  if(d.state === '0' ){ }}
+    <span style="color:#C2C5D6;">不对外招租</span>
+    {{#  } else if(d.state === '1'){ }}
+    <span style="color:#44B549;">在租</span>
+    {{#  } else if(d.state === '2'){ }}
+    <span style="color:#FEB97A;">即将到期</span>
+    {{#  } else if(d.state === '3'){ }}
+    <span style="color:#69BFD3;">空置</span>
+    {{#  } else{ }}
+    <span style="color:#DE7B9E;">到期未处理</span>
+    {{#  } }}
+</script>
+<script th:inline="javascript">
+    var table;
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form', 'upload'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var upload = layui.upload;
+
+        table.render({
+            elem: '#dataList',
+            // toolbar: '#toolbar',
+            defaultToolbar: false,
+            url: URL + 'workplace/queryWorkplaceList',
+            where: {
+                buildingId: [[${buildingId}]]
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    fixed: 'left',
+                    unresize: true,
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'buildingName',
+                    title: '楼宇名称'
+                }, {
+                    field: 'floorNo',
+                    title: '楼层'
+                },{
+                    field: 'placeId',
+                    title: '工位ID',
+                    hide: true
+                }, {
+                    field: 'roomNo-placeNo',
+                    title: '房间 - 工位号',templet:function(d){
+                        return  d.roomNo + ' - ' + d.placeNo;
+                    }
+                }, {
+                    field: 'bottomPrice',
+                    title: '租金底价（元/月）'
+                }, {
+                    field: 'whetherOpen',
+                    title: '是否对外招租',
+                    templet:function(d) {
+                        return [[${WHETHER_OPEN_MAP}]][d.whetherOpen];
+                    }
+                },{
+                    field: 'state',
+                    title: '招商状态',
+                    templet: '#state'
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 200,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.placeId;
+
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin:true,
+                    title: '<b>工位详情</b>',
+                    content: URL + 'workplace/queryWorkplaceDetail/' + id,
+                    area: ['100%', '100%']
+                });
+            }
+            ;
+
+            if (obj.event === 'editor') {
+                layer.open({
+                    type: 2,
+                    maxmin:true,
+                    title: '<b>编辑工位</b>',
+                    content: URL + 'workplace/toEditorWorkplace/' + id,
+                    area: ['100%', '100%']
+                });
+            }
+            ;
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'workplace/deleteWorkplace',
+                        data: {"roomId": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                table.reload('dataList');
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        $('body').on('click', '.go-back', function () {
+            location.href = URL + 'building/toBuildingList/1';
+        });
+
+        /*table.on('toolbar(dataList)', function (obj) {
+            if (obj.event === 'add') {
+                layer.open({
+                    type: 2,
+                    title: '<b>新增工位</b>',
+                    content: URL + 'room/toAddRoom',
+                    area: ['100%', '100%']
+                });
+            };
+        });*/
+
+    });
+</script>
+</body>
+</html>

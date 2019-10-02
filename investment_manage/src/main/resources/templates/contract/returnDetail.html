@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<form id="form" class="w_zddel layui-form">
+    <div class="layui-row layui-form-item">
+        <!--基本信息-->
+        <div class="mytitle">
+            基本信息
+        </div>
+        <div class="w_addpart l_shadow mb-15">
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">合同编号：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.contractCode}"></span>
+                    <input type="hidden" name="contractCode" th:value="${contract.contractCode}">
+                    <input type="hidden" name="version" th:value="${contract.version}">
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label ">合同类别：</label>
+                <div class="layui-input-block">
+                    <span class="htcont">房源合同</span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">签订日期：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.signDate}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">客户：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.customerName}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">合同生效日期：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.startDate}"></span>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs4 l_po">
+                <label class="layui-form-label w_label ">合同截止日期：</label>
+                <div class="layui-input-block">
+                    <span class="htcont" th:text="${contract.endDate}"></span>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--基本信息end-->
+        <!--资源信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">资源信息</div>
+            <div class="w_addpart l_shadow">
+                <div class="w_colxs_5">
+                    <span class="htstyle">房源面积：</span>
+                    <span class="htcont" th:text="${#numbers.formatDecimal(totalArea, 0, 2)} + ' ㎡'"></span>
+                </div>
+                <div class="w_colxs_5" th:if="${carplaceList.size() > 0}">
+                    <span class="htstyle">车位数量：</span>
+                    <span class="htcont" th:text="${carplaceList.size()} + ' 个'"></span>
+                </div>
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">租赁房源：</label>
+                    <div class="layui-input-block">
+                        <table class="layui-table" style="width: auto;">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>楼层</th>
+                                <th>房间</th>
+                                <th>面积（㎡）</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="rm" th:each="obj:${roomList}">
+                                <td th:text="${obj.projectName}"></td>
+                                <td th:text="${obj.buildingName}"></td>
+                                <td th:text="${obj.floorNo}"></td>
+                                <td th:text="${obj.roomNo}"></td>
+                                <td th:text="${#numbers.formatDecimal(obj.buildArea, 0, 2)}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs12 l_po" th:if="${carplaceList.size() > 0}">
+                    <label class="layui-form-label w_label ">租赁车位：</label>
+                    <div class="layui-input-block">
+                        <table class="layui-table" style="width: auto;">
+                            <colgroup>
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                                <col width="150">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>楼宇</th>
+                                <th>车位</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="rm" th:each="obj:${carplaceList}">
+                                <td th:text="${obj.projectName}"></td>
+                                <td th:text="${obj.buildingName}"></td>
+                                <td th:text="${obj.placeNo}"></td>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--资源信息end-->
+        <!--变更设置信息start-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                退租时间
+            </div>
+            <div class="w_addpart l_shadow">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">退租日期：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${contract.changeDate}"></span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--变更设置信息end-->
+        <!--账单明细-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                账单明细
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label text_center">待收款：</label>
+                    <p class="chang_tips">截止退租时间，共有 <span class="col_yq num1"></span> 笔待收款账单</p>
+
+                    <div class="layui-input-block">
+                        <table class="layui-hide" id="dataList1"></table>
+                    </div>
+                </div>
+                <hr/>
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label text_center">待付款：</label>
+                    <p class="chang_tips">截止退租时间，共有 <span class="col_yq num2"></span> 笔待付款账单
+                    </p>
+                    <div class="layui-input-block">
+                        <table class="layui-hide" id="dataList2"></table>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--账单明细end-->
+        <!--退租说明-->
+        <div class="layui-row layui-form-item" th:if="${not #strings.isEmpty(contract.changeReason)}">
+            <div class="mytitle">
+                退租原因
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">退租原因：</label>
+                    <div class="layui-input-block">
+                        <span class="htcont" th:text="${contract.changeReason}"></span>
+                        <!--<input type="checkbox" name="changeReason" th:value="正常到期"
+                               checked="${#arrays.contains(#strings.setSplit(contract.changeReason,','), '正常到期')}"
+                               lay-skin="primary" title="正常到期" disabled/>
+                        <input type="checkbox" name="changeReason" th:value="价格因素"
+                               checked="${#arrays.contains(#strings.setSplit(contract.changeReason,','), '价格因素')}"
+                               lay-skin="primary" title="价格因素" disabled>
+                        <input type="checkbox" name="changeReason" th:value="物业服务"
+                               checked="${#arrays.contains(#strings.setSplit(contract.changeReason,','), '物业服务')}"
+                               lay-skin="primary" title="物业服务" disabled/>
+                        <input type="checkbox" name="changeReason" th:value="交通不便"
+                               checked="${#arrays.contains(#strings.setSplit(contract.changeReason,','), '交通不便')}"
+                               lay-skin="primary" title="交通不便" disabled/>
+                        <input type="checkbox" name="changeReason" th:value="设施配置"
+                               checked="${#arrays.contains(#strings.setSplit(contract.changeReason,','), '设施配置')}"
+                               lay-skin="primary" title="设施配置" disabled/>
+                        <input type="checkbox" name="changeReason" th:value="其他"
+                               checked="${#arrays.contains(#strings.setSplit(contract.changeReason,','), '其他')}"
+                               lay-skin="primary" title="其他" disabled/>-->
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--退租说明end-->
+        <!--备注-->
+        <div class="layui-row layui-form-item" th:if="${not #strings.isEmpty(contract.remarks)}">
+            <div class="mytitle">
+                备注
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                    <span class="htcont" th:text="${contract.remarks}"></span>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <!--备注end-->
+            <div class="w_del_btnbox">
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="days">
+    {{#  if(d.days > 0 ){ }}
+    <a class="col_lq">剩余{{d.days}}天</a>
+    {{#  } else if(d.days < 0){ }}
+    <a class="col_yq">逾期{{Math.abs(d.days)}}天</a>
+    {{#  } else { }}
+    <a class="col_zc">正常</a>
+    {{#  } }}
+</script>
+<script type="text/html" id="state1">
+    {{#  if(d.state === '1' ){ }}
+    <a class="col_ws">未收</a>
+    {{#  } else if(d.state === '2' ){ }}
+    <a class="col_bf">部分</a>
+    {{#  } else if(d.state === '3'){ }}
+    <a class="col_zc">已收</a>
+    {{#  } }}
+</script>
+<script type="text/html" id="state2">
+    {{#  if(d.state === '1' ){ }}
+    <a class="col_ws">未付</a>
+    {{#  } else if(d.state === '2' ){ }}
+    <a class="col_bf">部分</a>
+    {{#  } else if(d.state === '3'){ }}
+    <a class="col_zc">已付</a>
+    {{#  } }}
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['form', 'index', 'contlist', 'table', 'laydate'], function () {
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            table = layui.table,
+            form = layui.form;
+
+        table.render({
+            elem: '#dataList1',
+            url: URL + 'queryBillsSumList',
+            where: {
+                contractCode: '[[${contract.contractCode}]]',
+                version: '[[${contract.version}]]',
+                changeDate: '[[${contract.changeDate}]]',
+                billType: '1'
+            },
+            totalRow: true,
+            cols: [
+                [
+                    {
+                        field: 'billCode', title: '账单编号', totalRowText: '合计', width: 180, templet: function (d) {
+                            return '<a style="color: #0c6bcd;text-decoration:underline;cursor:pointer">' + d.billCode + '</a>';
+                        }
+                    },
+                    {
+                        field: 'costAmt', title: '应收金额（元）', totalRow: true, templet: function (d) {
+                            return number_format((d.costAmt + d.feeLateAmt - d.freeAmt), 2);
+                        }
+                    },
+                    {
+                        field: 'feeLateAmt', title: '滞纳金（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.feeLateAmt, 2);
+                        }
+                    },
+                    {
+                        field: 'finishAmt', title: '已收金额（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.finishAmt, 2);
+                        }
+                    },
+                    {
+                        field: 'residualAmt', title: '未收金额（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.residualAmt, 2);
+                        }
+                    },
+                    {
+                        field: 'freeAmt', title: '减免金额（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.freeAmt, 2);
+                        }
+                    },
+                    {field: 'shouldDealDate', title: '应收时间'},
+                    {field: 'days', title: '提醒', templet: '#days'},
+                    {field: 'state', title: '收款状态', templet: '#state1'}
+                ]
+            ],
+            parseData: function (res) {
+                $(".num1").text(res.data.total);
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            }
+        });
+
+        table.render({
+            elem: '#dataList2',
+            url: URL + 'queryBillsSumList',
+            where: {
+                contractCode: '[[${contract.contractCode}]]',
+                version: '[[${contract.version}]]',
+                changeDate: '[[${contract.changeDate}]]',
+                billType: '2'
+            },
+            totalRow: true,
+            cols: [
+                [
+                    {
+                        field: 'billCode', title: '账单编号', totalRowText: '合计', width: 180, templet: function (d) {
+                            return '<a style="color: #0c6bcd;text-decoration:underline;cursor:pointer">' + d.billCode + '</a>';
+                        }
+                    },
+                    {
+                        field: 'costAmt', title: '应付金额（元）', totalRow: true, templet: function (d) {
+                            return number_format((d.costAmt + d.feeLateAmt - d.freeAmt), 2);
+                        }
+                    },
+                    {
+                        field: 'feeLateAmt', title: '滞纳金（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.feeLateAmt, 2);
+                        }
+                    },
+                    {
+                        field: 'finishAmt', title: '已付金额（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.finishAmt, 2);
+                        }
+                    },
+                    {
+                        field: 'residualAmt', title: '未付金额（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.residualAmt, 2);
+                        }
+                    },
+                    {
+                        field: 'freeAmt', title: '减免金额（元）', totalRow: true, templet: function (d) {
+                            return number_format(d.freeAmt, 2);
+                        }
+                    },
+                    {field: 'state', title: '付款状态', templet: '#state2'}
+                ]
+            ],
+            parseData: function (res) {
+                $(".num2").text(res.data.total);
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            }
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            parent.layer.closeAll(); //关闭弹层
+        })
+
+    });
+</script>
+</body>
+</html>

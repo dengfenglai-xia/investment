@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.ProjectMapper">
+
+    <sql id="Base_Column_List">
+		p.project_id,
+		p.project_name,
+		p.business_mode,
+		p.company_code,
+		p.province,
+		p.city,
+		p.region,
+		p.address,
+		p.longitude,
+		p.latitude,
+		p.cover_area,
+		p.build_area,
+		p.imgs,
+        p.power_price,
+        p.water_price,
+        p.gas_price,
+		p.remind_days,
+		p.bill_days,
+		p.create_user_id,
+		p.create_time,
+		p.update_user_id,
+		p.update_time,
+		p.remarks,
+		p.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+	</sql>
+
+    <select id="queryProjectBaseList" resultType="project">
+        select
+            project_id,
+            project_name,
+            bill_days
+        from project
+        where del_flag = '0'
+        and company_code = #{companyCode}
+    </select>
+
+    <select id="queryProjectList" resultType="project">
+        select
+            p.project_id,
+            p.project_name,
+            p.business_mode,
+            p.address
+        from project p
+        where p.del_flag = '0'
+        and p.company_code = #{companyCode}
+        <if test="businessMode != null and businessMode != '' ">
+            and p.business_mode = #{businessMode}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            p.project_name like concat('%',#{keyword},'%')
+            or
+            p.address like concat('%',#{keyword},'%')
+            )
+        </if>
+        group by p.project_id
+        order by p.project_id desc
+    </select>
+
+    <select id="queryProjectDetailByPrimarykey" resultType="project">
+        select
+            count(b.project_id) buildingNum,
+            u.company,
+            <include refid="Base_Column_List"/>
+        from project p
+            left join building b on p.project_id = b.project_id
+            left join user u on p.company_code = u.company_code
+        where p.project_id = #{projectId}
+        group by p.project_id
+    </select>
+
+    <select id="queryProjectDetail" resultType="project">
+        select
+        <include refid="Base_Column_List"/>
+        from project p
+        where p.del_flag = '0'
+        <if test="projectName != null and projectName != '' ">
+            and p.project_name = #{projectName}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and p.company_code = #{companyCode}
+        </if>
+    </select>
+
+    <insert id="insertProject">
+        insert into project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="businessMode != null and businessMode != '' ">
+                business_mode,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="province != null and province != '' ">
+                province,
+            </if>
+            <if test="city != null and city != '' ">
+                city,
+            </if>
+            <if test="region != null and region != '' ">
+                region,
+            </if>
+            <if test="address != null and address != '' ">
+                address,
+            </if>
+            <if test="longitude != null and longitude != '' ">
+                longitude,
+            </if>
+            <if test="latitude != null and latitude != '' ">
+                latitude,
+            </if>
+            <if test="coverArea != null ">
+                cover_area,
+            </if>
+            <if test="buildArea != null ">
+                build_area,
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs,
+            </if>
+            <if test="powerPrice != null ">
+                power_price,
+            </if>
+            <if test="waterPrice != null ">
+                water_price,
+            </if>
+            <if test="gasPrice != null ">
+                gas_price,
+            </if>
+            <if test="remindDays != null ">
+                remind_days,
+            </if>
+            <if test="billDays != null ">
+                bill_days,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="businessMode != null and businessMode != '' ">
+                #{businessMode},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="province != null and province != '' ">
+                #{province},
+            </if>
+            <if test="city != null and city != '' ">
+                #{city},
+            </if>
+            <if test="region != null and region != '' ">
+                #{region},
+            </if>
+            <if test="address != null and address != '' ">
+                #{address},
+            </if>
+            <if test="longitude != null and longitude != '' ">
+                #{longitude},
+            </if>
+            <if test="latitude != null and latitude != '' ">
+                #{latitude},
+            </if>
+            <if test="coverArea != null ">
+                #{coverArea},
+            </if>
+            <if test="buildArea != null ">
+                #{buildArea},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                #{imgs},
+            </if>
+            <if test="powerPrice != null ">
+                #{powerPrice},
+            </if>
+            <if test="waterPrice != null ">
+                #{waterPrice},
+            </if>
+            <if test="gasPrice != null ">
+                #{gasPrice},
+            </if>
+            <if test="remindDays != null">
+                #{remindDays},
+            </if>
+            <if test="billDays != null ">
+                #{billDays},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateProject">
+        update project
+        <set>
+            <if test="projectName != null and projectName != '' ">
+                project_name = #{projectName},
+            </if>
+            <if test="businessMode != null and businessMode != '' ">
+                business_mode = #{businessMode},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code = #{companyCode},
+            </if>
+            <if test="province != null and province != '' ">
+                province = #{province},
+            </if>
+            <if test="city != null and city != '' ">
+                city = #{city},
+            </if>
+            <if test="region != null and region != '' ">
+                region = #{region},
+            </if>
+            <if test="address != null and address != '' ">
+                address = #{address},
+            </if>
+            <if test="longitude != null and longitude != '' ">
+                longitude = #{longitude},
+            </if>
+            <if test="latitude != null and latitude != '' ">
+                latitude = #{latitude},
+            </if>
+            <if test="coverArea != null ">
+                cover_area = #{coverArea},
+            </if>
+            <if test="buildArea != null ">
+                build_area = #{buildArea},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs = #{imgs},
+            </if>
+            <if test="powerPrice != null ">
+                power_price = #{powerPrice},
+            </if>
+            <if test="waterPrice != null ">
+                water_price = #{waterPrice},
+            </if>
+            <if test="gasPrice != null ">
+                gas_price = #{gasPrice},
+            </if>
+            <if test="remindDays != null ">
+                remind_days = #{remindDays},
+            </if>
+            <if test="billDays != null ">
+                bill_days = #{billDays},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        project_id = #{projectId}
+    </update>
+
+    <delete id="deleteProjectByPrimarykey">
+		delete
+		from
+			project
+		where
+			project_id = #{projectId}
+	</delete>
+
+</mapper>

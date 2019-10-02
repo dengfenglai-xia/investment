@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div>
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">来访时间 </label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input l_time test-laydate-item w_timeinp" placeholder="请选择开始时间">
+                        <p class="btw">至</p>
+                        <input type="text" class="layui-input l_time test-laydate-item w_timeinp" placeholder="请选择结束时间">
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">行业类型</label>
+                    <div class="layui-input-inline">
+                        <select name="label" lay-verify="required" lay-search>
+                            <option value="">请选择行业类型</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">客户状态 </label>
+                    <div class="layui-input-inline">
+                        <select name="label" lay-verify="required" lay-search>
+                            <option value="">请选择客户状态</option>
+                            <option value="1">初次接触</option>
+                            <option value="2">潜在客户</option>
+                            <option value="3">意向客户</option>
+                            <option value="4">成交客户</option>
+                            <option value="5">流失客户</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">客户类型</label>
+                    <div class="layui-input-inline">
+                        <select name="label" lay-verify="required" lay-search>
+                            <option value="">请选择客户类型</option>
+                            <option value="1">全部</option>
+                            <option value="2">公司</option>
+                            <option value="3">个人</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">渠道来源</label>
+                    <div class="layui-input-inline">
+                        <select name="label" lay-verify="required" lay-search>
+                            <option value="">请选择渠道来源</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">一键查询</label>
+                <div class="layui-input-inline">
+                    <input type="text" value="" placeholder="请输入客户名称/跟进人/联系人" class="w_seartext" style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <input type="button" value="搜索" class="layui-btn layui-btn-normal"/>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">
+                            <div class="tab-tit l_inptd">
+                                临时客户列表
+                            </div>
+                            <div class="tab-tit-btn">
+                                <a href="临时客户_新增.html"><input type="button" value="新增临时客户"
+                                                              class="layui-btn layui-btn-normal btn table_but_xz"/></a>
+                                <a href="#"><input type="button" value="修改跟进人"
+                                                   class="layui-btn layui-btn-normal btn table_but_xz"
+                                                   data-type="edit_peo"/></a>
+                                <input type="button" value="导入" class="layui-btn layui-btn-warm btn table_but_dr dy"/>
+                            </div>
+                        </div>
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+                            <script type="text/html" id="test-table-toolbar-barDemo">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" href="临时客户_查看.html">查看</a>
+                                <!--<a class="layui-btn layui-btn-xs l_web_but_xg" href="#" lay-event="edit">修改</a>-->
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--合同列表end-->
+    </div>
+
+</div>
+
+
+<!--导入弹窗-->
+<div class="dr"></div>
+<div class="dr-box">
+    <div class="dr-tit">
+        导入
+    </div>
+    <div class="dr-body">
+        <div class="laylists w_scb">
+            <input type="file" class="web_file_1" id="schx">
+            <input type="button" value="选择附件" class="layui-btn web_inp_s ffil layui-btn-normal" id="w_btn">
+        </div>
+
+        <div class="laylists">
+            <a class="web_cor_1 " onclick="layer.msg('下载成功');">
+                <input type="button" value="下载模板" class="layui-btn xzfjw web_inp_s">
+            </a>
+        </div>
+
+        <div class="butorde1">
+            <input type="button" value="上传" class="minbut1 site-demo-active sc" data-type="loading">
+            <input type="button" value="取消" class="minbut2 drqx">
+        </div>
+    </div>
+</div>
+<div class="jdt-box">
+    <div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="demo">
+        <div class="layui-progress-bar layui-bg-bar" lay-percent="0%"></div>
+    </div>
+</div>
+
+
+<!--        弹窗、模板                    -->
+<script type="text/html" id="remind">
+    <div class="w_hosue_open" style="background-color: white;">
+        <div class="w_dwcx layui-form">
+            <div class="layui-col-xs12 l_po">
+                <label class="layui-form-label w_label ">跟进人：</label>
+                <div class="layui-input-block">
+                    <select name="type" lay-verify="required" lay-search>
+                        <option value="">请选择跟进人</option>
+                        <option value="1">张三</option>
+                    </select>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type">
+                <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="component-form-demo1">提交</button>
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+            </div>
+        </div>
+
+    </div>
+</script>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            form = layui.form,
+            table = layui.table;
+
+        table.render('select');
+        //时间选择器
+        lay('.test-laydate-item').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+            });
+        });
+
+        table.render({
+            elem: '#test-table-toolbar'
+            //    ,url: layui.setter.base + 'json/table/demo.js'
+            ,
+            defaultToolbar: false,
+            title: '用户数据表',
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'id', title: '序号'},
+                    {field: 'name', title: '客户名称'},
+                    {field: 'lx', title: '客户类型'},
+                    {field: 'lftime', title: '来访时间'},
+                    {field: 'qdly', title: '渠道来源'},
+                    {field: 'khzt', title: '客户状态'},
+                    {field: 'hylx', title: '行业类型'},
+                    {field: 'per', title: '跟进人'},
+                    {field: 'time', title: '最新跟进时间'},
+                    {fixed: 'right', title: '操作', toolbar: '#test-table-toolbar-barDemo', width: 220}
+                ]
+            ]
+
+            ,
+            data: [{
+                "id": '1',
+                "name": '王美丽',
+                "lx": '公司',
+                "lftime": '2018-03-21',
+                "qdly": '上门',
+                "khzt": '初次接触',
+                "hylx": '技术服务',
+                "per": '张伟',
+                "time": '2018-10-22',
+            }],
+            page: true
+        });
+
+        //监听行工具事件
+        table.on('tool(test-table-toolbar)', function (obj) {
+            var data = obj.data;
+            console.log(data)
+
+            if (obj.event === 'edit') {
+                layer.open({
+                    type: 2,
+                    title: '编辑',
+                    skin: 'opens',
+                    content: '房源合同_新增.html',
+                    area: ['90%', '90%']
+
+                }, function (value, index) {
+
+                });
+            }
+            ;
+            if (obj.event === 'sub') {
+                layer.confirm('是否要提交？', function (index) {
+                    layer.close(index);
+                    layer.msg('提交成功');
+                });
+            }
+            ;
+            if (obj.event === 'del') {
+                layer.confirm('是否要删除？', function (index) {
+                    obj.del();
+                    layer.close(index);
+                    layer.msg('提交成功');
+                });
+            }
+            ;
+
+        });
+
+
+        var $ = layui.$, active = {
+            edit_peo: function () {
+                layer.open({
+                    type: 1,
+                    title: '修改跟进人',
+                    content: $('#remind').html(),
+                    area: ['500px', '60%'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success: function () {
+
+                    }
+                });
+                form.render();
+            },
+
+        };
+        $('.btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        /* 监听提交 */
+        form.on('submit(component-form-demo1)', function (data) {
+            parent.layer.msg('提交成功', {
+                time: 1000
+            });
+            //parent.layer.alert(JSON.stringify(data.field), {
+            //title: '最终的提交信息'
+            //})
+            layer.closeAll(); //关闭弹层
+            return false;
+        });
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            layer.closeAll(); //关闭弹层
+        })
+
+    });
+    //	上传文件回显
+    //	  	$(".w_scb").on("change","input[id='schx']",function(){
+    //          var filecent=$(this).val();
+    //          if(filecent.indexOf("png")!=1 ){
+    //              var arr=filecent.split('\\');
+    //              var fileName=arr[arr.length-1];
+    //              $("#w_btn").val(fileName);
+    //          }else{
+    ////                  $("#w_btn").html("");
+    ////                  return false
+    //          }
+    //      })
+    //导入部分
+    layui.use('element', function () {
+        var $ = layui.jquery
+            , element = layui.element;
+        var active = {
+            loading: function (othis) {
+                var DISABLED = 'layui-btn-disabled';
+                if (othis.hasClass(DISABLED)) return;
+                var n = 0, timer = setInterval(function () {
+                    n = n + Math.random() * 10 | 0;
+                    if (n > 100) {
+                        n = 100;
+                        clearInterval(timer);
+                        othis.removeClass(DISABLED);
+                        $('.dr').hide();
+                        $('.jdt-box').hide();
+                        layer.msg('上传成功', {time: 2000});
+                    }
+                    element.progress('demo', n + '%');
+                }, 300 + Math.random() * 1000);
+                othis.addClass(DISABLED);
+            }
+
+        };
+
+        $('.site-demo-active').on('click', function () {
+            var othis = $(this), type = $(this).data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        });
+
+    });
+
+    $('body').on('click', '.sc', function () {
+        $('.dr-box').hide();
+        $('.jdt-box').show()
+    })
+
+    $('body').on('click', '.dy', function () {
+        $('.dr').show();
+        $('.dr-box').show()
+    })
+
+    $('body').on('click', '.drqx', function () {
+        $('.dr').hide();
+        $('.dr-box').hide()
+    })
+
+    //导入部分end
+</script>
+</body>
+
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}"/>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-form">
+        <div class="layui-col-md12">
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="mytab">
+                        <ul class="ly_tab">
+                            <a th:href="@{'/building/queryBuildingDetail/' + ${buildingId} }">
+                                <li>楼宇信息</li>
+                            </a>
+                            <a th:href="@{'/building/toFloors/' + ${buildingId} }">
+                                <li class="ly_active">楼层信息</li>
+                            </a>
+                            <a th:href="@{'/building/toRooms/' + ${buildingId} }">
+                                <li>房源信息</li>
+                            </a>
+                            <a th:href="@{'/building/toWorkplaces/' + ${buildingId} }">
+                                <li>工位信息</li>
+                            </a>
+                            <a th:href="@{'/building/toCarplaces/' + ${buildingId} }">
+                                <li>车位信息</li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="layui-card tab_boxs l_shadow">
+                        <div class="mytitle">楼层列表</div>
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="clear"></div>
+                                <div class="layui-card">
+                                    <div class="layui-card-body">
+                                        <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                                        <script type="text/html" id="toolbar">
+                                            <a class="layui-btn layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe61f;</i>新增</a>
+                                            <a class="layui-btn layui-btn-warm" lay-event="uplod-batch"><i class="layui-icon">&#xe681;</i>批量上传平面图</a>
+                                        </script>
+                                        <script type="text/html" id="operation">
+                                            <a class="layui-btn layui-btn-xs l_web_but_xg" lay-event="edit">编辑</a>
+                                            <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<!--添加楼层模板-->
+<script type="text/html" id="add-floor-template">
+    <div class="w_addbox layui-form">
+        <div class="layui-row layui-form-item">
+            <div class="l_shadow">
+                <div class="layui-col-md12 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">添加方式：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="type" value="single" title="单层" lay-filter="type-select" checked="">
+                        <input type="radio" name="type" value="multiple" title="多层" lay-filter="type-select">
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs6 l_po single">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="floorNo" name="floorNo" lay-verify="required" oninput="onlyInteger(this)" placeholder="请输入楼层" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs6 l_po multiple" style="display: none;">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
+                    <div class="layui-input-block">
+                        <div style="display: inline-block;">
+                            <input type="text" id="floorNo1" placeholder="起始层" oninput="onlyInteger(this)" autocomplete="off" class="layui-input">
+                        </div>
+                        <div style="display: inline-block;">&nbsp;&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div style="display: inline-block;">
+                            <input type="text" id="floorNo2" placeholder="结束层" oninput="onlyInteger(this)" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12 layui-col-xs6 l_po floorName">
+                    <label class="layui-form-label w_label ">楼层名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="floorName" placeholder="请输入楼层名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs12">
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">平&nbsp;&nbsp;面&nbsp;&nbsp;图：</label>
+                        <div class="layui-input-block">
+                            <div style="cursor: pointer;" class="layui-upload wy_flex_wrap add-floor-img show-img">
+                                <img th:src="@{/img/q_jc_fy_shangchuan.png}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div style="text-align: center;">
+            <input type="button" value="确定" class="layui-btn layui-btn-normal save"/>
+            <input type="button" value="取消" class="layui-btn btn layui-btn-primary close"/>
+        </div>
+    </div>
+</script>
+<!--批量上传模板-->
+<script type="text/html" id="upload-batch-template">
+    <div class="w_addbox layui-form">
+        <div class="layui-row layui-form-item">
+            <div class="l_shadow">
+                <div class="layui-col-md12 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">已选楼层：</label>
+                    <div class="layui-input-block">
+                        <ul class="floor_select"></ul>
+                    </div>
+                </div>
+                <div class="layui-col-xs12">
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">平&nbsp;&nbsp;面&nbsp;&nbsp;图：</label>
+                        <div class="layui-input-block">
+                            <div style="cursor: pointer;" class="layui-upload wy_flex_wrap add-floor-img show-img">
+                                <img th:src="@{/img/q_jc_fy_shangchuan.png}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div style="text-align: center;">
+            <input type="button" value="确定" class="layui-btn layui-btn-normal save-batch"/>
+            <input type="button" value="取消" class="layui-btn btn layui-btn-primary close"/>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script type="text/html" id="floorWin">
+    <div class="w_hosue_open" style="background-color: white;">
+        <form class="w_dwcx layui-form" id="subForm">
+            <div class="layui-col-xs12 l_po">
+                <label class="layui-form-label w_label ">楼层名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" autocomplete="off" id="floorName" name="floorName">
+                    <input type="hidden" id="floorId" name="floorId">
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="clear"></div>
+            <div class="layui-form-item layui-layout-admin">
+                <div class="layui-footer w_type">
+                    <input type="button" class="layui-btn layui-btn-normal" lay-submit lay-filter="confirm" value="确定"/>
+                    <input type="button" class="layui-btn layui-btn-primary close" value="取消"/>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form', 'upload'], function () {
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var upload = layui.upload;
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: false,
+            url: URL + 'floor/queryFloorList',
+            where: {
+                buildingId: [[${buildingId}]]
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{  type: 'checkbox',
+                    fixed: 'left',
+                    title: '选择'
+                }, {
+                    field: 'floorId',
+                    title: '楼层ID',
+                    hide: true
+                }, {
+                    field: 'floorNo',
+                    title: '楼层'
+                }, {
+                    field: 'floorName',
+                    title: '楼层名称'
+                },{
+                    field: 'imgs',
+                    title: '平面图', templet: function (d) {
+                        return d.imgs == null ? '无':'<img style="width:auto;height:35px;cursor:pointer;" class="enlarge" src="' + d.imgs + '" />' ;
+                    },
+                    width: 300
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 200,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        //图片放大
+        $('body').on('click', '.enlarge', function () {
+            var path = $(this)[0].src;
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                skin: 'opens',
+                shadeClose: true,
+                area: ['700px', 'auto'], //宽高
+                content: "<img style='width: 100%;height：100%;' src=" + path + " />"
+            });
+        });
+
+        var imgs = '';
+        var ids = [];
+        table.on('toolbar(dataList)', function (obj) {
+            if (obj.event === 'add') {
+                imgs = ''; // 重置
+                layer.open({
+                    type: 1,
+                    title: '添加楼层',
+                    content: $('#add-floor-template').html(),
+                    maxmin: false,
+                    skin: 'opens',
+                    shadeClose: true,
+                    area: ['600px', '460px']
+                });
+                form.render('radio');
+                $("#floorNo").focus();
+                uploadImg();
+            };
+
+            var nos = [];
+            if (obj.event === 'uplod-batch') {
+                imgs = ''; // 重置
+                ids.splice(0, ids.length); // 重置
+                nos.splice(0, ids.length); // 重置
+                var checkStatus = table.checkStatus(obj.config.id);
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                    layer.msg("请至少选择一个楼层");
+                    return false;
+                }
+                $.each(data, function (i, val) {  //遍历二维数组
+                    ids.push(val.floorId);
+                    nos.push(val.floorNo);
+                });
+                layer.open({
+                    type: 1
+                    ,title: '批量上传'
+                    ,content: $('#upload-batch-template').html()
+                    ,maxmin: false
+                    ,skin: 'opens'
+                    ,shadeClose: true
+                    ,area: ['500px', '460px']
+                });
+                uploadImg();
+                $(".floor_select").empty();
+                $.each(nos, function (i, val) {  //遍历二维数组
+                    $('.floor_select').append('<li>'+ val + '</li>');
+                });
+            }
+        });
+
+        form.on("radio(type-select)", function (data) {
+            var type = data.value;
+            if (type == 'single') { // 单层
+                $(".single").show();
+                $(".multiple").hide();
+                $("#floorNo1").val('');
+                $("#floorNo2").val('');
+                $("#floorNo").focus();
+                $(".floorName").css('display','block');
+            } else if (type == 'multiple') { // 多层
+                $(".multiple").show();
+                $(".single").hide();
+                $("#floorNo").val('');
+                $("#floorNo1").focus();
+                $(".floorName").css('display','none');
+            }
+        });
+
+        var uploadImg = function () {
+            upload.render({
+                elem: '.add-floor-img'
+                , url: URL + 'imgUpload'
+                , done: function (res) {
+                    $(".show-img").html('<img style="width:auto;height:150px;" src="' + res.url + '" />');
+                    imgs = res.url;
+                }
+                , accept: 'images'
+            });
+        };
+
+        $('body').on('click','.save', function(){
+            var type = $("input[name='type']:checked").val();
+            var floorNo = $.trim($("#floorNo").val());
+            var floorName = $.trim($("#floorName").val());
+            var floorNo1 = $.trim($("#floorNo1").val());
+            var floorNo2 = $.trim($("#floorNo2").val());
+            var reg = /^[1-9]\d*$/;
+            if (type == 'single') { // 单层
+                if (floorNo == '') {
+                    layer.msg('楼层不能为空', {offset: '20px'});
+                    return;
+                }
+                if (!reg.test(floorNo)) {
+                    layer.msg('楼层只能是数字', {offset: '20px'});
+                    return;
+                }
+            } else if (type == 'multiple') { // 多层
+                if (floorNo1 == '' || floorNo2 == '') {
+                    layer.msg('楼层不能为空', {offset: '20px'});
+                    return;
+                }
+                if (!reg.test(floorNo1) || !reg.test(floorNo2)) {
+                    layer.msg('楼层只能是数字', {offset: '20px'});
+                    return;
+                }
+                floorNo1 = parseInt(floorNo1);
+                floorNo2 = parseInt(floorNo2);
+                if (floorNo1 >= floorNo2) {
+                    layer.msg('起始楼层不能大于结束楼层数', {offset: '20px'});
+                    return false;
+                }
+            }
+            $.ajax({
+                url: URL + "floor/insertFloor",
+                type:"POST",
+                data: {
+                    type: type,
+                    floorNo: floorNo,
+                    floorNo1: floorNo1,
+                    floorNo2: floorNo2,
+                    floorName: floorName,
+                    imgs:imgs,
+                    buildingId: [[${buildingId}]]
+                },
+                dataType:"json",
+                success:function(data){
+                    if(data.success){
+                        layer.closeAll();
+                        layer.msg(data.msg);
+                        table.reload('dataList');
+                    }else{
+                        layer.msg(data.msg, {offset: '20px'});
+                    }
+                }
+            });
+        });
+
+        $('body').on('click','.save-batch', function(){
+            $.ajax({
+                url: URL + "floor/updateFloorImgBatch",
+                type:"POST",
+                data: {
+                    imgs:imgs,
+                    ids:ids
+                },
+                dataType:"json",
+                success:function(data){
+                    if(data.success){
+                        layer.closeAll();
+                        layer.msg(data.msg);
+                        table.reload('dataList');
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var floorId = data.floorId;
+            var floorName = data.floorName;
+
+            if (obj.event === 'edit') {
+                layer.open({
+                    type: 1,
+                    title: '编辑楼层名称',
+                    content: $('#floorWin').html(),
+                    area: ['400px', '50%'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success: function () {
+                        $("#floorId").val(floorId);
+                        $("#floorName").val(floorName);
+                    }
+                });
+                form.render();
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'floor/deleteFloor',
+                        data: {"floorId": floorId},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                table.reload('dataList');
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        /* 监听提交 */
+        form.on('submit(confirm)', function (d) {
+            $.ajax({
+                url: URL + "floor/updateFloor",
+                type: "POST",
+                data: $("#subForm").serialize(),
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.closeAll(); //关闭弹层
+                        layer.msg(data.msg);
+                        table.reload('dataList');
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        $('body').on('click', '.go-back', function () {
+            location.href = URL + 'building/toBuildingList/1';
+        });
+
+        //取消按钮
+        $('body').on('click', '.close', function () {
+            layer.closeAll();
+        })
+    });
+</script>
+</body>
+</html>

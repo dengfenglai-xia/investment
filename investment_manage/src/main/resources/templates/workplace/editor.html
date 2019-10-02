@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="w_addbox">
+    <form id="form" class="house_page1 layui-form">
+        <!--基本信息-->
+        <div class="layui-row layui-form-item">
+            <div class="mytitle">
+                基本信息
+            </div>
+            <div class="w_addpart l_shadow">
+                <input type="hidden" name="placeId" th:value="${workplace.placeId}" >
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>项目名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${workplace.projectName}" autocomplete="off" class="layui-input layui-disabled" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼宇名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${workplace.buildingName}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${workplace.floorNo}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>房&nbsp;&nbsp;间&nbsp;&nbsp;号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${workplace.roomNo}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label "><b class="w_sur">*</b>工&nbsp;&nbsp;位&nbsp;&nbsp;号：</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${workplace.placeNo}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">是否对外招租：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="whetherOpen" value="1" title="是" th:checked="${#strings.equals(workplace.whetherOpen, '1')}">
+                        <input type="radio" name="whetherOpen" value="2" title="否" th:checked="${#strings.equals(workplace.whetherOpen, '2')}">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label l_hg">租金底价&nbsp;&nbsp;<br/>（元/月）：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="bottomPrice" th:value="${workplace.bottomPrice}"  placeholder="请输入租金底价" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label">备注：</label>
+                    <div class="layui-input-block">
+                        <textarea name="remarks" th:text="${workplace.remarks}" class="w_tzteaxer" placeholder="请输入备注信息" autocomplete="off"></textarea>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--基本信息end-->
+        <div class="w_del_btnbox">
+            <input type="button" value="保存" class="layui-btn layui-btn-normal" lay-submit lay-filter="commit"/>
+            <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+        </div>
+    </form>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        form.on('submit(commit)', function () {
+            var formData = $("#form").serializeObject();
+            $.ajax({
+                url: URL + "workplace/updateWorkplace",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function(){
+                            parent.table.reload('dataList');
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    });
+</script>
+</body>
+
+</html>

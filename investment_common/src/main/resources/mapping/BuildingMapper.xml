@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.BuildingMapper">
+
+    <sql id="Base_Column_List">
+		b.building_id,
+		b.building_name,
+		b.project_id,
+		b.project_name,
+		b.contacts,
+		b.owner,
+		b.phone,
+		b.cover_area,
+		b.build_area,
+		b.purpose,
+		b.build_time,
+		b.year_num,
+		b.up_num,
+		b.down_num,
+		b.height,
+		b.floor_height,
+		b.room_rate,
+		b.parking_num,
+		b.elevator_num,
+		b.developers,
+		b.imgs,
+		b.company_code,
+		b.create_user_id,
+		b.create_time,
+		b.update_user_id,
+		b.update_time,
+		b.remarks,
+		b.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+        left join room r on b.building_id = r.build_area
+        left join workplace w on b.building_id = w.building_id
+    </sql>
+
+    <select id="queryBuildingList" resultType="building">
+        select
+            b.building_id,
+            b.building_name,
+            b.project_id,
+            b.project_name
+        from building b
+        where b.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and b.company_code = #{companyCode}
+        </if>
+        <if test="keyword != null and keyword != '' ">
+            and (
+            b.project_name like concat('%',#{keyword},'%')
+            or
+            b.building_name like concat('%',#{keyword},'%')
+            )
+        </if>
+    </select>
+
+    <select id="queryBuildingBaseList" resultType="building">
+        select
+        project_id,
+        project_name,
+        building_id,
+        building_name
+        from building
+        where del_flag = '0'
+        <if test="projectId != null">
+            and project_id = #{projectId}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and company_code = #{companyCode}
+        </if>
+    </select>
+
+    <select id="queryBuildingCount" resultType="int">
+        select
+        ifnull(count(*),0) num
+        from building b
+        where b.del_flag = '0'
+        <if test="companyCode != null and companyCode != '' ">
+            and b.company_code = #{companyCode}
+        </if>
+        <if test="projectId != null ">
+            and b.project_id = #{projectId}
+        </if>
+    </select>
+
+    <select id="queryBuildingDetailByPrimarykey" resultType="building">
+        select
+        <include refid="Base_Column_List"/>
+        from building b
+        where b.building_id = #{buildingId}
+    </select>
+
+    <select id="queryBuildingDetail" resultType="building">
+        select
+        <include refid="Base_Column_List"/>
+        from building b
+        where b.del_flag = '0'
+        <if test="buildingId != null ">
+            and b.building_id = #{buildingId}
+        </if>
+        <if test="buildingName != null and buildingName != '' ">
+            and b.building_name = #{buildingName}
+        </if>
+        <if test="companyCode != null and companyCode != '' ">
+            and b.company_code = #{companyCode}
+        </if>
+    </select>
+
+    <insert id="insertBuilding" useGeneratedKeys="true" keyProperty="buildingId" keyColumn="building_id">
+        insert into building
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="buildingId != null ">
+                building_id,
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts,
+            </if>
+            <if test="owner != null and owner != '' ">
+                owner,
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone,
+            </if>
+            <if test="coverArea != null ">
+                cover_area,
+            </if>
+            <if test="buildArea != null ">
+                build_area,
+            </if>
+            <if test="purpose != null and purpose != '' ">
+                purpose,
+            </if>
+            <if test="buildTime != null and buildTime != '' ">
+                build_time,
+            </if>
+            <if test="yearNum != null ">
+                year_num,
+            </if>
+            <if test="upNum != null ">
+                up_num,
+            </if>
+            <if test="downNum != null ">
+                down_num,
+            </if>
+            <if test="height != null ">
+                height,
+            </if>
+            <if test="floorHeight != null ">
+                floor_height,
+            </if>
+            <if test="roomRate != null ">
+                room_rate,
+            </if>
+            <if test="parkingNum != null ">
+                parking_num,
+            </if>
+            <if test="elevatorNum != null ">
+                elevator_num,
+            </if>
+            <if test="developers != null and developers != '' ">
+                developers,
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs,
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                company_code,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="buildingId != null ">
+                #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                #{contacts},
+            </if>
+            <if test="owner != null and owner != '' ">
+                #{owner},
+            </if>
+            <if test="phone != null and phone != '' ">
+                #{phone},
+            </if>
+            <if test="coverArea != null ">
+                #{coverArea},
+            </if>
+            <if test="buildArea != null ">
+                #{buildArea},
+            </if>
+            <if test="purpose != null and purpose != '' ">
+                #{purpose},
+            </if>
+            <if test="buildTime != null and buildTime != '' ">
+                #{buildTime},
+            </if>
+            <if test="yearNum != null ">
+                #{yearNum},
+            </if>
+            <if test="upNum != null ">
+                #{upNum},
+            </if>
+            <if test="downNum != null ">
+                #{downNum},
+            </if>
+            <if test="height != null ">
+                #{height},
+            </if>
+            <if test="floorHeight != null ">
+                #{floorHeight},
+            </if>
+            <if test="roomRate != null ">
+                #{roomRate},
+            </if>
+            <if test="parkingNum != null ">
+                #{parkingNum},
+            </if>
+            <if test="elevatorNum != null ">
+                #{elevatorNum},
+            </if>
+            <if test="developers != null and developers != '' ">
+                #{developers},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                #{imgs},
+            </if>
+            <if test="companyCode != null and companyCode != '' ">
+                #{companyCode},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBuilding">
+        update building
+        <set>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name = #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                project_id = #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name = #{projectName},
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                contacts = #{contacts},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="coverArea != null ">
+                cover_area = #{coverArea},
+            </if>
+            <if test="buildArea != null ">
+                build_area = #{buildArea},
+            </if>
+            <if test="purpose != null and purpose != '' ">
+                purpose = #{purpose},
+            </if>
+            <if test="buildTime != null and buildTime != '' ">
+                build_time = #{buildTime},
+            </if>
+            <if test="yearNum != null ">
+                year_num = #{yearNum},
+            </if>
+            <if test="upNum != null ">
+                up_num = #{upNum},
+            </if>
+            <if test="downNum != null ">
+                down_num = #{downNum},
+            </if>
+            <if test="height != null ">
+                height = #{height},
+            </if>
+            <if test="floorHeight != null ">
+                floor_height = #{floorHeight},
+            </if>
+            <if test="roomRate != null ">
+                room_rate = #{roomRate},
+            </if>
+            <if test="parkingNum != null ">
+                parking_num = #{parkingNum},
+            </if>
+            <if test="elevatorNum != null ">
+                elevator_num = #{elevatorNum},
+            </if>
+            <if test="developers != null and developers != '' ">
+                developers = #{developers},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs = #{imgs},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        building_id = #{buildingId}
+    </update>
+
+    <delete id="deleteBuildingByPrimarykey">
+		delete
+		from
+			building
+		where
+			building_id = #{buildingId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">审核状态： </label>
+                    <div class="layui-input-inline layui-form sear_rad">
+                        <input type="radio" name="state" value="1" title="待审核" lay-filter="auditState-select" checked>
+                        <input type="radio" name="state" value="2" title="通过" lay-filter="auditState-select" >
+                        <input type="radio" name="state" value="3" title="驳回" lay-filter="auditState-select" >
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">审核列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                <!--{{#  if(d.auditState === '1' ){ }}
+                                <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="audit">审核</a>
+                                {{#  } }}-->
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script type="text/html" id="sign">
+    {{#  if(d.sign === 'new' ){ }}
+    新建合同
+    {{#  } else if(d.sign === 'change'){ }}
+    变更合同
+    {{#  } else if(d.sign === 'return'){ }}
+    退租合同
+    {{#  } else if(d.sign === 'renew'){ }}
+    续租合同
+    {{#  } }}
+</script>
+<script type="text/html" id="auditState">
+    {{#  if(d.auditState === '1' ){ }}
+    <span style="color: #1E9FFF">待审核</span>
+    {{#  } else if(d.auditState === '2'){ }}
+    <span style="color: #1E9300">通过</span>
+    {{#  } else if(d.auditState === '3'){ }}
+    <span style="color: #FD482C">驳回</span>
+    {{#  } }}
+</script>
+<script type="text/html" id="audit_open">
+    <div class="layui-form" >
+        <div class="layui-row ">
+            <div class="layui-col-md12 l_po">
+                <input type="radio" name="auditState" th:value="2" title="同意" checked="">
+                <input type="radio" name="auditState" th:value="3" title="驳回">
+            </div>
+            <div class="layui-col-md12 l_po">
+                <textarea  placeholder="请输入审核意见" id="auditOpinion" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type" style="left: 0;">
+                <button class="layui-btn layui-btn-normal audit">确认</button>
+                <button type="button" class="layui-btn layui-btn-primary cancel" >取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    var table = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: false,
+            url: URL + 'queryAuditOperList',
+            where: {
+                auditState: $("input[name='state']:checked").val()
+            },
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    unresize: true,
+                    fixed: 'left',
+                    templet: '#orderNum',
+                    width: 60
+                }, {
+                    field: 'id',
+                    title: 'ID',
+                    hide: true
+                }, {
+                    field: 'sort',
+                    title: '顺序',
+                    hide: true
+                }, {
+                    field: 'sign',
+                    title: '合同类型',
+                    templet: '#sign'
+                }, {
+                    field: 'customerName',
+                    title: '客户'
+                },{
+                    field: 'code',
+                    title: '合同编号'
+                }, {
+                    field: 'version',
+                    title: '版本',
+                    hide:true
+                },{
+                    field: 'submitter',
+                    title: '提交人'
+                }, {
+                    field: 'subtime',
+                    title: '提交时间',templet:function(d){
+                        return formatDate(d.subtime,'yyyy-MM-dd HH:mm');
+                    }
+                }, {
+                    field: 'auditState',
+                    title: '审核状态',
+                    templet: '#auditState'
+                }, {
+                    field: 'auditDate',
+                    title: '审核时间',templet:function(d){
+                        return  d.auditDate == ''? "- -":d.auditDate;
+                    }
+                },{
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#operation',
+                    width:200
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('radio(auditState-select)', function(data){
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    auditState: val
+                }
+            });
+        });
+
+        var id = '';
+        var sign = '';
+        var sort = '';
+        var code ='';
+        var version ='';
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            id = data.id;
+            sign = data.sign;
+            sort = data.sort;
+            code = data.code;
+            version = data.version;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>合同详情</b>',
+                    content: URL + 'queryAuditContractDetail?code=' + code + '&version=' + version+ '&id=' + id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if(obj.event === 'audit'){
+                layer.open({
+                    type: 1
+                    ,title: '审核'
+                    ,content: $('#audit_open').html()
+                    ,maxmin: false
+                    ,area: ['420px', '280px']
+                });
+                form.render();
+            }
+        });
+
+        $('body').on('click','.audit', function(){
+            var auditState = $('input[name="auditState"]:checked').val();
+            var auditOpinion = $.trim($("#auditOpinion").val());
+            if (auditState == '3' && auditOpinion == '') {
+                layer.msg("请填写审核意见");
+                return;
+            }
+            $.ajax({
+                url: URL + "updateAuditOper",
+                type:"POST",
+                data: {
+                    id: id,
+                    sign:sign,
+                    sort:sort,
+                    code:code,
+                    version:version,
+                    auditState: auditState,
+                    auditOpinion: auditOpinion
+                },
+                dataType:"json",
+                success:function(data){
+                    if(data.success){
+                        layer.closeAll();
+                        layer.msg(data.msg);
+                        if(auditState == '2'){
+                            $("input[name='state']:eq(1)").attr("checked",'checked');
+                        }
+                        if(auditState == '3'){
+                            $("input[name='state']:eq(2)").attr("checked",'checked');
+                        }
+                        form.render();
+                        table.reload('dataList', {
+                            where: {
+                                auditState: $("input[name='state']:checked").val()
+                            }
+                        });
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            layer.closeAll(); //关闭弹层
+        })
+
+    });
+</script>
+</body>
+
+</html>

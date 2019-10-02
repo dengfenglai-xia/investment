@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head"></head>
+<body>
+<div class="">
+    <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
+        <div class="clear"></div>
+        <!--搜索-->
+        <div class="searchbox l_shadow" style="margin-bottom: 0;">
+            <div class="w_searlist">
+                <div class="layui-form">
+                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">部门</label>
+                    <div class="layui-input-inline">
+                        <select id="deptId" lay-filter="dept-select" lay-search>
+                            <option value="">请选择部门</option>
+                            <option th:each="obj:${deptList}"  th:value="${obj.deptId}" th:text="${obj.deptName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="w_searlist">
+                <label class="layui-form-label layui-form-label-left " style="text-align: left;">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="keyword" placeholder="请输入员工姓名/手机号" autocomplete="off" class="w_seartext" style="width: 260px;">
+                </div>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal search"><i class="layui-icon">&#xe615;</i>查询</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal reset"><i class="layui-icon">&#xe669;</i>重置</a>
+            </div>
+            <div class="w_searlist">
+                <a class="layui-btn layui-btn-normal add"><i class="layui-icon">&#xe61f;</i>新增</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="tab_boxs l_shadow">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="clear"></div>
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <table class="layui-hide" id="dataList" lay-filter="dataList"></table>
+                            <script type="text/html" id="toolbar">
+                                <div class="tab-tit l_inptd">员工列表</div>
+                            </script>
+                            <script type="text/html" id="operation">
+                                <a class="layui-btn layui-btn-xs l_web_but_ck" lay-event="show">查看</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="editor">编辑</a>
+                                <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="common/common-js::js"></script>
+<script type="text/html" id="orderNum">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script>
+    var table = '';
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        table.render({
+            elem: '#dataList',
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter'],
+            url: URL + 'queryUserList',
+            request: {
+                pageName: 'pageNum',
+                limitName: 'pageSize'
+            },
+            cols: [
+                [{
+                    field: 'orderNum',
+                    title: '序号',
+                    fixed: 'left',
+                    unresize: true,
+                    templet: '#orderNum',
+                    width: 60
+                },{
+                    field: 'userCode',
+                    title: '员工编号'
+                }, {
+                    field: 'realName',
+                    title: '员工姓名'
+                },{
+                    field: 'phone',
+                    title: '手机号'
+                },  {
+                    field: 'deptName',
+                    title: '所在部门'
+                },{
+                    field: 'jobName',
+                    title: '职务'
+                }, {
+                    field: 'roleName',
+                    title: '角色'
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    width: 200,
+                    toolbar: '#operation'
+                }]
+            ],
+            parseData: function (res) {
+                return {
+                    "code": 0,
+                    "msg": "查询成功",
+                    "count": res.data.total,
+                    "data": res.data.list
+                };
+            },
+            page: true
+        });
+
+        form.on('select(dept-select)', function(data){
+            var val = data.value;
+            table.reload('dataList', {
+                where: {
+                    keyword: $.trim($("#keyword").val()),
+                    deptId: val
+                }
+            });
+        });
+
+        $('.search').on('click', function () {
+            table.reload('dataList', {
+                where: {
+                    keyword: $.trim($("#keyword").val()),
+                    deptId: $("#deptId option:selected").val()
+                }
+            });
+        });
+
+        $('.reset').on('click', function () {
+            $('#keyword').val('');
+            $('#deptId').val('');
+            form.render();
+            $(".search").click();
+        });
+
+        $('.add').on('click', function () {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>新增员工</b>',
+                content: URL + 'toAddUser',
+                area: ['100%', '100%']
+            });
+        });
+
+        //监听行工具事件
+        table.on('tool(dataList)', function (obj) {
+            var data = obj.data;
+            var id = data.userId;
+            if (obj.event === 'show') {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>员工详情</b>',
+                    content: URL + 'queryUserDetail/' + id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'editor') {
+                layer.open({
+                    type: 2,
+                    maxmin:true,
+                    title: '<b>编辑</b>',
+                    content: URL+'toEditorUser/'+id,
+                    area: ['100%', '100%']
+                });
+            };
+
+            if (obj.event === 'del') {
+                layer.confirm('请确定是否删除？', function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: URL + 'deleteUser',
+                        data: {"userId": id},
+                        dataType: 'json',
+                        traditional: true,
+                        success: function (data) {
+                            if (data.success) {
+                                layer.msg(data.msg);
+                                setTimeout(function () {
+                                    table.reload('dataList');
+                                }, 1000);
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

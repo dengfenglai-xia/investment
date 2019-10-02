@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}"  media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <script th:replace="common/common-js::js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/jquery-ztree/3.5.12/css/zTreeStyle/zTreeStyle.min.css}" />
+    <script th:src="@{/jquery-ztree/3.5.12/js/jquery.ztree.all-3.5.min.js}" type="text/javascript"></script>
+    <script th:inline="javascript">
+        $(function(){
+            var setting = {check:{enable:true,nocheckInherit:true},view:{selectedMulti:false},
+                data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
+                        tree.checkNode(node, !node.checked, true, true);
+                        return false;
+                    }}};
+            // 用户-菜单
+            var zNodes= eval("(" + [[${zNodes }]] + ")");
+            debugger;
+            // 初始化树结构
+            var tree = $.fn.zTree.init($("#menuTree"), setting, zNodes);
+            // 不选择父节点
+            tree.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+            // 默认选择节点
+            var ids = [[${ids }]].split(",");
+            for(var i=0; i<ids.length; i++) {
+                var node = tree.getNodeByParam("id", ids[i]);
+                try{tree.checkNode(node, true, false);}catch(e){}
+            }
+            // 默认展开全部节点
+            tree.expandAll(true);
+
+            /* 保存角色权限 */
+            $("#addSave").click(function(){
+                var ids = [], nodes = tree.getCheckedNodes(true);
+                for(var i=0; i<nodes.length; i++) {
+                    ids.push(nodes[i].id);
+                }
+                if(!isEmpty(ids,'权限')) return;
+                $("#addSave").attr("disabled","disabled");
+                $.ajax({
+                    url: URL+'saveRolePermission',
+                    type: 'POST',
+                    data: {
+                        roleId:[[${roleId}]],
+                        ids:JSON.stringify(ids)
+                    },
+                    async: false,
+                    dataType : "json",
+                    success: function (data) {
+                        if(data.success){
+                            layer.msg(data.msg,{icon:6});
+                            setTimeout(function(){
+                                parent.location.href = URL + 'toRoleList';
+                                parent.layer.closeAll(); //关闭弹层
+                            }, 1000);
+                        }else{
+                            layer.msg(data.msg,{icon:5});
+                            $("#addSave").removeAttr("disabled"); 	;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <style type="text/css">
+        .gray{color:#ddd;}
+        .x-body{
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="x-body">
+    <blockquote class="layui-elem-quote">角色授权</blockquote>
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            角色名称：
+        </label>
+        <div class="layui-input-inline" style="padding-top:10px;">
+            <span style="color:blue;" th:text="${roleName }"></span>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            授权列表：
+        </label>
+        <div class="layui-input-inline">
+            <div id="menuTree" class="ztree"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">
+        </label>
+        <input type="button" id="addSave" class="layui-btn" value="保存">
+    </div>
+</div>
+</body>
+</html>

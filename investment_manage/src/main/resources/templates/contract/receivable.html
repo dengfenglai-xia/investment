@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<form id="form" class="w_zddel  layui-form">
+    <div class="layui-row layui-form-item">
+        <div class="w_zdbox">
+            <div class="zd_hed">
+                <span>收款计划</span>
+                <div class="zd_btnbox">
+                    <!--<a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>-->
+                    <a class="layui-btn layui-btn-primary round"><i class="layui-icon">&#xe65e;</i>四舍五入</a>
+                    <a class="layui-btn layui-btn-primary edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+                </div>
+                <div class="zd_btnbox2">
+                    <a class="layui-btn layui-btn-primary complete"><i class="layui-icon">&#x1005;</i>完成</a>
+                </div>
+            </div>
+            <div class="zd_cont">
+                <div class="zd_part" th:each="obj:${planSumList}">
+                    <div class="information">
+                        <div class="layui-col-sm4 w_bor">
+                            <div class="information_list_zd text_center">应收款时间：</div>
+                            <div class="information_list_zd ">
+                                <input type="text" name="time"
+                                       class="layui-input pad_size w_borno text_center date-select"
+                                       th:value="${obj.receivableDate}" readonly>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm4 w_bor">
+                            <div class="information_list_zd text_center">应收款总金额（元）：</div>
+                            <div class="information_list_zd text_center">
+                                <span th:class="'w_fs_20 w_fc_2 costAmtSum totalAmt'+${objStat.index}"
+                                      th:text="${obj.costAmtSum}"></span>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm4 w_bor">
+                            <div class="information_list_zd text_center">账单编号：</div>
+                            <div class="information_list_zd text_center">
+                                <span class="w_fs_20" th:text="${obj.billCode}"></span></div>
+                        </div>
+                    </div>
+
+                    <ul class="cost_tit">
+                        <li>费用名称</li>
+                        <li>费用区间</li>
+                        <li>收款金额（元）</li>
+                    </ul>
+                    <div class="cost_list" th:each="item:${obj.planList}">
+                        <ul class="zd_list">
+                            <li style="display: none" th:text="${item.id}"></li>
+                            <li style="display: none" th:text="${obj.billCode}"></li>
+                            <li class="w_fc_2" th:text="${item.costName}"></li>
+                            <li th:text="${item.startDate} + ' ~ ' + ${item.endDate}"></li>
+                            <li><input name="costAmt" type="text" oninput="onlyNumber(this)" autocomplete="off"
+                                       lay-verify="required|number" th:id="${item.id}" th:value="${item.costAmt}"
+                                       th:class="'layui-input text_center w_borno info changeAmt costAmt'+${objStat.index}"
+                                       th:index="${objStat.index}" readonly></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-layout-admin">
+        <div class="layui-input-block">
+            <div class="layui-footer w_btn_foot" style="left: 0;">
+                <input type="button" value="保存" lay-submit lay-filter="commit" class="layui-btn btn layui-btn-normal"/>
+                <input type="button" value="提交" lay-submit lay-filter="commit" class="layui-btn btn layui-btn-warm"/>
+                <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"/>
+            </div>
+        </div>
+    </div>
+</form>
+<script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'form', 'upload', 'laydate'], function () {
+        var form = layui.form,
+            upload = layui.upload,
+            laydate = layui.laydate;
+
+        /* 监听提交 */
+        form.on('submit(commit)', function (data) {
+            if (!$('.zd_cont .layui-input').hasClass("w_borno")) {
+                layer.msg("请点击完成");
+                return false;
+            }
+            // var times = $("input[name='time']");
+            var formData = $("#form").serializeObject();
+            var i = 0;
+            $(".cost_list ul").each(function () {
+                formData['planList[' + i + '].id'] = $(this).find('li').eq(0).text();
+                formData['planList[' + i + '].billCode'] = $(this).find('li').eq(1).text();
+                // formData['planList[' + i + '].receivableDate'] = times.eq(i).val();
+                formData['planList[' + i + '].costAmt'] = $(this).find('li').eq(4).children("input:first").val();
+                i++;
+            });
+            var value = $(data.elem).attr('value');
+            if (value == '保存') {
+                formData['operFlag'] = '1';
+            } else {
+                formData['operFlag'] = '2';
+            }
+            formData['contractCode'] = '[[${contractCode}]]';
+            formData['version'] = [[${version}]];
+            formData['operType'] = '[[${operType}]]';
+            formData['sameCode'] = '[[${sameCode}]]';
+            $.ajax({
+                url: URL + "updateReceiptBatch",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        layer.msg(data.msg);
+                        setTimeout(function () {
+                            // parent.table.reload('dataList');
+                            // parent.layer.closeAll();
+                            parent.location.reload()
+                        }, 1000);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+        $(document).on('input', '.changeAmt', function () {
+            var index = $(this).attr("index");
+            var totalAmt = 0;
+            $(".costAmt" + index).each(function (index, el) {
+                totalAmt += Number(el.value);
+            });
+            $(".totalAmt" + index).text(totalAmt.toFixed(2));
+        });
+
+        $('body').on('click', '.round', function () {
+            var number = 0;
+            var sumNumber = 0;
+            $("input[name='costAmt']").each(function () {
+                number = Math.round(Number($(this).val()));
+                $(this).val(number)
+            })
+
+            $(".costAmtSum").each(function (index, el) {
+                sumNumber += Math.round(Number(el.innerText));
+                $(this).text(sumNumber)
+            });
+
+        })
+
+        $('body').on('click', '.reset', function () {
+            location.reload();
+        })
+
+        $('body').on('click', '.edit', function () {
+            $('.zd_cont .layui-input').removeClass("w_borno");
+            $('.zd_cont .layui-input').removeAttr("readonly");
+            $('.date-select').addClass("laydate-control");
+            $('.zd_btnbox').hide();
+            $('.zd_btnbox2').show();
+            w_date();
+        })
+
+        $('body').on('click', '.complete', function () {
+            $('.zd_cont .layui-input').addClass("w_borno");
+            $('.zd_cont .layui-input').attr("readonly", "readonly");
+            $('.date-select').removeClass("laydate-control");
+            $('.zd_btnbox').show();
+            $('.zd_btnbox2').hide();
+            w_date();
+        })
+
+        var w_date = function () {
+            lay('.laydate-control').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                });
+            });
+        }
+
+        //取消按钮
+        $('.cancel').on('click', function () {
+            $.ajax({
+                url: URL + "deleteContractReceiptPlan",
+                type: "POST",
+                data: {
+                    contractCode: '[[${contractCode}]]',
+                    version: [[${version}]]
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        })
+    });
+</script>
+</body>
+
+</html>

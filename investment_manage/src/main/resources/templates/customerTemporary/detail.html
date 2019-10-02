@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-form">
+        <div class="layui-col-md12">
+            <div class="w_delcont">
+                <div class="w_dellist">
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">基本信息</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">客户类型：</span>
+                                <span class="htcont"
+                                      th:text="${customerTemporary.customerType eq '1'}?'公司':'个人'"></span>
+                            </div>
+                            <div class="layui-col-xs3" th:if="${customerTemporary.customerType eq '1'}">
+                                <span class="htstyle">公司名称：</span>
+                                <span class="htcont" th:text="${customerTemporary.customerName}"></span>
+                            </div>
+                            <div class="layui-col-xs3" th:if="${customerTemporary.customerType eq '2'}">
+                                <span class="htstyle">客户姓名：</span>
+                                <span class="htcont" th:text="${customerTemporary.customerName}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">客户状态：</span>
+                                <span class="htcont" th:text="${customerStateMap[customerTemporary.state]}"></span>
+                            </div>
+                            <div class="layui-col-xs3" th:if="${customerTemporary.customerType eq '1'}">
+                                <span class="htstyle">联系人：</span>
+                                <span class="htcont" th:text="${customerTemporary.contacts}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">联系电话：</span>
+                                <span class="htcont" th:text="${customerTemporary.phone}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">行业类型：</span>
+                                <span class="htcont" th:text="${customerTemporary.industry}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">首次接洽时间：</span>
+                                <span class="htcont" th:text="${customerTemporary.firstMeetTime}"></span>
+                            </div>
+                            <div class="layui-col-xs6">
+                                <span class="htstyle">通讯地址：</span>
+                                <span class="htcont" th:text="${customerTemporary.linkAddress}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">渠道来源：</span>
+                                <span class="htcont" th:text="${customerTemporary.channelSource}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">渠道名称：</span>
+                                <span class="htcont" th:text="${customerTemporary.sourceName}"></span>
+                            </div>
+                            <div class="layui-col-xs12">
+                                <span class="htstyle">备注：</span>
+                                <span class="htcont" th:text="${customerTemporary.remarks}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">需求信息</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs3" style="width: 500px;">
+                                <span class="htstyle">需求时间：</span>
+                                <span class="htcont" th:if="${not #strings.isEmpty(customerTemporary.demandStartTime)}"
+                                      th:text="${customerTemporary.demandStartTime} + ' ~ ' + ${customerTemporary.demandEndTime}"></span>
+                            </div>
+                            <div class="layui-col-xs12"
+                                 th:if="${customerTemporary.customerTemporaryRoomList.size() > 0}">
+                                <span class="htstyle">意向房源：</span>
+                                <table class="layui-table">
+                                    <thead>
+                                    <tr>
+                                        <th>项目</th>
+                                        <th>楼宇</th>
+                                        <th>楼层</th>
+                                        <th>房间号</th>
+                                        <th>面积（㎡）</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:if="${not #strings.isEmpty(customerTemporary.demandStartTime)}"
+                                        th:each="customerTemporaryRoom:${customerTemporary.customerTemporaryRoomList}">
+                                        <td th:text="${customerTemporaryRoom.projectName}"></td>
+                                        <td th:text="${customerTemporaryRoom.buildingName}"></td>
+                                        <td th:text="${customerTemporaryRoom.floorNo}"></td>
+                                        <td th:text="${customerTemporaryRoom.roomNo}"></td>
+                                        <td th:text="${customerTemporaryRoom.buildArea}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">需求面积（㎡）：</span>
+                                <span class="htcont"
+                                      th:text="${customerTemporary.demandAreaMin} + ' ~ ' + ${customerTemporary.demandAreaMax}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">需求工位（个）：</span>
+                                <span class="htcont"
+                                      th:text="${customerTemporary.demandStationMin} + ' ~ ' + ${customerTemporary.demandStationMax}"></span>
+                            </div>
+                            <div class="layui-col-xs3">
+                                <span class="htstyle">需求车位（个）：</span>
+                                <span class="htcont"
+                                      th:text="${customerTemporary.demandParkMin} + ' ~ ' + ${customerTemporary.demandParkMax}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">
+                            跟进记录
+                            <input type="button" value="新增记录" class="w_record btn" data-type="remind"/>
+                        </div>
+                        <div class="w_part" id="followHistory">
+                        </div>
+                    </div>
+                    <div class="layui-card l_shadow">
+                        <div class="mytitle">相关文件</div>
+                        <div class="w_part">
+                            <div class="layui-col-xs12">
+                                <div class="layui-upload">
+                                    <div class="layui-upload-list">
+                                        <table class="layui-table">
+                                            <thead>
+                                            <tr>
+                                                <th>文件名称</th>
+                                                <th>大小</th>
+                                                <th>上传人</th>
+                                                <th>上传时间</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="fileList" >
+                                            <tr th:if="${#lists.size(docsList)==0}" class="ant"><td colspan="6">暂无相关文件</td></tr>
+                                            <tr th:if="${#lists.size(docsList)>0}" th:each="obj:${docsList}">
+                                                <td th:text="${obj.docOriginalName}"></td>
+                                                <td th:text="${obj.docSize} + ' KB'"></td>
+                                                <td th:text="${obj.uploader}"></td>
+                                                <td th:text="${#dates.format(obj.createTime, 'yyyy-MM-dd')}"></td>
+                                                <td><span style="color: #5FB878;">已上传</span></td>
+                                                <td>
+                                                    <button th:fileName="${obj.docOriginalName}" th:filePath="${obj.docPath}" class="layui-btn l_web_but_tj file-down">下载</button>
+                                                    <button th:fileId="${obj.docId}" class="layui-btn l_web_but_sc layui-btn-danger file-delete">删除</button>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <a id="fileUpload" class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe621;</i>选择文件</a>
+                                    <a id="uploadAction" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe681;</i>上传</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w_del_btnbox">
+                        <input type="button" value="编辑" class="layui-btn layui-btn-primary editor">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 弹窗、模板  -->
+<script type="text/html" id="remind">
+    <form id="subForm">
+        <div class="w_hosue_open">
+            <div class="w_dwcx layui-form">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">跟进时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="followTime" autocomplete="off" class="layui-input l_time test-laydate-item"
+                               placeholder="请选择跟进时间">
+                    </div>
+                </div>
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label ">跟进方式：</label>
+                    <div class="layui-input-block">
+                        <select name="followWay" lay-verify="required" lay-search>
+                            <option value="">请选择跟进方式</option>
+                            <option th:each="obj:${typeList}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" name="temporaryId" th:value="${customerTemporary.temporaryId}">
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">跟进记录：</label>
+                    <div class="layui-input-block">
+                        <textarea class="w_tzteaxer" name="followContent" autocomplete="off" placeholder="请输入跟进记录"></textarea>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+
+            <div class="layui-form-item layui-layout-admin">
+                <div class="layui-footer w_type">
+                    <input type="button" value="提交" class="layui-btn layui-btn-normal" lay-submit=""
+                           lay-filter="component-form-demo1">
+                    <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"></input>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<!--跟进提醒-->
+<script type="text/html" id="noticeTemp">
+    <form id="noticeForm">
+        <div class="w_hosue_open">
+            <div class="w_dwcx layui-form">
+                <div class="layui-col-md4 layui-col-xs6 l_po">
+                    <label class="layui-form-label w_label">计划时间：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="followPlanTime" class="layui-input l_time test-laydate-item"
+                               placeholder="请选择计划时间">
+                    </div>
+                </div>
+                <input type="hidden" name="temporaryId" th:value="${customerTemporary.temporaryId}">
+                <div class="layui-col-xs12 l_po">
+                    <label class="layui-form-label w_label ">提醒内容：</label>
+                    <div class="layui-input-block">
+                        <textarea class="w_tzteaxer" name="noticeContent" placeholder="请输入提醒内容"></textarea>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+
+            <div class="layui-form-item layui-layout-admin">
+                <div class="layui-footer w_type">
+                    <input type="button" value="提交" class="layui-btn layui-btn-normal" lay-submit=""
+                           lay-filter="notice"></input>
+                    <input type="button" value="取消" class="layui-btn layui-btn-primary cancel"></input>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<!--跟进历史-->
+<script type="text/html" id="followHistoryTemp">
+    <ul class="layui-timeline">
+        {{if followHistoryList.length>0}}
+        {{each followHistoryList as obj index}}
+        <li class="layui-timeline-item">
+            <i class="layui-icon layui-timeline-axis"></i>
+            <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title">{{obj.followTime}}&nbsp;&nbsp;&nbsp;<span style="color: #01a1eb;font-size: 15px;">{{obj.followWay}}</span></h3>
+                <p>
+                    <span class="timelin_text">{{obj.followContent}}</span>
+                </p>
+            </div>
+        </li>
+        {{/each}}
+        {{else}}
+        <li style="text-align: center">暂无记录</li>
+        {{/if}}
+    </ul>
+</script>
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script th:inline="javascript">
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'upload', 'form'], function () {
+        var laydate = layui.laydate;
+        var admin = layui.admin,
+            upload = layui.upload,
+            form = layui.form,
+            table = layui.table;
+        table.render('select');
+        //时间选择器
+        var w_date = function () {
+            lay('.test-laydate-item').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                });
+            });
+        }
+
+        //跟进记录
+        queryFollowHistoryList();
+        var active = {
+            remind: function () {
+                layer.open({
+                    type: 1,
+                    title: '新增记录',
+                    content: $('#remind').html(),
+                    area: ['90%', '90%'],
+                    skin: 'opens',
+                    maxmin: false
+                });
+                form.render();
+                w_date();
+            },
+            notice: function () {
+                layer.open({
+                    type: 1,
+                    title: '跟进提醒',
+                    content: $('#noticeTemp').html(),
+                    area: ['600px', '60%'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success: function () {
+
+                    }
+                });
+                form.render();
+                w_date();
+            }
+        };
+
+        $('.btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //跟进记录
+        function queryFollowHistoryList() {
+            $.post(URL + "queryFollowHistoryList", {"temporaryId": [[${temporaryId}]]}, function (data) {
+                var html = template('followHistoryTemp', data);
+                $('#followHistory').html(html);
+            })
+        }
+
+        var fileListView = $('#fileList');
+        var uploadListIns = upload.render({
+            elem: '#fileUpload'
+            , url: URL + 'fileUpload'
+            , data: {
+                "linkId": [[${temporaryId}]],
+                "docType": 'temporary'
+            }
+            , accept: 'file'
+            , multiple: true
+            , auto: false
+            , bindAction: '#uploadAction'
+            , choose: function (obj) {
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function (index, file, result) {
+                    if ($('#fileList tr').hasClass('ant')) {
+                        $('#fileList').find('tr').remove()
+                    }
+                    fileListView.append(tr);
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '</td>'
+                        , '<td>' + (file.size/1024).toFixed(2) + ' KB</td>'
+                        , '<td>--</td>'
+                        , '<td>--</td>'
+                        , '<td><span style="color: #ff983c;">等待上传</span></td>'
+                        , '<td>'
+                        , '<button class="layui-btn l_web_but_sc pre-file-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+                    fileListView.append(tr);
+                    //上传前文件删除
+                    tr.find('.pre-file-delete').on('click', function () {
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                        if ($('#fileList tr').length == 0) {
+                            $('#fileList').html('<tr class="ant"><td colspan="6">暂无相关文件</td></tr>')
+                        }
+                    });
+                });
+            }
+            , done: function (res, index, upload) {
+                if (res.success) { //上传成功
+                    var tr = fileListView.find('tr#upload-' + index);
+                    var tds = tr.children();
+                    tds.eq(2).text(res.uploader);
+                    tds.eq(3).text(res.uploadTime);
+                    tds.eq(4).html('<span style="color: #5FB878;">已上传</span>');
+                    tds.eq(5).html(
+                        '<button fileName="' + res.originalName + '" filePath="' + res.filePath + '" class="layui-btn l_web_but_tj file-down">下载</button>' +
+                        '<button fileId="' + res.fileId + '" class="layui-btn l_web_but_sc file-delete">删除</button>'
+                    );
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }
+                this.error(index, upload);
+            }
+            , error: function (index, upload) {
+                var tr = fileListView.find('tr#upload-' + index);
+                var tds = tr.children();
+                tds.eq(4).html('<span style="color: #FF5722;">上传失败</span>');
+            }
+        });
+
+        //下载
+        $('body').on('click', '.file-down', function () {
+            var fileName = $(this).attr("fileName");
+            var filePath = $(this).attr("filePath");
+            downloadFile(filePath,fileName);
+        });
+
+        //删除按钮
+        $('body').on('click', '.file-delete', function () {
+            var tr = $(this).parent().parent('tr');
+            var fileId = $(this).attr("fileId");
+            layer.confirm('请确定是否删除？', function (index) {
+                $.ajax({
+                    type: 'post',
+                    url: URL + 'docs/deleteDocs',
+                    data: {"docId": fileId},
+                    dataType: 'json',
+                    traditional: true,
+                    success: function (data) {
+                        if (data.success) {
+                            layer.msg(data.msg);
+                            tr.remove();
+                            if ($('#fileList tr').length == 0) {
+                                $('#fileList').html('<tr class="ant"><td colspan="6">暂无相关文件</td></tr>')
+                            }
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            });
+        });
+
+        /* 监听提交 */
+        form.on('submit(component-form-demo1)', function (data) {
+            $.post(URL + "insertFollowHistory", $("#subForm").serialize(), function (d) {
+                queryFollowHistoryList();
+                layer.closeAll(); //关闭弹层
+                return false;
+            })
+
+        });
+        /* 监听提交 */
+        form.on('submit(notice)', function (data) {
+            $.post(URL + "insertFollowNotice", $("#noticeForm").serialize(), function (d) {
+                layer.msg(d.msg);
+                if (d.success) {
+                    setTimeout(function () {
+                        layer.closeAll(); //关闭弹层
+                        return false;
+                    }, 1000);
+                }
+            })
+        });
+
+        //取消按钮
+        $('body').on('click', '.editor', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+            parent.layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>编辑临时客户</b>',
+                content: URL + 'customerTemporary/toEditCustomer/'+[[${temporaryId}]],
+                area: ['100%', '100%']
+            });
+        })
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            layer.closeAll(); //关闭弹层
+        })
+    });
+</script>
+</body>
+</html>

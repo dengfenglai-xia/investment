@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/common-head::head">
+<body>
+<form id="form" class="w_addbox layui-form">
+    <div class="house_pagebox">
+        <div class="house_page">
+            <!--基本信息-->
+            <div class="layui-row layui-form-item">
+                <div class="mytitle">
+                    基本信息
+                </div>
+                <div class="w_addpart l_shadow">
+                    <input type="hidden" name="sameCode" th:value="${contract.sameCode}">
+                    <input type="hidden" id="contractCode" name="contractCode" th:value="${contract.contractCode}">
+                    <input type="hidden" name="version" th:value="${newVersion}">
+                    <input type="hidden" name="operType" th:value="${contract.operType}">
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">合同编号：</label>
+                        <div class="layui-input-block">
+                            <p class="tz_rgtext" th:text="${contract.contractCode}"></p>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">合同类别：</label>
+                        <div class="layui-input-block">
+                            <p class="tz_rgtext">房源合同</p>
+                            <input type="hidden" name="contractType" value="房源合同">
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>签订日期：</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="signDate" class="layui-input l_time laydate-control"
+                                   th:value="${contract.signDate}" lay-verify="required" placeholder="请选择签订日期">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <!--基本信息end-->
+            <!--客户信息-->
+            <div class="layui-row layui-form-item">
+                <div class="mytitle">客户信息</div>
+                <div class="w_addpart l_shadow">
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>客户类型：</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="customerType" th:value="1" title="公司"
+                                   lay-filter="customerType-select"
+                                   th:checked="${contract.customerType eq '1'}">
+                            <input type="radio" name="customerType" th:value="2" title="个人"
+                                   lay-filter="customerType-select"
+                                   th:checked="${contract.customerType eq '2'}">
+                        </div>
+                    </div>
+                    <!--公司/个人租赁信息-->
+                    <div class="customer-info-switch"></div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <!--客户信息end-->
+            <!--资源信息-->
+            <div class="layui-row layui-form-item">
+                <div class="mytitle">资源信息</div>
+                <div class="w_addpart l_shadow">
+                    <div class="layui-col-md12 layui-col-xs12 l_po">
+                        <label class="layui-form-label w_label ">资源选择：</label>
+                        <div class="layui-input-block">
+                            <b class="w_sur">*</b>
+                            <input type="button" value="房源选择" class="layui-btn btn layui-btn-normal pop-up" data-type="addRoom"/>
+                            <input type="button" value="车位选择" class="layui-btn btn layui-btn-normal pop-up" data-type="addCarplace"/>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12 layui-col-xs12 l_po">
+                        <label class="layui-form-label w_label ">已选房源：</label>
+                        <div class="layui-input-block">
+                            <table class="layui-table" style="width: auto;">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="150">
+                                    <col width="150">
+                                    <col width="150">
+                                    <col width="150">
+                                    <col width="150">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>项目</th>
+                                    <th>楼宇</th>
+                                    <th>楼层</th>
+                                    <th>房间</th>
+                                    <th>面积（㎡）</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="selectedRoomList">
+                                <tr class="rm" th:each="obj:${roomList}">
+                                    <td style="display: none" th:text="${obj.projectId}"></td>
+                                    <td th:text="${obj.projectName}"></td>
+                                    <td style="display: none" th:text="${obj.buildingId}"></td>
+                                    <td th:text="${obj.buildingName}"></td>
+                                    <td style="display: none" th:text="${obj.floorId}"></td>
+                                    <td th:text="${obj.floorNo}"></td>
+                                    <td style="display: none" th:text="${obj.roomId}"></td>
+                                    <td th:text="${obj.roomNo}"></td>
+                                    <td th:text="${#numbers.formatDecimal(obj.buildArea, 1, 2)}"></td>
+                                    <td><a title="删除" th:roomId="${obj.roomId}" class="btn w_sc_btn del-room"></a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12 layui-col-xs12 l_po">
+                        <label class="layui-form-label w_label ">已选车位：</label>
+                        <div class="layui-input-block">
+                            <table class="layui-table" style="width: auto;">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="150">
+                                    <col width="150">
+                                    <col width="150">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>项目</th>
+                                    <th>楼宇</th>
+                                    <th>车位</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="selectedPlaceList">
+                                <tr class="rm" th:each="obj:${carplaceList}">
+                                    <td style="display: none" th:text="${obj.projectId}"></td>
+                                    <td th:text="${obj.projectName}"></td>
+                                    <td style="display: none" th:text="${obj.buildingId}"></td>
+                                    <td th:text="${obj.buildingName}"></td>
+                                    <td style="display: none" th:text="${obj.floorId}"></td>
+                                    <td style="display: none" th:text="${obj.floorNo}"></td>
+                                    <td style="display: none" th:text="${obj.placeId}"></td>
+                                    <td th:text="${obj.placeNo}"></td>
+                                    <td><a title="删除" th:placeId="${obj.placeId}" class="btn w_sc_btn del-place"></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <!--资源信息end-->
+            <!--租赁信息-->
+            <div class="layui-row layui-form-item">
+                <div class="mytitle">
+                    租赁信息
+                </div>
+                <div class="w_addpart l_shadow">
+                    <input type="hidden" name="rentList[0].costName" th:value="租金">
+                    <div class="layui-col-md4 layui-col-xs6 l_po select-startDate">
+                        <label class="layui-form-label w_label"><b class="w_sur">*</b>生效日期：</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="startDate0" name="rentList[0].startDate"
+                                   th:value="${rentList[0].startDate}" lay-verify="required"
+                                   class="layui-input l_time" placeholder="合同生效日期" readonly>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po select-leaseTerm">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>租期：</label>
+                        <div class="layui-input-block">
+                            <select id="leaseTerm" name="leaseTerm" lay-verify="required" lay-search
+                                    lay-filter="term-select">
+                                <option value="">请选择租期</option>
+                                <option th:each="obj:${termList}" th:value="${obj.bdName}"
+                                        th:selected="${obj.bdName eq contract.leaseTerm}"
+                                        th:text="${obj.bdName eq '0.5'?'半':obj.bdName} + '年'"></option>
+                                <option value="0">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">截止时间：</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="endDate0" name="rentList[0].endDate"
+                                   th:value="${rentList[0].endDate}" lay-verify="required" readonly
+                                   class="layui-input l_time" placeholder="合同截止日期">
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>租金单价：</label>
+                        <div class="layui-input-block">
+                            <div class="year_inp">
+                                <input type="text" id="unitPrice0" name="rentList[0].unitPrice"
+                                       th:value="${rentList[0].unitPrice}" index="0" lay-verify="required|number"
+                                       autocomplete="off" placeholder="请输入租金单价" class="layui-input unitPrice">
+                            </div>
+                            <div class="year_inp" id="tip0">
+                                <select id="chargeUnit0" name="rentList[0].chargeUnit" index="0" lay-verify="required"
+                                        lay-filter="unit-select">
+                                    <option value="">选择计价单位</option>
+                                    <option th:each="obj:${CHARGE_UNIT_MAP}"
+                                            th:selected="${obj.key eq rentList[0].chargeUnit}" th:value="${obj.key}"
+                                            th:text="${obj.value}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po dayPrice">
+                        <label class="layui-form-label w_label ">日租金：</label>
+                        <div class="layui-input-block">
+                            <div class="day_left">
+                                <input type="text" id="dayPrice0" name="rentList[0].dayPrice"
+                                       th:value="${rentList[0].dayPrice}" placeholder="自动计算" class="layui-input "
+                                       readonly>
+                            </div>
+                            <div class="day_right">
+                                元/天
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label l_hg">月租金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>计算方式：</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="rentList[0].monthCountType" value="1" th:index="0" title="按固定租金"
+                                   lay-filter="countType-select" th:checked="${rentList[0].monthCountType eq '1'}">
+                            <input type="radio" name="rentList[0].monthCountType" value="2" th:index="0" title="按实际天数"
+                                   lay-filter="countType-select" th:checked="${rentList[0].monthCountType eq '2'}">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po monthPrice0">
+                        <label class="layui-form-label w_label ">月租金：</label>
+                        <div class="layui-input-block">
+                            <div class="day_left">
+                                <input type="text" id="monthPrice0" name="rentList[0].monthPrice"
+                                       th:value="${rentList[0].monthPrice}" lay-verify="required|number"
+                                       placeholder="自动计算" class="layui-input " readonly>
+                            </div>
+                            <div class="day_right">
+                                元/月
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>提前付款日：</label>
+                        <div class="layui-input-block">
+                            <div class="year_inp">
+                                <input type="text" id="advancePayDays0" name="rentList[0].advancePayDays"
+                                       th:value="${rentList[0].advancePayDays}" oninput="if(value>28)value=28"
+                                       lay-verify="required|integer" autocomplete="off" placeholder="请输入提前付款日"
+                                       class="layui-input">
+                            </div>
+                            <div class="year_inp">
+                                <select name="rentList[0].advancePayType" lay-verify="required">
+                                    <option th:each="obj:${ADVANCE_PAY_TYPE_MAP}"
+                                            th:selected="${obj.key eq rentList[0].advancePayType}" th:value="${obj.key}"
+                                            th:text="${obj.value}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>付款周期：</label>
+                        <div class="layui-input-block">
+                            <div class="day_left">
+                                <select name="rentList[0].payCycle" lay-verify="required" lay-search>
+                                    <option value="">请选择付款周期</option>
+                                    <option th:selected="${rentList[0].payCycle eq 1}" value="1">1 个月</option>
+                                    <option th:selected="${rentList[0].payCycle eq 2}" value="2">2 个月</option>
+                                    <option th:selected="${rentList[0].payCycle eq 3}" value="3">3 个月</option>
+                                    <option th:selected="${rentList[0].payCycle eq 6}" value="6">6 个月</option>
+                                    <option th:selected="${rentList[0].payCycle eq 12}" value="12">12 个月</option>
+                                </select>
+                            </div>
+                            <div class="day_right">
+                                一付
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear split-line"></div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                        <div class="layui-input-block">
+                            <div class="day_left">
+                                <input type="text" id="feeLateRatio0" name="rentList[0].feeLateRatio"
+                                       oninput="onlyNumber(this)" th:value="${rentList[0].feeLateRatio}"
+                                       autocomplete="off" lay-verify="required" placeholder="请输入滞纳金比例"
+                                       class="layui-input">
+                            </div>
+                            <div class="day_right">
+                                %
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <!--租赁信息end-->
+            <!--租金保证金-->
+            <div class="layui-row layui-form-item">
+                <div class="mytitle">
+                    保证金
+                </div>
+                <div class="w_addpart l_shadow">
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label "><b class="w_sur">*</b>租赁押金：</label>
+                        <div class="layui-input-block">
+                            <div class="year_inp">
+                                <input type="text" id="deposit" name="deposit" lay-verify="required|number"
+                                       oninput="onlyNumber(this)" autocomplete="off"
+                                       placeholder="请输入租赁押金" class="layui-input">
+                            </div>
+                            <div class="year_inp">
+                                <select id="depositType" name="depositType" lay-verify="required" lay-search>
+                                    <option th:each="obj:${DEPOSIT_CHARGE_UNIT_MAP}"
+                                            th:selected="${obj.key eq contract.depositType}" th:value="${obj.key}"
+                                            th:text="${obj.value}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">物业押金：</label>
+                        <div class="layui-input-block">
+                            <div class="day_left">
+                                <input type="text" th:value="${contract.wyDeposit}" name="wyDeposit"
+                                       oninput="onlyNumber(this)" autocomplete="off"
+                                       placeholder="请输入物业费押金" class="layui-input">
+                            </div>
+                            <div class="day_right">
+                                元
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-xs6 l_po">
+                        <label class="layui-form-label w_label ">履约保证金：</label>
+                        <div class="layui-input-block">
+                            <div class="day_left">
+                                <input type="text" th:value="${contract.breachAmt}" name="breachAmt"
+                                       oninput="onlyNumber(this)" autocomplete="off"
+                                       placeholder="请输入履约保证金" class="layui-input">
+                            </div>
+                            <div class="day_right">
+                                元
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <!--租金保证金end-->
+            <!--新增递增率-->
+            <div class="layui-row layui-form-item">
+                <a href="#increaseRate" class="layui-btn layui-btn-normal addIncreaseRate"><i class="layui-icon">&#xe61f;</i>递增率</a>
+                <div class="increaseRateList" th:if="${increaseRateList.size() eq 0}"></div>
+                <div class="increaseRateList" th:if="${increaseRateList.size() > 0}">
+                    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5" th:each="obj:${increaseRateList}">
+                        <div class="wy_add_part_btnline">
+                            <a class="layui-btn layui-btn-primary delIncreaseRate"><i class="layui-icon">&#xe640;</i>删除</a>
+                        </div>
+                        <div class="l_minlod">
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>递增时间：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:index="${objStat.index}"
+                                           th:name="'increaseRateList['+ ${objStat.index}+ '].increaseMonth'"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+                                           autocomplete="off" placeholder="请输入几个月后开始递增"
+                                           lay-verify="required|integer"
+                                           class="layui-input increaseMonth">
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label ">递增日期：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:id="'increaseDate' + ${objStat.index}"
+                                           th:name="'increaseRateList['+ ${objStat.index}+ '].increaseDate'"
+                                           placeholder="递增日期" class="layui-input l_time " readonly>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>递增率：</label>
+                                <div class="layui-input-block">
+                                    <div class="day_left">
+                                        <input type="text" oninput="onlyNumber(this)"
+                                               th:name="'increaseRateList['+ ${objStat.index}+ '].increaseRate'"
+                                               lay-verify="required|number" placeholder="请输入递增率" autocomplete="off"
+                                               class="layui-input">
+                                    </div>
+                                    <div class="day_right">
+                                        %
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <a id="increaseRate"></a>
+            </div>
+            <!--新增递增率end-->
+            <!--新增免租期-->
+            <div class="layui-row layui-form-item">
+                <a href="#freeTime" class="layui-btn layui-btn-normal addFreeTime"><i class="layui-icon">&#xe61f;</i>免租期</a>
+                <div class="freeTimeList" th:if="${freeTimeList.size() eq 0}"></div>
+                <div class="freeTimeList" th:if="${freeTimeList.size() > 0}">
+                    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5" th:each="obj:${freeTimeList}">
+                        <div class="wy_add_part_btnline">
+                            <a class="layui-btn layui-btn-primary delFreeTime"><i class="layui-icon">&#xe640;</i>删除</a>
+                        </div>
+                        <div class="l_minlod">
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>免租期：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:id="'freeDateRange' + ${objStat.index}"
+                                           th:name="'freeTimeList['+ ${objStat.index}+ '].freeDateRange'"
+                                           lay-verify="required"
+                                           class="layui-input l_time laydate-control-range1" autocomplete="off"
+                                           placeholder="请选择免租时间区间">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <a id="freeTime"></a>
+            </div>
+            <!--新增免租期end-->
+            <!--新增周期性费用-->
+            <div class="layui-row layui-form-item">
+                <a href="#cycleCost" class="layui-btn layui-btn-normal addCycleCost"><i class="layui-icon">&#xe61f;</i>周期性费用</a>
+                <div class="cycleCostList" th:if="${rentList.size() eq 1}"></div>
+                <div class="cycleCostList" th:if="${rentList.size() > 1}">
+                    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5" th:if="${objStat.index > 0}"
+                         th:each="obj:${rentList}">
+                        <div class="wy_add_part_btnline">
+                            <a class="layui-btn layui-btn-primary delCycleCost"><i class="layui-icon">&#xe640;</i>删除</a>
+                        </div>
+                        <div class="l_minlod">
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>费用名称：</label>
+                                <div class="layui-input-block">
+                                    <select th:name="'rentList['+ ${objStat.index}+ '].costName'" lay-verify="required"
+                                            lay-search lay-filter="costName-select">
+                                        <option th:selected="${obj.costName == '物业费'}" value="物业费">物业费</option>
+                                        <option th:selected="${obj.costName == '清洁费'}" value="清洁费">清洁费</option>
+                                        <option th:selected="${obj.costName == '车位费'}" value="车位费">车位费</option>
+                                        <option th:selected="${obj.costName == '能源费'}" value="能源费">能源费</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>付费时间：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" th:id="'rentDateRange' + ${objStat.index}"
+                                           th:name="'rentList['+ ${objStat.index}+ '].rentDateRange'"
+                                           th:value="${obj.startDate} + ' ~ ' + ${obj.endDate}" lay-verify="required"
+                                           class="layui-input l_time laydate-control-range2" placeholder="开始时间 ~ 结束时间">
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>租金单价：</label>
+                                <div class="layui-input-block">
+                                    <div class="year_inp">
+                                        <input type="text" th:id="'unitPrice' + ${objStat.index}"
+                                               th:name="'rentList['+ ${objStat.index}+ '].unitPrice'"
+                                               th:value="${obj.unitPrice}" th:index="${objStat.index}"
+                                               oninput="onlyNumber(this)"
+                                               autocomplete="off" lay-verify="required|number" placeholder="请输入租金单价"
+                                               class="layui-input unitPrice">
+                                    </div>
+                                    <div class="year_inp" th:id="'tip' + ${objStat.index}">
+                                        <select th:id="'chargeUnit' + ${objStat.index}"
+                                                th:name="'rentList['+ ${objStat.index}+ '].chargeUnit'"
+                                                th:index="${objStat.index}" lay-verify="required" lay-search
+                                                lay-filter="unit-select">
+                                            <option value="">选择计价单位</option>
+                                            <option th:each="item:${CHARGE_UNIT_MAP}"
+                                                    th:selected="'${item.key eq rentList[' + ${objStat.index} + '].chargeUnit}'"
+                                                    th:value="${item.key}" th:text="${item.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label ">日租金：</label>
+                                <div class="layui-input-block">
+                                    <div class="day_left">
+                                        <input type="text" th:id="'dayPrice' + ${objStat.index}"
+                                               th:name="'rentList['+ ${objStat.index}+ '].dayPrice'"
+                                               th:value="${obj.dayPrice}" lay-verify="required|number"
+                                               placeholder="自动计算" class="layui-input " readonly>
+                                    </div>
+                                    <div class="day_right">
+                                        元/天
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label l_hg">月租金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>计算方式：</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" th:name="'rentList['+ ${objStat.index}+ '].monthCountType'"
+                                           value="1" th:index="${objStat.index}" title="按固定租金"
+                                           lay-filter="countType-select" th:checked="${obj.monthCountType eq '1'}">
+                                    <input type="radio" th:name="'rentList['+ ${objStat.index}+ '].monthCountType'"
+                                           value="2" th:index="${objStat.index}" title="按实际天数"
+                                           lay-filter="countType-select" th:checked="${obj.monthCountType eq '2'}">
+                                </div>
+                            </div>
+                            <div th:class="'layui-col-md4 layui-col-xs6 l_po  monthPrice' + ${objStat.index}">
+                                <label class="layui-form-label w_label ">月租金：</label>
+                                <div class="layui-input-block">
+                                    <div class="day_left">
+                                        <input type="text" th:id="'monthPrice' + ${objStat.index}"
+                                               th:name="'rentList['+ ${objStat.index}+ '].monthPrice'"
+                                               th:value="${obj.monthPrice}" placeholder="自动计算" class="layui-input "
+                                               readonly>
+                                    </div>
+                                    <div class="day_right">
+                                        元/月
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>提前付款日：</label>
+                                <div class="layui-input-block">
+                                    <div class="year_inp">
+                                        <input type="text" th:id="'advancePayDays' + ${objStat.index}"
+                                               th:name="'rentList['+ ${objStat.index}+ '].advancePayDays'"
+                                               th:value="${obj.advancePayDays}"
+                                               oninput="if(value>28)value=28;onlyNumber(this)"
+                                               lay-verify="required|integer" autocomplete="off" placeholder="请输入提前付款日"
+                                               class="layui-input">
+                                    </div>
+                                    <div class="year_inp">
+                                        <select th:name="'rentList['+ ${objStat.index} + '].advancePayType'"
+                                                lay-verify="required" lay-search>
+                                            <option th:each="item:${ADVANCE_PAY_TYPE_MAP}"
+                                                    th:selected="${item.key eq rentList[0].advancePayType}"
+                                                    th:value="${item.key}" th:text="${item.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>付款周期：</label>
+                                <div class="layui-input-block">
+                                    <div class="day_left">
+                                        <select th:name="'rentList['+ ${objStat.index}+ '].payCycle'"
+                                                lay-verify="required" lay-search>
+                                            <option value="">请选择付款周期</option>
+                                            <option th:selected="${rentList[0].payCycle eq 1}" value="1">1 个月</option>
+                                            <option th:selected="${rentList[0].payCycle eq 2}" value="2">2 个月</option>
+                                            <option th:selected="${rentList[0].payCycle eq 3}" value="3">3 个月</option>
+                                            <option th:selected="${rentList[0].payCycle eq 6}" value="6">6 个月</option>
+                                            <option th:selected="${rentList[0].payCycle eq 12}" value="12">12 个月
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="day_right">
+                                        一付
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-xs6 l_po">
+                                <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                                <div class="layui-input-block">
+                                    <div class="day_left">
+                                        <input type="text" th:id="'feeLateRatio' + ${objStat.index}"
+                                               oninput="onlyNumber(this)"
+                                               th:name="'rentList['+ ${objStat.index}+ '].feeLateRatio'"
+                                               th:value="${obj.feeLateRatio}" autocomplete="off" lay-verify="required"
+                                               placeholder="请输入滞纳金比例"
+                                               class="layui-input">
+                                    </div>
+                                    <div class="day_right">
+                                        %
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <a id="cycleCost"></a>
+            </div>
+            <!--备注-->
+            <div class="mytitle">
+                备注
+            </div>
+            <div class="w_addpart l_shadow mb-15">
+                <div class="layui-col-md12 layui-col-xs12 l_po" style="padding-left: 15px;">
+                    <textarea name="changeReason" class="w_tzteaxer" placeholder="请输入备注信息..."></textarea>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <!--备注end-->
+            <!--新增周期性费用end-->
+            <div class="w_del_btnbox">
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+                <input type="button" value="生成收款计划" lay-submit lay-filter="generate"
+                       class="layui-btn btn layui-btn-normal w_generate"/>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- 弹窗、模板 -->
+<!--公司信息部分start-->
+<script type="text/html" id="company_part">
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>选择客户：</label>
+        <div class="layui-input-block">
+            <select id="company_customerId" name="customerId" lay-verify="required" lay-filter="customer-select"
+                    lay-search>
+                <option th:if="${customerList.size() == 0}" value="">暂无客户信息</option>
+                <option th:if="${customerList.size() > 0}" value="">请选择客户</option>
+                <option th:each="obj:${customerList}" th:selected="${obj.customerId eq contract.customerId}"
+                        th:value="${obj.customerId}" th:text="${obj.customerName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">所属行业：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_industry" th:value="${contract.industry}" placeholder="请输入所属行业"
+                   autocomplete="off" class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label l_hg">纳税人识&nbsp;&nbsp;&nbsp;<br/>别号：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_ceditCode" th:value="${contract.ceditCode}" placeholder="请输入纳税人识别号"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">联&nbsp;&nbsp;系&nbsp;&nbsp;人：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_contacts" th:value="${contract.contacts}" placeholder="请输入联系人"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">联系电话：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_phone" th:value="${contract.phone}" placeholder="请输入联系电话" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">法&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_legalPerson" th:value="${contract.legalPerson}" placeholder="请输入法人"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道来源：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_channelSource" th:value="${contract.channelSource}" placeholder="请输入渠道来源"
+                   autocomplete="off" class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道名称：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_sourceName" th:value="${contract.sourceName}" placeholder="请输入渠道名称"
+                   autocomplete="off" class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_email" th:value="${contract.email}" placeholder="请输入邮箱" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md8 layui-col-xs8 l_po">
+        <label class="layui-form-label w_label ">通讯地址：</label>
+        <div class="layui-input-block">
+            <input type="text" id="company_linkAddress" th:value="${contract.linkAddress}" placeholder="请输入通讯地址"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</script>
+<!--公司信息部分end-->
+
+<!--个人信息部分end-->
+<script type="text/html" id="personal_part">
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label "><b class="w_sur">*</b>选择客户：</label>
+        <div class="layui-input-block">
+            <select id="personal_customerId" name="customerId" lay-verify="required" lay-filter="customer-select"
+                    lay-search>
+                <option value="">请选择客户</option>
+                <option th:each="obj:${customerList}" th:selected="${obj.customerId eq contract.customerId}"
+                        th:value="${obj.customerId}" th:text="${obj.customerName}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">身份证号：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_contactsCard" th:value="${contract.contactsCard}" placeholder="请输入身份证号"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">联系电话：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_phone" th:value="${contract.phone}" placeholder="请输入联系电话" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">所属行业：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_industry" th:value="${contract.industry}" placeholder="请输入所属行业"
+                   autocomplete="off" class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">工作单位：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_workUnit" th:value="${contract.workUnit}" placeholder="请输入工作单位"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道来源：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_channelSource" th:value="${contract.channelSource}" placeholder="请输入渠道来源"
+                   autocomplete="off" class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">渠道名称：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_sourceName" th:value="${contract.sourceName}" placeholder="请输入渠道名称"
+                   autocomplete="off" class="layui-input layui-disabled" readonly>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po">
+        <label class="layui-form-label w_label ">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_email" th:value="${contract.email}" placeholder="请输入邮箱" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-col-md8 layui-col-xs8 l_po">
+        <label class="layui-form-label w_label ">通讯地址：</label>
+        <div class="layui-input-block">
+            <input type="text" id="personal_linkAddress" th:value="${contract.linkAddress}" placeholder="请输入通讯地址"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</script>
+<!--个人信息部分end-->
+
+<!--房源选择-->
+<script type="text/html" id="rooms">
+    <div class="w_hosue_open">
+        <div>
+            <div class="w_sear_box">
+                <input type="text" id="room-keyword" autocomplete="off" placeholder="请根据 项目名称 / 楼宇名称 / 楼层 / 房间号 进行查询" class="w_sear_inp"/>
+                <input type="button" value="搜索" class="w_sear_btn searchRoom"/>
+            </div>
+            <div class="w_rybox layui-form l_m_10 ope_size">
+                <table class="layui-hide" id="roomList"></table>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type">
+                <button class="layui-btn layui-btn-normal add-room">确定</button>
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+            </div>
+        </div>
+
+    </div>
+</script>
+<!--房源选择end-->
+
+<!--车位选择-->
+<script type="text/html" id="carplaces">
+    <div class="w_hosue_open">
+        <div>
+            <div class="w_sear_box">
+                <input type="text" id="carplace-keyword" autocomplete="off" placeholder="请根据 项目名称 / 楼宇名称 / 楼层号 / 车位号 进行查询"
+                       class="w_sear_inp"/>
+                <input type="button" value="搜索" class="w_sear_btn searchCarplace"/>
+            </div>
+            <div class="w_rybox layui-form l_m_10 ope_size">
+                <table class="layui-hide" id="placeList"></table>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-footer w_type">
+                <button class="layui-btn layui-btn-normal add-place">确定</button>
+                <button type="button" class="layui-btn layui-btn-primary cancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<!--车位选择end-->
+
+<!--递增率模板-->
+<script type="text/html" id="increase-rate-templete">
+    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5">
+        <div class="wy_add_part_btnline">
+            <a class="layui-btn layui-btn-primary delIncreaseRate"><i class="layui-icon">&#xe640;</i>删除</a>
+        </div>
+        <div class="l_minlod">
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>递增时间：</label>
+                <div class="layui-input-block">
+                    <input type="text" index="{{count}}" name="increaseRateList[{{count}}].increaseMonth"
+                           oninput="this.value=this.value.replace(/[^0-9]/g,'');" autocomplete="off"
+                           placeholder="请输入几个月后开始递增" lay-verify="required|integer"
+                           class="layui-input increaseMonth">
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label ">递增日期：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="increaseDate{{count}}" name="increaseRateList[{{count}}].increaseDate"
+                           placeholder="递增日期" class="layui-input l_time " readonly>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>递增率：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <input type="text" name="increaseRateList[{{count}}].increaseRate" lay-verify="required|number"
+                               placeholder="请输入递增率" oninput="onlyNumber(this)" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="day_right">
+                        %
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>
+<!--递增率模板end-->
+
+<!--新增免租期-->
+<script type="text/html" id="free-time-templete">
+    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5">
+        <div class="wy_add_part_btnline">
+            <a class="layui-btn layui-btn-primary delFreeTime"><i class="layui-icon">&#xe640;</i>删除</a>
+        </div>
+        <div class="l_minlod">
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>免租期：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="freeDateRange{{count}}" name="freeTimeList[{{count}}].freeDateRange"
+                           lay-verify="required" class="layui-input l_time laydate-control-range1"
+                           autocomplete="off" placeholder="请选择免租时间区间">
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>
+<!--新增免租期end-->
+
+<!--新增周期性费用-->
+<script type="text/html" id="cycle-cost-templete">
+    <div class="layui-col-md12 l_add_part w_bgc_w w_mt_5">
+        <div class="wy_add_part_btnline">
+            <a class="layui-btn layui-btn-primary delCycleCost"><i class="layui-icon">&#xe640;</i>删除</a>
+        </div>
+        <div class="l_minlod">
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>费用名称：</label>
+                <div class="layui-input-block">
+                    <select name="rentList[{{count}}].costName" lay-verify="required" lay-search
+                            lay-filter="costName-select">
+                        <option value="物业费">物业费</option>
+                        <option value="清洁费">清洁费</option>
+                        <option value="车位费">车位费</option>
+                        <option value="能源费">能源费</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>付费时间：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="rentDateRange{{count}}" name="rentList[{{count}}].rentDateRange"
+                           lay-verify="required" class="layui-input l_time laydate-control-range2"
+                           placeholder="开始时间 ~ 结束时间">
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>租金单价：</label>
+                <div class="layui-input-block">
+                    <div class="year_inp">
+                        <input type="text" id="unitPrice{{count}}" name="rentList[{{count}}].unitPrice"
+                               oninput="onlyNumber(this)"
+                               index="{{count}}" autocomplete="off" lay-verify="required|number" placeholder="请输入租金单价"
+                               class="layui-input unitPrice" readonly>
+                    </div>
+                    <div class="year_inp" id="tip{{count}}">
+                        <select id="chargeUnit{{count}}" name="rentList[{{count}}].chargeUnit" index="{{count}}"
+                                lay-verify="required" lay-search lay-filter="unit-select">
+                            <option value="">选择计价单位</option>
+                            <option th:each="obj:${CHARGE_UNIT_MAP}" th:value="${obj.key}"
+                                    th:text="${obj.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label ">日租金：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <input type="text" id="dayPrice{{count}}" name="rentList[{{count}}].dayPrice" th:value="0"
+                               lay-verify="required|number" placeholder="自动计算" class="layui-input " readonly>
+                    </div>
+                    <div class="day_right">
+                        元/天
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label l_hg">月租金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>计算方式：</label>
+                <div class="layui-input-block">
+                    {{if countType=='1'}}
+                    <input type="radio" name="rentList[{{count}}].monthCountType" value="1" index="{{count}}"
+                           title="按固定租金" lay-filter="countType-select" checked="">
+                    <input type="radio" name="rentList[{{count}}].monthCountType" value="2" index="{{count}}"
+                           title="按实际天数" lay-filter="countType-select">
+                    {{else}}
+                    <input type="radio" name="rentList[{{count}}].monthCountType" value="1" index="{{count}}"
+                           title="按固定租金" lay-filter="countType-select">
+                    <input type="radio" name="rentList[{{count}}].monthCountType" value="2" index="{{count}}"
+                           title="按实际天数" lay-filter="countType-select" checked="">
+                    {{/if}}
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po monthPrice{{count}}">
+                <label class="layui-form-label w_label ">月租金：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <input type="text" id="monthPrice{{count}}" name="rentList[{{count}}].monthPrice" th:value="0"
+                               lay-verify="required" placeholder="自动计算" class="layui-input " readonly>
+                    </div>
+                    <div class="day_right">
+                        元/月
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>提前付款日：</label>
+                <div class="layui-input-block">
+                    <div class="year_inp">
+                        <input type="text" id="advancePayDays{{count}}" name="rentList[{{count}}].advancePayDays"
+                               oninput="if(value>28)value=28;onlyNumber(this)" lay-verify="required|integer"
+                               autocomplete="off"
+                               placeholder="请输入提前付款日"
+                               class="layui-input">
+                    </div>
+                    <div class="year_inp">
+                        <select name="rentList[{{count}}].advancePayType" lay-verify="required" lay-search>
+                            <option th:each="obj:${ADVANCE_PAY_TYPE_MAP}" th:value="${obj.key}"
+                                    th:text="${obj.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>付款周期：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <select name="rentList[{{count}}].payCycle" lay-verify="required" lay-search>
+                            <option value="">请选择付款周期</option>
+                            <option value="1">1 个月</option>
+                            <option value="2">2 个月</option>
+                            <option value="3">3 个月</option>
+                            <option value="6">6 个月</option>
+                            <option value="12">12 个月</option>
+                        </select>
+                    </div>
+                    <div class="day_right">
+                        一付
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4 layui-col-xs6 l_po">
+                <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                <div class="layui-input-block">
+                    <div class="day_left">
+                        <input type="text" id="feeLateRatio{{count}}" name="rentList[{{count}}].feeLateRatio"
+                               oninput="onlyNumber(this)" th:value="0" autocomplete="off" lay-verify="required"
+                               placeholder="请输入滞纳金比例"
+                               class="layui-input">
+                    </div>
+                    <div class="day_right">
+                        %
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>
+<!--新增周期性费用end-->
+<script th:replace="common/common-js::js"></script>
+<script th:src="@{/js/template.js}"></script>
+<script type="text/html" id="state">
+    {{#  if(d.state === '0' ){ }}
+    <span style="color:#C2C5D6;">不对外招租</span>
+    {{#  } else if(d.state === '1'){ }}
+    <span style="color:#44B549;">在租</span>
+    {{#  } else if(d.state === '2'){ }}
+    <span style="color:#FEB97A;">即将到期</span>
+    {{#  } else if(d.state === '3'){ }}
+    <span style="color:#69BFD3;">空置</span>
+    {{#  } else{ }}
+    <span style="color:#DE7B9E;">到期未处理</span>
+    {{#  } }}
+</script>
+<script id="customer-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择客户</option>
+    {{each list as obj index}}
+    <option value="{{obj.customerId}}">{{obj.customerName}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无客户信息</option>
+    {{/if}}
+</script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['form', 'index', 'contlist', 'table', 'laydate'], function () {
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            table = layui.table,
+            form = layui.form;
+
+        var $ = layui.$, active = {
+            addRoom: function () {
+                layer.open({
+                    type: 1,
+                    title: '房源选择',
+                    content: $('#rooms').html(),
+                    area: ['724px', '400px'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success: function () {
+                        table.render({
+                            elem: '#roomList'
+                            , url: URL + 'room/queryRoomListNoPageing'
+                            , defaultToolbar: false
+                            , cols: [
+                                [
+                                    {type: 'checkbox', width: 50}
+                                    , {field: 'projectId', title: '项目ID', hide: true}
+                                    , {field: 'projectName', title: '项目', width: 150}
+                                    , {field: 'buildingId', title: '楼宇ID', hide: true}
+                                    , {field: 'buildingName', title: '楼宇', width: 150}
+                                    , {field: 'floorId', title: '楼层ID', hide: true}
+                                    , {field: 'floorNo', title: '楼层', width: 60}
+                                    , {field: 'roomId', title: '房间ID', hide: true}
+                                    , {field: 'roomNo', title: '房间', width: 80}
+                                    , {field: 'buildArea', title: '面积（㎡）', width: 100}
+                                    , {field: 'state', title: '状态', templet: '#state', width: 92}
+                                ]
+                            ], parseData: function (res) { //res 即为原始返回的数据
+                                return {
+                                    "code": 0, //解析接口状态
+                                    "msg": "查询成功", //解析提示文本
+                                    "count": res.data.total, //解析数据长度
+                                    "data": res.data.list //解析数据列表
+                                };
+                            }
+                        });
+                    }
+                });
+            },
+            addCarplace: function () {
+                layer.open({
+                    type: 1,
+                    title: '车位选择',
+                    content: $('#carplaces').html(),
+                    area: ['724px', '400px'],
+                    skin: 'opens',
+                    maxmin: false,
+                    success: function () {
+                        table.render({
+                            elem: '#placeList'
+                            , url: URL + 'carplace/queryCarplaceListNoPageing'
+                            , defaultToolbar: false
+                            , cols: [
+                                [
+                                    {type: 'checkbox'}
+                                    , {field: 'projectId', title: '项目ID', hide: true}
+                                    , {field: 'projectName', title: '项目'}
+                                    , {field: 'buildingId', title: '楼宇ID', hide: true}
+                                    , {field: 'buildingName', title: '楼宇'}
+                                    , {field: 'floorId', title: '楼层ID', hide: true}
+                                    , {field: 'floorNo', title: '楼层'}
+                                    , {field: 'placeId', title: '车位ID', hide: true}
+                                    , {field: 'placeNo', title: '车位号'}
+                                    , {field: 'state', title: '状态', templet: '#state'}
+                                ]
+                            ], parseData: function (res) { //res 即为原始返回的数据
+                                return {
+                                    "code": 0, //解析接口状态
+                                    "msg": "查询成功", //解析提示文本
+                                    "count": res.data.total, //解析数据长度
+                                    "data": res.data.list //解析数据列表
+                                };
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $('.pop-up').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        $('body').on('click', '.searchRoom', function () {
+            var keyword = $.trim($('#room-keyword').val());
+            table.reload('roomList', {
+                where: {
+                    keyword: keyword
+                }
+            });
+        });
+
+        var roomArr = [];
+        getRoomArr();
+        $('body').on('click', '.add-room', function () {
+            var checkStatus = table.checkStatus('roomList');
+            var data = checkStatus.data;
+            if (data.length == 0) {
+                layer.msg('请选择房源');
+                return;
+            }
+            $.each(data, function (i, item) {
+                var roomId = parseInt(item.roomId);
+                var res = get(roomArr, 'roomId', roomId);
+                if (res == '') {
+                    var tr = '<tr class="rm">' +
+                        '<td style="display: none;">' + item.projectId + '</td>' +
+                        '<td>' + item.projectName + '</td>' +
+                        '<td style="display: none;">' + item.buildingId + '</td>' +
+                        '<td>' + item.buildingName + '</td>' +
+                        '<td style="display: none;">' + item.floorId + '</td>' +
+                        '<td>' + item.floorNo + '</td>' +
+                        '<td style="display: none;">' + item.roomId + '</td>' +
+                        '<td>' + item.roomNo + '</td>' +
+                        '<td>' + item.buildArea + '</td>' +
+                        '<td>' +
+                        '<a title="删除" roomId="' + item.roomId + '" class="btn w_sc_btn del-room"></a>' +
+                        '</td>' +
+                        '</tr>';
+                    $('#selectedRoomList').append(tr);
+                }
+                layer.closeAll(); //关闭弹层
+            });
+        });
+
+        function getRoomArr() {
+            roomArr = [];
+            $("#selectedRoomList tr").each(function (i) {
+                var obj = {};
+                var projectId = $(this).find('td').eq(0).text();
+                var projectName = $(this).find('td').eq(1).text();
+                var buildingId = $(this).find('td').eq(2).text();
+                var buildingName = $(this).find('td').eq(3).text();
+                var floorId = $(this).find('td').eq(4).text();
+                var floorNo = $(this).find('td').eq(5).text();
+                var roomId = $(this).find('td').eq(6).text();
+                var roomNo = $(this).find('td').eq(7).text();
+                var buildArea = $(this).find('td').eq(8).text();
+
+                obj.roomId = parseInt(roomId);
+                obj.roomNo = roomNo;
+                obj.buildArea = buildArea;
+                obj.floorId = parseInt(floorId);
+                obj.floorNo = floorNo;
+                obj.buildingId = parseInt(buildingId);
+                obj.buildingName = buildingName;
+                obj.projectId = parseInt(projectId);
+                obj.projectName = projectName;
+                roomArr.push(obj);
+            });
+        }
+
+        function getPlaceArr() {
+            placeArr = [];
+            $("#selectedPlaceList tr").each(function (i) {
+                var obj = {};
+                var projectId = $(this).find('td').eq(0).text();
+                var projectName = $(this).find('td').eq(1).text();
+                var buildingId = $(this).find('td').eq(2).text();
+                var buildingName = $(this).find('td').eq(3).text();
+                var floorId = $(this).find('td').eq(4).text();
+                var floorNo = $(this).find('td').eq(5).text();
+                var placeId = $(this).find('td').eq(6).text();
+                var placeNo = $(this).find('td').eq(7).text();
+
+                obj.placeId = parseInt(placeId);
+                obj.placeNo = placeNo;
+                obj.floorId = parseInt(floorId);
+                obj.floorNo = floorNo;
+                obj.buildingId = parseInt(buildingId);
+                obj.buildingName = buildingName;
+                obj.projectId = parseInt(projectId);
+                obj.projectName = projectName;
+                placeArr.push(obj);
+            });
+        }
+
+        $('body').on('click', '.del-room', function () {
+            var roomId = parseInt($(this).attr("roomId"));
+            roomArr = remove(roomArr, 'roomId', roomId);
+            $(this).parents('.rm').remove();
+        })
+
+        var placeArr = [];
+        $('body').on('click', '.add-place', function () {
+            var checkStatus = table.checkStatus('placeList');
+            var data = checkStatus.data;
+            getPlaceArr();
+            $.each(data, function (i, item) {
+                var placeId = parseInt(item.placeId);
+                var res = get(placeArr, 'placeId', placeId);
+                if (res == '') {
+                    var tr = '<tr class="rm">' +
+                        '<td style="display: none;">' + item.projectId + '</td>' +
+                        '<td>' + item.projectName + '</td>' +
+                        '<td style="display: none;">' + item.buildingId + '</td>' +
+                        '<td>' + item.buildingName + '</td>' +
+                        '<td style="display: none;">' + item.floorId + '</td>' +
+                        '<td style="display: none;">' + item.floorNo + '</td>' +
+                        '<td style="display: none;">' + item.placeId + '</td>' +
+                        '<td>' + item.placeNo + '</td>' +
+                        '<td>' +
+                        '<a title="删除" placeId="' + item.placeId + '" class="btn w_sc_btn del-place"></a>' +
+                        '</td>' +
+                        '</tr>';
+                    $('#selectedPlaceList').append(tr);
+                }
+                layer.closeAll(); //关闭弹层
+            });
+        });
+
+        $('body').on('click', '.del-place', function () {
+            var placeId = parseInt($(this).attr("placeId"));
+            placeArr = remove(placeArr, 'placeId', placeId);
+            $(this).parents('.rm').remove();
+        })
+
+        //监听单选按钮--租赁方式
+        var customerType = '[[${contract.customerType}]]';
+        var company_part = $('#company_part').html();
+        var personal_part = $('#personal_part').html();
+        if (customerType == '1') {
+            $('.customer-info-switch').html(company_part);
+        } else {
+            $('.customer-info-switch').html(personal_part);
+        }
+        form.render();
+        form.on("radio(customerType-select)", function (data) {
+            var val = data.value;
+            form.render('select');
+            if (val == '1') { // 公司租赁
+                $('.customer-info-switch').html(company_part);
+            } else if (val == '2') { // 个人租赁
+                $('.customer-info-switch').html(personal_part);
+            }
+            if (val != customerType) cleanUserInfo();
+            $.ajax({
+                url: URL + "customer/queryCustomerBaseList",
+                type: "POST",
+                data: {
+                    customerType: val
+                },
+                dataType: "json",
+                success: function (data) {
+                    var html = template('customer-templete', data);
+                    if (val == '1') { // 公司租赁
+                        $('#company_customerId').html(html);
+                    } else if (val == '2') { // 个人租赁
+                        $('#personal_customerId').html(html);
+                    }
+                    form.render('select');
+                }
+            });
+            form.render();
+        });
+
+        form.on('select(customer-select)', function (data) {
+            var customerId = data.value;
+            if (customerId != '') {
+                $.ajax({
+                    url: URL + "customer/queryCustomerDetail",
+                    type: "POST",
+                    data: {
+                        customerId: customerId
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var customerType = data.customerType;
+                        if (customerType == '1') { // 公司租赁
+                            $('#company_ceditCode').val(data.contactsCard);
+                            $('#company_contacts').val(data.contacts);
+                            $('#company_phone').val(data.phone);
+                            $('#company_legalPerson').val(data.legalPerson);
+                            $('#company_email').val(data.email);
+                            $('#company_linkAddress').val(data.linkAddress);
+                            $('#company_industry').val(data.industry);
+                            $('#company_channelSource').val(data.channelSource);
+                            $('#company_sourceName').val(data.sourceName);
+                        } else if (customerType == '2') { // 个人租赁
+                            $('#personal_contactsCard').val(data.contactsCard);
+                            $('#personal_phone').val(data.phone);
+                            $('#personal_industry').val(data.industry);
+                            $('#personal_channelSource').val(data.channelSource);
+                            $('#personal_sourceName').val(data.sourceName);
+                            $('#personal_workUnit').val(data.workUnit);
+                            $('#personal_email').val(data.email);
+                            $('#personal_linkAddress').val(data.linkAddress);
+                        }
+                    }
+                });
+            } else {
+                cleanUserInfo();
+            }
+        });
+
+        function cleanUserInfo() {
+            $('#company_ceditCode').val('');
+            $('#company_contacts').val('');
+            $('#company_phone').val('');
+            $('#company_legalPerson').val('');
+            $('#company_email').val('');
+            $('#company_linkAddress').val('');
+            $('#company_industry').val('');
+            $('#company_channelSource').val('');
+            $('#company_sourceName').val('');
+            $('#personal_contactsCard').val('');
+            $('#personal_phone').text('');
+            $('#personal_industry').val('');
+            $('#personal_channelSource').val('');
+            $('#personal_sourceName').val('');
+            $('#personal_workUnit').val('');
+            $('#personal_email').val('');
+            $('#personal_linkAddress').val('');
+        };
+
+        form.on('select(term-select)', function (data) {
+            var term = data.value;
+            if(term == '0'){
+                $("#endDate0").val('');
+                return;
+            }
+            var startDate = $("#startDate0").val();
+            if (term != '') {
+                var month = Number(term) * 12;
+                var endDate = DateAdd("m", month, stringToDate(startDate, '-'));
+                endDate = DateAdd("d", -1, endDate)
+                var tempDate = dateToString(endDate);
+                var year = startDate.substring(0, 4);
+                if (isLeapYear(year) == false) {
+                    if (tempDate.substring(5) == '02-29') {
+                        endDate = DateAdd("d", -1, endDate)
+                    }
+                }
+                $("#endDate0").val(dateToString(endDate));
+            }
+            reset();
+        });
+
+        $('body').on('click', '.unitPrice', function () {
+            var index = $(this).attr('index');
+            if ($(this).attr('readonly') == 'readonly') {
+                layer.tips("请先选择计价单位", '#tip' + index, {tips: 1, time: 1000});
+            }
+        });
+
+        $(document).on('input', '.unitPrice', function () {
+            var index = $(this).attr('index');
+            var unitPrice = $(this).val();
+            var readAttr = $(this).attr('readonly');
+            if (readAttr != 'readonly' && unitPrice == '') {
+                // layer.msg('请填写租金单价');
+                return false;
+            }
+            ;
+
+            if (readAttr != 'readonly' && unitPrice != '') {
+                unitPrice = Number(unitPrice).toFixed(2);
+            }
+            ;
+
+            var chargeUnit = $('#chargeUnit' + index).val();
+            var countType = $("input[name='rentList[" + index + "].monthCountType']:checked").val();
+            switch (chargeUnit) {
+                case "1": {
+                    var dayPrice = countPrice(unitPrice).toFixed(2);
+                    $('#dayPrice' + index).val(dayPrice);
+
+                    if (countType == '1') {
+                        var monthPrice = (dayPrice * 365 / 12).toFixed(2);
+                        $('#monthPrice' + index).val(monthPrice);
+                    }
+                    break;
+                }
+                case "2": {
+                    var monthPrice = countPrice(unitPrice).toFixed(2);
+                    var dayPrice = (monthPrice * 12 / 365).toFixed(2);
+                    $('#monthPrice' + index).val(monthPrice);
+                    $('#dayPrice' + index).val(dayPrice);
+                    break;
+                }
+                case "3": {
+                    $('#dayPrice' + index).val(unitPrice);
+                    if (countType == '1') {
+                        var monthPrice = (unitPrice * 365 / 12).toFixed(2);
+                        $('#monthPrice' + index).val(monthPrice);
+                    }
+                    break;
+                }
+                case "4": {
+                    var dayPrice = (unitPrice * 12 / 365).toFixed(2);
+                    $('#monthPrice' + index).val(unitPrice);
+                    $('#dayPrice' + index).val(dayPrice);
+                    break;
+                }
+                case "5": {
+                    var dayPrice = (unitPrice / 365).toFixed(2);
+                    var monthPrice = (unitPrice / 12).toFixed(2);
+                    $('#dayPrice' + index).val(dayPrice);
+                    $('#monthPrice' + index).val(monthPrice);
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        });
+
+        form.on('select(unit-select)', function (data) {
+            var value = data.value;
+            var index = $(data.elem).attr('index')
+            if (value == '') {
+                $('#unitPrice' + index).attr("readonly", "readonly");
+            } else {
+                $('#unitPrice' + index).removeAttr("readonly");
+            }
+            // 重置选项
+            $('#unitPrice' + index).val('');
+            $('#dayPrice' + index).val(0);
+            $('#monthPrice' + index).val(0);
+            var countTypeRadio = $("input[name='rentList[" + index + "].monthCountType']");
+            countTypeRadio.get(0).checked = true;
+            countTypeRadio.get(1).disabled = false;
+            form.render('radio');
+            $('.monthPrice' + index).show();
+            $('.split-line').show();
+            switch (value) {
+                case "1": {
+                    break;
+                }
+                case "2": {
+                    countTypeRadio.get(1).disabled = true;
+                    form.render('radio');
+                    break;
+                }
+                case "3": {
+                    break;
+                }
+                case "4": {
+                    countTypeRadio.get(1).disabled = true;
+                    form.render('radio');
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        });
+
+        function countPrice(unitPrice) {
+            var totalArea = 0;
+            getRoomArr();
+            $.each(roomArr, function (i, item) {
+                totalArea += Number(item.buildArea);
+            });
+            return unitPrice * totalArea;
+        };
+
+        form.on('radio(countType-select)', function (data) {
+            var index = $(data.elem).attr('index')
+            var countType = data.value;
+            if (countType == '1') {
+                var dayPrice = $.trim($('#dayPrice' + index).val());
+                if (dayPrice != '') {
+                    dayPrice = Number(dayPrice);
+                } else {
+                    dayPrice = 0;
+                }
+                if (dayPrice == 0) {
+                    $('#monthPrice' + index).val(0);
+                } else {
+                    var monthPrice = (dayPrice * 365 / 12).toFixed(2);
+                    $('#monthPrice' + index).val(monthPrice);
+                }
+                $('.monthPrice' + index).show();
+                if (index == 0) $('.split-line').show();
+            } else {
+                $('#monthPrice' + index).val(0);
+                $('.monthPrice' + index).hide();
+                if (index == 0) $('.split-line').hide();
+            }
+            if (index == 0) reset();
+        });
+
+        // 重置动态项目
+        function reset() {
+            //重置递增率
+            $(".increaseRateList").empty();
+            increaseRateCount = 0;
+
+            //重置免租期
+            $(".freeTimeList").empty();
+            freeTimeCount = 0;
+
+            //重置周期性费用
+            $(".cycleCostList").empty();
+            cycleCostCount = 1;
+        }
+
+        form.on('submit(generate)', function () {
+            if (roomArr.length == 0) {
+                layer.msg('请选择房源');
+                return false;
+            };
+
+            if (checekRooms(roomArr) == false) {
+                layer.msg('请选择同一个楼宇房间');
+                return false;
+            };
+
+            // 判断房源是否已被签约
+            var bool = true;
+            for (var i = 0; i < roomArr.length; i++) {
+                $.ajax({
+                    url: URL + "checkRoom",
+                    type: "POST",
+                    async: false,
+                    data: {
+                        roomId: roomArr[i].roomId,
+                        roomNo: roomArr[i].roomNo,
+                        buildingName: roomArr[i].buildingName,
+                        startDate: $("#startDate0").val(),
+                        endDate: $("#endDate0").val()
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("允许签约");
+                        } else {
+                            bool = false;
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+                if (bool == false) {
+                    return;
+                } else {
+                    layer.closeAll();
+                }
+            }
+
+            // 修改客户信息
+            if (customerType == '1') {
+                var customerId = $('#company_customerId').val();
+                var ceditCode = $('#company_ceditCode').val();
+                var contacts = $('#company_contacts').val();
+                var phone = $('#company_phone').val();
+                var legalPerson = $('#company_legalPerson').val();
+                var email = $('#company_email').val();
+                var linkAddress = $('#company_linkAddress').val();
+                var sourceName = $('#company_sourceName').val();
+                $.ajax({
+                    url: URL + "customer/updateCustomer",
+                    type: "POST",
+                    data: {
+                        customerId: customerId,
+                        ceditCode: ceditCode,
+                        contacts: contacts,
+                        phone: phone,
+                        legalPerson: legalPerson,
+                        email: email,
+                        linkAddress: linkAddress,
+                        sourceName: sourceName
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        bool = true;
+                        console.log("客户信息修改成功");
+                    }
+                });
+            } else {
+                var customerId = $('#personal_customerId').val();
+                var contactsCard = $('#personal_contactsCard').val();
+                var phone = $('#personal_phone').val();
+                var sourceName = $('#personal_sourceName').val();
+                var workUnit = $('#personal_workUnit').val();
+                var email = $('#personal_email').val();
+                var linkAddress = $('#personal_linkAddress').val();
+                $.ajax({
+                    url: URL + "customer/updateCustomer",
+                    type: "POST",
+                    data: {
+                        customerId: customerId,
+                        contactsCard: contactsCard,
+                        phone: phone,
+                        sourceName: sourceName,
+                        phone: phone,
+                        workUnit: workUnit,
+                        email: email,
+                        linkAddress: linkAddress
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("客户信息修改成功");
+                    }
+                });
+            }
+            // 生成计划账单
+            var formData = $("#form").serializeObject();
+            getRoomArr(); //获取选中房间集合
+            getPlaceArr(); //获取选中车位集合
+            $.each(roomArr, function (i, item) {
+                formData['roomList[' + i + '].contractCode'] = $("#contractCode").val();
+                formData['roomList[' + i + '].roomId'] = item.roomId;
+                formData['roomList[' + i + '].roomNo'] = item.roomNo;
+                formData['roomList[' + i + '].buildArea'] = item.buildArea;
+                formData['roomList[' + i + '].floorId'] = item.floorId;
+                formData['roomList[' + i + '].floorNo'] = item.floorNo;
+                formData['roomList[' + i + '].buildingId'] = item.buildingId;
+                formData['roomList[' + i + '].buildingName'] = item.buildingName;
+                formData['roomList[' + i + '].projectId'] = item.projectId;
+                formData['roomList[' + i + '].projectName'] = item.projectName;
+            });
+            $.each(placeArr, function (i, item) {
+                formData['placeList[' + i + '].contractCode'] = $("#contractCode").val();
+                formData['placeList[' + i + '].placeId'] = item.placeId;
+                formData['placeList[' + i + '].placeNo'] = item.placeNo;
+                formData['placeList[' + i + '].floorId'] = item.floorId;
+                formData['placeList[' + i + '].floorNo'] = item.floorNo;
+                formData['placeList[' + i + '].buildingId'] = item.buildingId;
+                formData['placeList[' + i + '].buildingName'] = item.buildingName;
+                formData['placeList[' + i + '].projectId'] = item.projectId;
+                formData['placeList[' + i + '].projectName'] = item.projectName;
+            });
+            $.ajax({
+                url: URL + "generateReceipt",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        parent.layer.open({
+                            type: 2,
+                            closeBtn: false,
+                            title: '<b>收款计划</b>',
+                            content: URL + 'previewReceipt?sameCode=[[${contract.sameCode}]]&contractCode=[[${contract.contractCode}]]&version=[[${newVersion}]]&operType=[[${contract.operType}]]',
+                            area: ['100%', '100%']
+                        });
+                    } else {
+                        layer.msg(data.msg, {time: 6000});
+                    }
+                }
+            });
+        });
+
+        //判断是否存在签订两个不同楼宇的房间
+        function checekRooms(roomArr) {
+            var len = roomArr.length;
+            for (var i = 0; i < len; i++) {
+                var buildingId1 = roomArr[i].buildingId;
+                for (var j = 0; j < len; j++) {
+                    var buildingId2 = roomArr[j].buildingId;
+                    if (buildingId1 != buildingId2) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        /*------------------------------递增率start------------------------------*/
+        var increaseRateCount = [[${increaseRateCount}]];
+        $('body').on('click', '.addIncreaseRate', function () {
+            var data = {"count": increaseRateCount};
+            var html = template("increase-rate-templete", data);
+            $(".increaseRateList").append(html);
+            increaseRateCount++;
+            form.render('select');
+            increase_rate();
+        });
+
+        // 加载免租期计算方法
+        var increase_rate = function () {
+            $(".increaseMonth").bind("input propertychange", function (event) {
+                var date;
+                var index = parseInt($(this).attr('index'));
+                if (index == 0) {
+                    date = $("#startDate0").val();
+                } else {
+                    date = $("#increaseDate" + (index - 1)).val();
+                }
+                var index = $(this).attr('index');
+                var month = parseInt($(this).val());
+                var increaseDate = DateAdd("m", month, stringToDate(date, '-'));
+                $("#increaseDate" + index).val(dateToString(increaseDate));
+            });
+        }
+
+        $('body').on('click', '.delIncreaseRate', function () {
+            increaseRateCount--;
+            $(this).parents('.l_add_part').remove()
+        })
+        /*------------------------------递增率end------------------------------*/
+
+        /*------------------------------免租期start------------------------------*/
+        var freeTimeCount = [[${freeTimeCount}]];
+        $('body').on('click', '.addFreeTime', function () {
+            var data = {"count": freeTimeCount};
+            var html = template("free-time-templete", data);
+            $(".freeTimeList").append(html);
+            w_date_range_1();
+            freeTimeCount++;
+        });
+
+        $('body').on('click', '.delFreeTime', function () {
+            freeTimeCount--;
+            $(this).parents('.l_add_part').remove()
+        })
+        /*------------------------------免租期end------------------------------*/
+
+        /*------------------------------周期性费用start------------------------------*/
+        var cycleCostCount = [[${cycleCostCount}]];
+        $('body').on('click', '.addCycleCost', function () {
+            var endDate = $("#endDate0").val();
+            if (endDate == '') {
+                layer.msg("请选择租期");
+                return;
+            }
+            var countType = $("input[name='rentList[0].monthCountType']:checked").val();
+            var data = {"count": cycleCostCount, "countType": countType};
+            var html = template("cycle-cost-templete", data);
+            $(".cycleCostList").append(html);
+            form.render();
+            w_date_range_2();
+            cycleCostCount++;
+        });
+
+        $('body').on('click', '.delCycleCost', function () {
+            cycleCostCount--;
+            $(this).parents('.l_add_part').remove()
+        })
+        /*------------------------------周期性费用end------------------------------*/
+
+        //生效日期
+        lay('#startDate0').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                done: function (value) {
+                    var term = $('#leaseTerm').val();
+                    if (term != '') {
+                        var month = Number(term) * 12;
+                        var endDate = DateAdd("m", month, stringToDate(value, '-'));
+                        endDate = DateAdd("d", -1, endDate)
+                        var tempDate = dateToString(endDate);
+                        var year = value.substring(0, 4);
+                        if (isLeapYear(year) == false) {
+                            if (tempDate.substring(5) == '02-29') {
+                                endDate = DateAdd("d", -1, endDate)
+                            }
+                        }
+                        $("#endDate0").val(dateToString(endDate));
+                    }
+                    reset();
+                }
+            });
+        });
+
+        //截止日期
+        lay('#endDate0').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                done: function (value) {
+                    reset();
+                }
+            });
+        });
+
+        lay('#changeDate').each(function () {
+            var startDate = $("#startDate0").val();
+            var endDate = $("#endDate0").val();
+            laydate.render({
+                elem: this,
+                trigger: 'click',
+                min: startDate,
+                max: endDate
+            });
+        });
+
+        lay('.laydate-control').each(function () {
+            laydate.render({
+                elem: this,
+                trigger: 'click'
+            });
+        });
+
+        // 初始化双日历控件，不限制时间范围
+        lay('.laydate-control-range1').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+                , range: '~'
+            });
+        });
+        //不限制时间范围
+        var w_date_range_1 = function () {
+            lay('.laydate-control-range1').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                    , range: '~'
+                });
+            });
+        }
+
+        // 初始化双日历控件，限制时间范围
+        var startDate = '[[${startDate}]]';
+        var endDate = '[[${endDate}]]';
+        lay('.laydate-control-range2').each(function () {
+            laydate.render({
+                elem: this
+                , trigger: 'click'
+                , range: '~'
+                , min: startDate
+                , max: endDate
+                , value: startDate + ' ~ ' + endDate
+            });
+        });
+
+        //限制时间范围
+        var w_date_range_2 = function () {
+            startDate = $("#startDate0").val();
+            endDate = $("#endDate0").val();
+            lay('.laydate-control-range2').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                    , range: '~'
+                    , min: startDate
+                    , max: endDate
+                    , value: startDate + ' ~ ' + endDate
+                });
+            });
+        }
+
+        //变更类型切换
+        $('body').on('click', '.ht_change li', function () {
+            $(this).addClass('htactive').siblings().removeClass('htactive');
+            $('.house_pagebox .house_page:eq(' + $(this).index() + ')').show().siblings().hide();
+        })
+
+        //数据表格点击一行选中
+        $(document).on("click", ".layui-table-body table.layui-table tbody tr", function () {
+            var obj = event ? event.target : event.srcElement;
+            var tag = obj.tagName;
+            var checkbox = $(this).find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if (checkbox.length != 0) {
+                if (tag == 'DIV') {
+                    checkbox.click();
+                }
+            }
+
+        });
+        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+            e.stopPropagation();
+        });
+        form.verify({
+            integer: function (value, item) {
+                var reg = /^\+?[1-9]\d*$/;
+                if (!reg.test(value)) {
+                    return "必须是正整数";
+                }
+            }
+        });
+
+        //取消按钮
+        $('body').on('click', '.cancel', function () {
+            parent.layer.closeAll(); //关闭弹层
+        })
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.FloorMapper">
+
+    <sql id="Base_Column_List">
+		f.floor_id,
+		f.floor_no,
+		f.floor_name,
+		f.building_id,
+		f.building_name,
+		f.project_id,
+		f.project_name,
+		f.imgs,
+		f.create_user_id,
+		f.create_time,
+		f.update_user_id,
+		f.update_time,
+		f.remarks,
+		f.del_flag
+	</sql>
+
+    <sql id="Link_Column_List">
+    </sql>
+
+    <select id="queryFloorList" resultType="floor">
+        select
+        <include refid="Base_Column_List"/>
+        from floor f
+        where f.del_flag = '0'
+        <if test="floorNo != null and floorNo != '' ">
+            and f.floor_no = #{floorNo}
+        </if>
+        <if test="buildingId != null ">
+            and f.building_id = #{buildingId}
+        </if>
+        <if test="buildingName != null and buildingName != '' ">
+            and f.building_name like concat('%',#{buildingName},'%')
+        </if>
+        order by
+        f.building_id,
+        cast( f.floor_no as signed )
+    </select>
+
+    <select id="queryFloorBaseList" resultType="floor">
+        select
+        floor_id,
+        floor_no
+        from floor
+        where del_flag = '0'
+        <if test="buildingId != null ">
+            and building_id = #{buildingId}
+        </if>
+        order by
+        cast( floor_no as signed )
+    </select>
+
+    <select id="queryFloorNoList" resultType="string">
+        select
+        floor_no
+        from floor
+        where del_flag = '0'
+        <if test="buildingId != null ">
+            and building_id = #{buildingId}
+        </if>
+    </select>
+
+    <select id="queryFloorDetailByPrimarykey" resultType="floor">
+        select
+        <include refid="Base_Column_List"/>
+        from floor f
+        where f.floor_id = #{floorId}
+    </select>
+
+    <select id="queryFloorDetail" resultType="floor">
+        select
+        <include refid="Base_Column_List"/>
+        from floor f
+        where f.del_flag = '0'
+        <if test="floorId != null ">
+            and f.floor_id = #{floorId}
+        </if>
+        <if test="buildingId != null ">
+            and f.building_id = #{buildingId}
+        </if>
+        <if test="floorNo != null and floorNo != '' ">
+            and f.floor_no = #{floorNo}
+        </if>
+    </select>
+
+    <insert id="insertFloor">
+        insert into floor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="floorId != null ">
+                floor_id,
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no,
+            </if>
+            <if test="floorName != null and floorName != '' ">
+                floor_name,
+            </if>
+            <if test="buildingId != null ">
+                building_id,
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name,
+            </if>
+            <if test="projectId != null ">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name,
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks,
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="floorId != null ">
+                #{floorId},
+            </if>
+            <if test="floorNo != null and floorNo != '' ">
+                #{floorNo},
+            </if>
+            <if test="floorName != null and floorName != '' ">
+                #{floorName},
+            </if>
+            <if test="buildingId != null ">
+                #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                #{projectName},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                #{imgs},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                #{delFlag},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertFloorBatch">
+        insert into floor
+        (
+        floor_no,
+        floor_name,
+        building_id,
+        building_name,
+        project_id,
+        project_name,
+        imgs,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.floorNo},
+            #{item.floorName},
+            #{item.buildingId},
+            #{item.buildingName},
+            #{item.projectId},
+            #{item.projectName},
+            #{item.imgs},
+            #{item.createUserId},
+            #{item.createTime},
+            #{item.updateUserId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateFloor">
+        update floor
+        <set>
+            <if test="floorNo != null and floorNo != '' ">
+                floor_no = #{floorNo},
+            </if>
+            <if test="floorName != null and floorName != '' ">
+                floor_name = #{floorName},
+            </if>
+            <if test="buildingId != null ">
+                building_id = #{buildingId},
+            </if>
+            <if test="buildingName != null and buildingName != '' ">
+                building_name = #{buildingName},
+            </if>
+            <if test="projectId != null ">
+                project_id = #{projectId},
+            </if>
+            <if test="projectName != null and projectName != '' ">
+                project_name = #{projectName},
+            </if>
+            <if test="imgs != null and imgs != '' ">
+                imgs = #{imgs},
+            </if>
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="remarks != null and remarks != '' ">
+                remarks = #{remarks},
+            </if>
+            <if test="delFlag != null and delFlag != '' ">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where
+        floor_id = #{floorId}
+    </update>
+
+    <update id="updateFloorImgBatch">
+        update floor
+        <set>
+            <if test="imgs != null and imgs != '' ">
+                imgs = #{imgs},
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where floor_id in
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteFloorByPrimarykey">
+		delete
+		from
+			floor
+		where
+			floor_id = #{floorId}
+	</delete>
+
+</mapper>
