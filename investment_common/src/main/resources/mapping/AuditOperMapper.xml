@@ -15,6 +15,7 @@
 		a.lighten_up
 	</sql>
 
+    <!--关联表-->
     <sql id="Link_Column_List">
 		left join contract c on a.code = c.contract_code and a.version = c.version
 		left join customer cu on c.customer_id = cu.customer_id
