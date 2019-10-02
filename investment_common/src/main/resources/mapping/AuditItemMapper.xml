@@ -9,9 +9,6 @@
 		a.switch_flag
 	</sql>
 
-	<sql id="Link_Column_List" >
-	</sql>
-	
 	<select id="queryAuditItemList" resultType="auditItem">
 		select
 			<include refid="Base_Column_List"/>
