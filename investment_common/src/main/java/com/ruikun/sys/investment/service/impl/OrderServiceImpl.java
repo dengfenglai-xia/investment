@@ -11,6 +11,6 @@ public class OrderServiceImpl implements OrderService {
 	public void insertOrder() {
 		Order order = Order.getInstance();
 		System.out.println("订单信息：" + order.getSerialNo()+"|"+order.getTradingTime()+"|"+order.getAmount());
-//		Order.clear();
+		Order.clear();
 	}
 }
