@@ -45,6 +45,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/layuiadmin/**", "anon");
         filterChainDefinitionMap.put("/loginCommit", "anon");
+        filterChainDefinitionMap.put("/insertOrder", "anon");
         filterChainDefinitionMap.put("/logout", "logout");
         filterChainDefinitionMap.put("/**", "authc");
 //        filterChainDefinitionMap.put("/**", "anon");
