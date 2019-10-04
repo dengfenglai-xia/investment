@@ -17,6 +17,10 @@ public class Order {
         return oredr;
     }
 
+    public static void setInstance(Order oredr) {
+        orderThreadLocal.set(oredr);
+    }
+
     public static void clear(){
         orderThreadLocal.remove();
     }

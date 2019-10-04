@@ -264,7 +264,7 @@
 		insert into role_permission(role_id,permissionid)
 		values
 		<foreach collection="list" item="item" index="index" separator="," >
-			(#{item.role_id},#{item.permissionid})
+			(#{item.roleId},#{item.permissionid})
 		</foreach>
 	</insert>
 

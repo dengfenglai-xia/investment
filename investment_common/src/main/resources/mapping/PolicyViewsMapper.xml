@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruikun.sys.investment.mapper.PolicyViewsMapper">
+ 
+	<select id="queryIndustryList1" resultType="policy">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					industry name,
+					count(industry) num
+				FROM
+					customer
+				WHERE
+					state = '1'
+				GROUP BY
+					industry
+			) temp
+		ORDER BY num DESC
+		LIMIT 0, 6
+	</select>
+
+	<select id="queryIndustryList2" resultType="policy">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					industry name,
+					count(industry) num
+				FROM
+					customer_temporary
+				WHERE
+					state = '3'
+				GROUP BY
+					industry
+			) temp
+		ORDER BY num DESC
+		LIMIT 0, 6
+	</select>
+
+
+	<select id="querySourceList1" resultType="policy">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					channel_source name,
+					count(industry) num
+				FROM
+					customer
+				WHERE
+					state = '1'
+					and channel_source != ''
+				GROUP BY
+					channel_source
+			) temp
+		ORDER BY num DESC
+	</select>
+
+	<select id="querySourceList2" resultType="policy">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					channel_source name,
+					count(industry) num
+				FROM
+					customer_temporary
+				WHERE
+					state = '3'
+					and channel_source != ''
+				GROUP BY
+					channel_source
+			) temp
+		ORDER BY num DESC
+	</select>
+</mapper>

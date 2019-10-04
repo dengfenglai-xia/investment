@@ -9,7 +9,6 @@ import com.ruikun.sys.investment.entity.PermissionTree;
 import com.ruikun.sys.investment.entity.Role;
 import com.ruikun.sys.investment.entity.RolePermission;
 import com.ruikun.sys.investment.service.PermissionService;
-import com.ruikun.sys.investment.service.PermissionService;
 import com.ruikun.sys.investment.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@SuppressWarnings("all")
 public class PermissionController {
 	
     @Autowired
@@ -181,7 +179,7 @@ public class PermissionController {
 	/**
 	 * 跳转到分配权限列表页面
 	 */
-	@RequestMapping(value="/permissionBusinessTreeList/{roleId}")
+	@RequestMapping(value="/permissionTreeList/{roleId}")
     public String permissionTreeList(@PathVariable("roleId")Integer roleId,Model model){
 		String ids = "";
 		List<PermissionTree> treeList = permissionService.findPermissionTreeList(); //查询菜单(全部)树

@@ -21,6 +21,7 @@
                     <script type="text/html" id="operation">
                         <a class="layui-btn layui-btn-xs l_web_but_xg" lay-event="edit">修改</a>
                         <a class="layui-btn layui-btn-xs l_web_but_sc" lay-event="del">删除</a>
+                        <a class="layui-btn layui-btn-xs l_web_but_dr" lay-event="right">授权</a>
                     </script>
                 </div>
             </div>
@@ -101,6 +102,18 @@
                     skin: 'opens',
                     shadeClose: true,
                     area: ['450px', '300px']
+                });
+            };
+
+            if(obj.event === 'right'){
+                layer.open({
+                    type: 2
+                    ,title: '授权'
+                    ,content: URL+'permissionTreeList/'+data.roleId
+                    ,maxmin: false
+                    ,skin: 'opens'
+                    ,shadeClose: true
+                    ,area: ['95%', '95%']
                 });
             };
 

@@ -2,267 +2,374 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:include="common/common-head::head">
-<body class="layui-layout-body" >
+<body class="layui-layout-body">
 <div id="LAY_app">
-  <div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-      <!-- 头部区域 -->
-      <ul class="layui-nav layui-layout-left">
-        <li class="layui-nav-item layadmin-flexible" lay-unselect>
-          <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
-            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
-          </a>
-        </li>
-        <li class="layui-nav-item layadmin-flexible" lay-unselect>
-          <span class="minkot">您好，欢迎来到招商管理系统</span>
-        </li>
-      </ul>
-      <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <!-- 头部区域 -->
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item layadmin-flexible" lay-unselect>
+                    <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+                <li class="layui-nav-item layadmin-flexible" lay-unselect>
+                    <span class="minkot">您好，欢迎来到招商管理系统</span>
+                </li>
+            </ul>
+            <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
-        <li class="layui-nav-item" lay-unselect>
-          <a href="javascript:;" layadmin-event="refresh" title="刷新">
-            <i class="layui-icon layui-icon-refresh-3"></i>
-          </a>
-        </li>
-        <li class="layui-nav-item layui-hide-xs" lay-unselect>
-          <a href="javascript:;" layadmin-event="theme">
-            <i class="layui-icon layui-icon-theme"></i>
-          </a>
-        </li>
-        <li class="layui-nav-item layui-hide-xs" lay-unselect>
-          <a href="javascript:;" layadmin-event="fullscreen">
-            <i class="layui-icon layui-icon-screen-full"></i>
-          </a>
-        </li>
-        <li class="layui-nav-item" lay-unselect>
-          <a href="javascript:;">
-            <cite th:text="${user.realName }"></cite>
-          </a>
-          <dl class="layui-nav-child">
-            <dd><a class="liopassword">修改密码</a></dd>
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;" layadmin-event="refresh" title="刷新">
+                        <i class="layui-icon layui-icon-refresh-3"></i>
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="javascript:;" layadmin-event="theme">
+                        <i class="layui-icon layui-icon-theme"></i>
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="javascript:;" layadmin-event="fullscreen">
+                        <i class="layui-icon layui-icon-screen-full"></i>
+                    </a>
+                </li>
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;">
+                        <cite th:text="${user.realName }"></cite>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a class="liopassword">修改密码</a></dd>
 
-            <hr>
-            <dd style="text-align: center;"><a th:href="@{/logout}">退出</a></dd>
-          </dl>
-        </li>
+                        <hr>
+                        <dd style="text-align: center;"><a th:href="@{/logout}">退出</a></dd>
+                    </dl>
+                </li>
 
-        <li class="layui-nav-item layui-hide-xs">
-          &nbsp;
-        </li>
-        <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
-          <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
-        </li>
-      </ul>
-    </div>
-    <!-- 侧边菜单 -->
-    <div class="layui-side layui-side-menu">
-      <div class="layui-side-scroll">
-        <div class="layui-logo">
-          <!--logo图标-->
-          <span><img src="img/logo_icon.png" /></span>
+                <li class="layui-nav-item layui-hide-xs">
+                    &nbsp;
+                </li>
+                <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+                    <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
+                </li>
+            </ul>
         </div>
-        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-          <li data-name="get" class="layui-nav-item">
-            <a href="javascript:;" th:lay-href="@{/home}" lay-tips="首页" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon01.png" width="16px" /></i>
-              <cite>首页</cite>
-            </a>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="项目管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon03.png" width="16px" /></i>
-              <cite>项目管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/project/toProjectList}">项目管理</a></dd>
-              <dd><a th:lay-href="@{/building/toBuildingList/1}">楼宇管理</a></dd>
-              <dd><a th:lay-href="@{/room/queryRoomSumList}">招商看板</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="空间管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon04.png" width="16px" /></i>
-              <cite>空间管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/room/toRoomList}">房源管理</a></dd>
-              <dd><a th:lay-href="@{/workplace/toWorkplaceList}">工位管理</a></dd>
-              <dd><a th:lay-href="@{/carplace/toCarplaceList}">车位管理</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="客户管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon05.png" width="16px" /></i>
-              <cite>客户管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/customerTemporary/list}">临时客户</a></dd>
-              <dd><a th:lay-href="@{/customer/toFormalCustomerList/1}">正式客户</a></dd>
-              <dd><a th:lay-href="@{/customer/toFormalCustomerList/2}">历史客户</a></dd>
-              <dd><a th:lay-href="@{/toChannelList}">渠道管理</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="合同管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon07.png" width="16px" /></i>
-              <cite>合同管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toContractList}">房源合同</a></dd>
-              <dd><a th:lay-href="@{/toContractWorkplaceList}">工位合同</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="协议管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon07.png" width="16px" /></i>
-              <cite>协议管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toAgreementList}">房源协议</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="财务管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon08.png" width="16px" /></i>
-              <cite>财务管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/receiptList}">收款账单</a></dd>
-              <dd><a th:lay-href="@{/paymentList}">付款账单</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="决策视图" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon07.png" width="16px" /></i>
-              <cite>决策视图</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toCustomerView}">客户分析</a></dd>
-              <dd><a th:lay-href="@{/toRentView}">租赁分析</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="统计报表" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon10.png" width="16px" /></i>
-              <cite>统计报表</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toSettelReport}">收支流水表</a></dd>
-              <dd><a th:lay-href="@{/toCustomerBills}">客单统计表</a></dd>
-              <dd><a th:lay-href="@{/toDepositBillsInfo}">押金统计表</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="组织结构管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon06.png" width="16px" /></i>
-              <cite>组织结构管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toUserList}">人员管理</a></dd>
-              <dd><a th:lay-href="@{/toRoleList}">角色管理</a></dd>
-              <dd><a th:lay-href="@{/toDeptList}">部门管理</a></dd>
-              <dd><a th:lay-href="@{/toJobList}">职务管理</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="审核管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon06.png" width="16px" /></i>
-              <cite>审核管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toAuditList}">合同审核</a></dd>
-              <dd><a th:lay-href="@{/toAuditConfig}">配置审核流程</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="物业管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon13.png" width="16px" /></i>
-              <cite>物业管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toEnergyList/1}">电费管理</a></dd>
-              <dd><a th:lay-href="@{/toEnergyList/2}">水费管理</a></dd>
-              <dd><a th:lay-href="@{/toEnergyList/3}">燃气费管理</a></dd>
-            </dl>
-          </li>
-          <li data-name="template" class="layui-nav-item">
-            <a href="javascript:;" lay-tips="系统管理" lay-direction="2">
-              <i class="layui-icon"><img src="img/dh_icon13.png" width="16px" /></i>
-              <cite>系统管理</cite>
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a th:lay-href="@{/toIndustryList}">行业分类</a></dd>
-              <dd><a th:lay-href="@{/toBusinessModeList}">项目业态</a></dd>
-              <dd><a th:lay-href="@{/toOrientationList}">楼宇朝向</a></dd>
-              <dd><a th:lay-href="@{/toLeaseTermList}">合同租期</a></dd>
-              <dd><a th:lay-href="@{/toChannelSourceList}">渠道来源</a></dd>
-              <dd><a th:lay-href="@{/toFacilitiesList}">配套设施</a></dd>
-              <dd><a th:lay-href="@{/toTagsList}">标签</a></dd>
-              <dd><a th:lay-href="@{/toFollowTypeList}">跟进方式</a></dd>
-              <dd><a th:lay-href="@{/queryContractConfigList}">合同配置</a></dd>
-            </dl>
-          </li>
-        </ul>
-      </div>
-    </div>
+        <!-- 侧边菜单 -->
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <div class="layui-logo">
+                    <!--logo图标-->
+                    <span><img src="img/logo_icon.png"/></span>
+                </div>
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                    lay-filter="layadmin-system-side-menu">
+                    <li data-name="get" class="layui-nav-item">
+                        <a href="javascript:;" th:lay-href="@{/home}" lay-tips="首页" lay-direction="2">
+                            <i class="layui-icon"><img src="img/dh_icon01.png" width="16px"/></i>
+                            <cite>首页</cite>
+                        </a>
+                    </li>
 
-    <!-- 页面标签 -->
-    <div class="layadmin-pagetabs" id="LAY_app_tabs">
-      <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
-      <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
-      <div class="layui-icon layadmin-tabs-control layui-icon-down">
-        <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
-          <li class="layui-nav-item" lay-unselect>
-            <a href="javascript:;"></a>
-            <dl class="layui-nav-child layui-anim-fadein">
-              <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
-              <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
-              <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
-            </dl>
-          </li>
-        </ul>
-      </div>
-      <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
-        <ul class="layui-tab-title" id="LAY_app_tabsheader">
-          <li lay-id="首页.html" lay-attr="首页.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
-        </ul>
-      </div>
-    </div>
-    <!-- 主体内容 -->
-    <div class="layui-body" id="LAY_app_body">
-      <div class="layadmin-tabsbody-item layui-show">
-        <iframe name="target" th:src="@{/home}" frameborder="0" class="layadmin-iframe"></iframe>
-      </div>
-    </div>
-    <div class="footer">
-      <div class="copyright">天津锐锟科技有限公司 版权所有</div>
-    </div>
+                    <shiro:hasPermission name="projectModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="项目管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon03.png" width="16px"/></i>
+                                <cite>项目管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="projectModule:projectList">
+                                    <dd><a th:lay-href="@{/project/toProjectList}">项目列表</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="projectModule:buildList">
+                                    <dd><a th:lay-href="@{/building/toBuildingList/1}">楼宇列表</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="projectModule:showList">
+                                    <dd><a th:lay-href="@{/room/queryRoomSumList}">招商看板</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
 
-    <!-- 辅助元素，一般用于移动设备下遮罩 -->
-    <div class="layadmin-body-shade" layadmin-event="shade"></div>
-  </div>
+                    <shiro:hasPermission name="spaceModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="空间管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon04.png" width="16px"/></i>
+                                <cite>空间管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="spaceModule:roomList">
+                                    <dd><a th:lay-href="@{/room/toRoomList}">房源列表</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="spaceModule:workplaceList">
+                                    <dd><a th:lay-href="@{/workplace/toWorkplaceList}">工位列表</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="spaceModule:carplaceList">
+                                    <dd><a th:lay-href="@{/carplace/toCarplaceList}">车位列表</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="customerModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="客户管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon05.png" width="16px"/></i>
+                                <cite>客户管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="customerModule:tempList">
+                                    <dd><a th:lay-href="@{/customerTemporary/list}">临时客户</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="customerModule:formalList">
+                                    <dd><a th:lay-href="@{/customer/toFormalCustomerList/1}">正式客户</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="customerModule:historyList">
+                                    <dd><a th:lay-href="@{/customer/toFormalCustomerList/2}">历史客户</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="customerModule:channelList">
+                                    <dd><a th:lay-href="@{/toChannelList}">渠道管理</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="contractModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="合同管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon07.png" width="16px"/></i>
+                                <cite>合同管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="contractModule:contractList">
+                                    <dd><a th:lay-href="@{/toContractList}">房源合同</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="contractModule:workplacecontractList">
+                                    <dd><a th:lay-href="@{/toContractWorkplaceList}">工位合同</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="agreementModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="协议管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon07.png" width="16px"/></i>
+                                <cite>协议管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a th:lay-href="@{/toAgreementList}">房源协议</a></dd>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="financeModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="财务管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon08.png" width="16px"/></i>
+                                <cite>财务管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="financeModule:receiptList">
+                                    <dd><a th:lay-href="@{/receiptList}">收款账单</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="financeModule:paymentList">
+                                    <dd><a th:lay-href="@{/paymentList}">付款账单</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="policyViewsModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="决策视图" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon07.png" width="16px"/></i>
+                                <cite>决策视图</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="policyViewsModule:customerList">
+                                <dd><a th:lay-href="@{/toCustomerView}">客户分析</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="policyViewsModule:rentList">
+                                <dd><a th:lay-href="@{/toRentView}">租赁分析</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="reportModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="统计报表" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon10.png" width="16px"/></i>
+                                <cite>统计报表</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="reportModule:settelReport">
+                                <dd><a th:lay-href="@{/toSettelReport}">收支流水表</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="reportModule:customerBillsReport">
+                                <dd><a th:lay-href="@{/toCustomerBills}">客单统计表</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="reportModule:depositBillsReport">
+                                <dd><a th:lay-href="@{/toDepositBillsInfo}">押金统计表</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="organModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="组织结构管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon06.png" width="16px"/></i>
+                                <cite>组织结构管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="organModule:userList">
+                                <dd><a th:lay-href="@{/toUserList}">人员管理</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="organModule:roleList">
+                                <dd><a th:lay-href="@{/toRoleList}">角色管理</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="organModule:deptList">
+                                <dd><a th:lay-href="@{/toDeptList}">部门管理</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="organModule:jobList">
+                                <dd><a th:lay-href="@{/toJobList}">职务管理</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="auditModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="审核管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon06.png" width="16px"/></i>
+                                <cite>审核管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="auditModule:auditList">
+                                <dd><a th:lay-href="@{/toAuditList}">合同审核</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="energyModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="物业管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon13.png" width="16px"/></i>
+                                <cite>物业管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="energyModule:energy1List">
+                                <dd><a th:lay-href="@{/toEnergyList/1}">电费管理</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="energyModule:energy2List">
+                                <dd><a th:lay-href="@{/toEnergyList/2}">水费管理</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="energyModule:energy3List">
+                                <dd><a th:lay-href="@{/toEnergyList/3}">燃气费管理</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="sysconfigModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="系统配置" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon13.png" width="16px"/></i>
+                                <cite>系统配置</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <shiro:hasPermission name="sysconfigModule:auditconfig">
+                                <dd><a th:lay-href="@{/toAuditConfig}">审核流程设置</a></dd>
+                                </shiro:hasPermission>
+                                <shiro:hasPermission name="sysconfigModule:contractconfig">
+                                <dd><a th:lay-href="@{/queryContractConfigList}">合同模板设置</a></dd>
+                                </shiro:hasPermission>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+
+                    <shiro:hasPermission name="basicsModule">
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="基础数据管理" lay-direction="2">
+                                <i class="layui-icon"><img src="img/dh_icon13.png" width="16px"/></i>
+                                <cite>基础数据管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a th:lay-href="@{/toIndustryList}">行业分类</a></dd>
+                                <dd><a th:lay-href="@{/toBusinessModeList}">项目业态</a></dd>
+                                <dd><a th:lay-href="@{/toOrientationList}">楼宇朝向</a></dd>
+                                <dd><a th:lay-href="@{/toLeaseTermList}">合同租期</a></dd>
+                                <dd><a th:lay-href="@{/toChannelSourceList}">渠道来源</a></dd>
+                                <dd><a th:lay-href="@{/toFacilitiesList}">配套设施</a></dd>
+                                <dd><a th:lay-href="@{/toTagsList}">标签</a></dd>
+                                <dd><a th:lay-href="@{/toFollowTypeList}">跟进方式</a></dd>
+                            </dl>
+                        </li>
+                    </shiro:hasPermission>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 页面标签 -->
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+            <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+            <div class="layui-icon layadmin-tabs-control layui-icon-down">
+                <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+                    <li class="layui-nav-item" lay-unselect>
+                        <a href="javascript:;"></a>
+                        <dl class="layui-nav-child layui-anim-fadein">
+                            <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                            <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                            <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+            <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+                <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                    <li lay-id="首页.html" lay-attr="首页.html" class="layui-this"><i
+                            class="layui-icon layui-icon-home"></i></li>
+                </ul>
+            </div>
+        </div>
+        <!-- 主体内容 -->
+        <div class="layui-body" id="LAY_app_body">
+            <div class="layadmin-tabsbody-item layui-show">
+                <iframe name="target" th:src="@{/home}" frameborder="0" class="layadmin-iframe"></iframe>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="copyright">天津锐锟科技有限公司 版权所有</div>
+        </div>
+
+        <!-- 辅助元素，一般用于移动设备下遮罩 -->
+        <div class="layadmin-body-shade" layadmin-event="shade"></div>
+    </div>
 </div>
 <script th:replace="common/common-js::js"></script>
 <script>
-  layui.config({
-    base:URL+ 'layuiadmin/'
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use('index');
-  $('.liopassword').click(function(){
-    layer.open({
-      type: 2
-      ,skin: 'currency00'
-      ,title: '修改密码'
-      ,content: '修改密码.html'
-      ,closeBtn: 2
-      ,area: ['400px', '300px']
-      ,btn: ['确定', '取消']
-      ,yes: function(index, layero){
-        layer.close(index); //关闭弹层
-      }
-    });
-  })
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+    $('.liopassword').click(function () {
+        layer.open({
+            type: 2
+            , skin: 'currency00'
+            , title: '修改密码'
+            , content: '修改密码.html'
+            , closeBtn: 2
+            , area: ['400px', '300px']
+            , btn: ['确定', '取消']
+            , yes: function (index, layero) {
+                layer.close(index); //关闭弹层
+            }
+        });
+    })
 </script>
 </body>
 </html>
