@@ -144,6 +144,9 @@
             <if test="state != null and state != '' ">
                 state,
             </if>
+            <if test="reason != null and reason != '' ">
+                reason,
+            </if>
             <if test="contacts != null and contacts != '' ">
                 contacts,
             </if>
@@ -231,6 +234,9 @@
             </if>
             <if test="state != null and state != '' ">
                 #{state},
+            </if>
+            <if test="reason != null and reason != '' ">
+                #{reason},
             </if>
             <if test="contacts != null and contacts != '' ">
                 #{contacts},
@@ -371,6 +377,9 @@
             </if>
             <if test="demandStartTime != null and demandStartTime != '' ">
                 demand_start_time = #{demandStartTime},
+            </if>
+            <if test="reason != null and reason != '' ">
+                reason = #{reason},
             </if>
             <if test="createUserId != null ">
                 create_user_id = #{createUserId},

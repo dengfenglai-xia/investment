@@ -57,13 +57,13 @@
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label l_hg">占地面积&nbsp;&nbsp;<br/>（㎡）：</label>
                     <div class="layui-input-block">
-                        <input type="text" name="coverArea" th:value="${building.coverArea}" oninput="onlyNumber(this)" placeholder="请输入总占地面积" autocomplete="off" class="layui-input">
+                        <input type="text" name="coverArea" th:value="${#numbers.formatDecimal(building.coverArea, 1, 2)}" oninput="onlyNumber(this)" placeholder="请输入总占地面积" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label l_hg">建筑面积&nbsp;&nbsp;<br/>（㎡）：</label>
                     <div class="layui-input-block">
-                        <input type="text" name="buildArea" th:value="${building.buildArea}" oninput="onlyNumber(this)" placeholder="请输入总建筑面积" autocomplete="off" class="layui-input">
+                        <input type="text" name="buildArea" th:value="${#numbers.formatDecimal(building.buildArea, 1, 2)}" oninput="onlyNumber(this)" placeholder="请输入总建筑面积" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-col-md8 layui-col-xs6 l_po">

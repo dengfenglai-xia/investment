@@ -46,8 +46,10 @@
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label "><b class="w_sur">*</b>客户类型：</label>
                     <div class="layui-input-block">
-                        <input type="radio" name="customerType" th:value="1" title="公司" lay-filter="customerType-select" th:checked="${customerType eq '1' || customerType == null}">
-                        <input type="radio" name="customerType" th:value="2" title="个人" lay-filter="customerType-select" th:checked="${customerType eq '2'}">
+                        <input type="radio" name="customerType" th:value="1" title="公司" lay-filter="customerType-select"
+                               th:checked="${customerType eq '1' || customerType == null}">
+                        <input type="radio" name="customerType" th:value="2" title="个人" lay-filter="customerType-select"
+                               th:checked="${customerType eq '2'}">
                     </div>
                 </div>
                 <!--公司/个人租赁信息-->
@@ -64,8 +66,10 @@
                     <label class="layui-form-label w_label ">资源选择：</label>
                     <div class="layui-input-block">
                         <b class="w_sur">*</b>
-                        <input type="button" value="房源选择" class="layui-btn btn layui-btn-normal pop-up" data-type="addRoom"/>
-                        <input type="button" value="车位选择" class="layui-btn btn layui-btn-normal pop-up" data-type="addCarplace"/>
+                        <input type="button" value="房源选择" class="layui-btn btn layui-btn-normal pop-up"
+                               data-type="addRoom"/>
+                        <input type="button" value="车位选择" class="layui-btn btn layui-btn-normal pop-up"
+                               data-type="addCarplace"/>
                     </div>
                 </div>
                 <div class="layui-col-md12 layui-col-xs12 l_po">
@@ -91,18 +95,18 @@
                             </tr>
                             </thead>
                             <tbody id="selectedRoomList">
-                                <tr class="rm" th:each="obj:${roomList}">
-                                    <td style="display: none" th:text="${obj.projectId}"></td>
-                                    <td th:text="${obj.projectName}"></td>
-                                    <td style="display: none" th:text="${obj.buildingId}"></td>
-                                    <td th:text="${obj.buildingName}"></td>
-                                    <td style="display: none" th:text="${obj.floorId}"></td>
-                                    <td th:text="${obj.floorNo}"></td>
-                                    <td style="display: none" th:text="${obj.roomId}"></td>
-                                    <td th:text="${obj.roomNo}"></td>
-                                    <td th:text="${#numbers.formatDecimal(obj.buildArea, 1, 2)}"></td>
-                                    <td><a title="删除" th:roomId="${obj.roomId}" class="btn w_sc_btn del-room"></a></td>
-                                </tr>
+                            <tr class="rm" th:each="obj:${roomList}">
+                                <td style="display: none" th:text="${obj.projectId}"></td>
+                                <td th:text="${obj.projectName}"></td>
+                                <td style="display: none" th:text="${obj.buildingId}"></td>
+                                <td th:text="${obj.buildingName}"></td>
+                                <td style="display: none" th:text="${obj.floorId}"></td>
+                                <td th:text="${obj.floorNo}"></td>
+                                <td style="display: none" th:text="${obj.roomId}"></td>
+                                <td th:text="${obj.roomNo}"></td>
+                                <td th:text="${#numbers.formatDecimal(obj.buildArea, 1, 2)}"></td>
+                                <td><a title="删除" th:roomId="${obj.roomId}" class="btn w_sc_btn del-room"></a></td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -266,12 +270,12 @@
                 </div>
                 <div class="clear split-line"></div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
-                    <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                    <label class="layui-form-label w_label ">滞纳金比例：</label>
                     <div class="layui-input-block">
                         <div class="day_left">
                             <input type="text" id="feeLateRatio0" name="rentList[0].feeLateRatio"
-                                   oninput="onlyNumber(this)"
-                                   lay-verify="required|number" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
+                                   oninput="onlyNumber(this)" lay-verify="required|number" autocomplete="off"
+                                   placeholder="请输入滞纳金比例" th:value="0"
                                    class="layui-input">
                         </div>
                         <div class="day_right">
@@ -385,7 +389,8 @@
     <div class="layui-col-md4 layui-col-xs6 l_po">
         <label class="layui-form-label w_label "><b class="w_sur">*</b>选择客户：</label>
         <div class="layui-input-block">
-            <select id="company_customerId" name="customerId" lay-verify="required" lay-filter="customer-select" lay-search>
+            <select id="company_customerId" name="customerId" lay-verify="required" lay-filter="customer-select"
+                    lay-search>
                 <option th:if="${customerCompanyList.size() == 0}" value="">暂无客户信息</option>
                 <option th:if="${customerCompanyList.size() > 0}" value="">请选择客户</option>
                 <option th:each="obj:${customerCompanyList}" th:value="${obj.customerId}"
@@ -457,7 +462,8 @@
     <div class="layui-col-md4 layui-col-xs6 l_po">
         <label class="layui-form-label w_label "><b class="w_sur">*</b>选择客户：</label>
         <div class="layui-input-block">
-            <select id="personal_customerId" name="customerId" lay-verify="required" lay-filter="customer-select" lay-search>
+            <select id="personal_customerId" name="customerId" lay-verify="required" lay-filter="customer-select"
+                    lay-search>
                 <option th:if="${customerPersonalList.size() == 0}" value="">暂无客户信息</option>
                 <option th:if="${customerPersonalList.size() > 0}" value="">请选择客户</option>
                 <option th:each="obj:${customerPersonalList}" th:value="${obj.customerId}"
@@ -548,7 +554,8 @@
     <div class="w_hosue_open">
         <div>
             <div class="w_sear_box">
-                <input type="text" id="carplace-keyword" autocomplete="off" placeholder="请根据 项目名称 / 楼宇名称 / 楼层号 / 车位号 进行查询"
+                <input type="text" id="carplace-keyword" autocomplete="off"
+                       placeholder="请根据 项目名称 / 楼宇名称 / 楼层号 / 车位号 进行查询"
                        class="w_sear_inp"/>
                 <input type="button" value="搜索" class="w_sear_btn searchCarplace"/>
             </div>
@@ -669,7 +676,8 @@
                         <select id="chargeUnit{{count}}" name="rentList[{{count}}].chargeUnit" index="{{count}}"
                                 lay-verify="required" lay-search lay-filter="unit-select">
                             <option value="">选择计价单位</option>
-                            <option th:each="obj:${CHARGE_UNIT_MAP}" th:value="${obj.key}" th:text="${obj.value}"></option>
+                            <option th:each="obj:${CHARGE_UNIT_MAP}" th:value="${obj.key}"
+                                    th:text="${obj.value}"></option>
                         </select>
                     </div>
                 </div>
@@ -750,12 +758,11 @@
                 </div>
             </div>
             <div class="layui-col-md4 layui-col-xs6 l_po">
-                <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                <label class="layui-form-label w_label ">滞纳金比例：</label>
                 <div class="layui-input-block">
                     <div class="day_left">
                         <input type="text" id="feeLateRatio{{count}}" name="rentList[{{count}}].feeLateRatio"
-                               oninput="onlyNumber(this)"
-                               lay-verify="required|number" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
+                               oninput="onlyNumber(this)" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
                                class="layui-input">
                     </div>
                     <div class="day_right">
@@ -800,7 +807,8 @@
             <div class="layui-col-xs12 l_po">
                 <label class="layui-form-label w_label ">房间号：</label>
                 <div class="layui-input-block">
-                    <input type="text" class="layui-input" autocomplete="off" id="regRoomNo" name="regRoomNo" lay-verify="required">
+                    <input type="text" class="layui-input" autocomplete="off" id="regRoomNo" name="regRoomNo"
+                           lay-verify="required">
                 </div>
             </div>
             <div class="clear"></div>
@@ -1044,9 +1052,9 @@
         var personal_part = $('#personal_part').html();
         var company_part = $('#company_part').html();
         //监听单选按钮--租赁方式
-        if(customerType == '2'){
+        if (customerType == '2') {
             $('.customer-info-switch').html(personal_part);
-        }else{
+        } else {
             $('.customer-info-switch').html(company_part);
         }
         form.render();
@@ -1102,8 +1110,8 @@
             }
         });
 
-        function getCustomerInfo(customerId){
-            if(customerId != ''){
+        function getCustomerInfo(customerId) {
+            if (customerId != '') {
                 $.ajax({
                     url: URL + "customer/queryCustomerDetail",
                     type: "POST",
@@ -1140,7 +1148,7 @@
 
         form.on('select(term-select)', function (data) {
             var term = data.value;
-            if(term == '0'){
+            if (term == '0') {
                 $("#endDate0").val('');
                 return;
             }
@@ -1167,7 +1175,7 @@
             format: 'yyyy-MM-dd',
             done: function (value) {
                 var term = $('#leaseTerm').val();
-                if(term == '0') return;
+                if (term == '0') return;
                 if (term != '') {
                     var month = Number(term) * 12;
                     var endDate = DateAdd("m", month, stringToDate(value, '-'));
@@ -1212,11 +1220,13 @@
             var readAttr = $(this).attr('readonly');
             if (readAttr != 'readonly' && unitPrice == '') {
                 return false;
-            };
+            }
+            ;
 
             if (readAttr != 'readonly' && unitPrice != '') {
                 unitPrice = Number(unitPrice).toFixed(2);
-            };
+            }
+            ;
 
             var chargeUnit = $('#chargeUnit' + index).val();
             var countType = $("input[name='rentList[" + index + "].monthCountType']:checked").val();
@@ -1549,17 +1559,20 @@
                 || (company_customerId == undefined && personal_customerId == '')) {
                 layer.msg('请选择客户');
                 return false;
-            };
+            }
+            ;
 
             if (roomArr.length == 0) {
                 layer.msg('请选择房源');
                 return false;
-            };
+            }
+            ;
 
             if (checekRooms(roomArr) == false) {
                 layer.msg('请选择同一个楼宇房间');
                 return false;
-            };
+            }
+            ;
 
             if (customerType == '1') {
                 var ceditCode = $('#company_ceditCode').val();

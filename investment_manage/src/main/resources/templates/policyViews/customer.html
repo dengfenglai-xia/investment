@@ -5,7 +5,7 @@
 <body>
 <!--搜索-->
 <div class="searchbox">
-    <div class="w_searlist">
+   <!-- <div class="w_searlist">
         <div class="layui-form">
             <div class="layui-input-inline">
                 <select name="label" lay-verify="required" lay-search>
@@ -27,7 +27,7 @@
     </div>
     <div class="w_searlist">
         <input type="button" value="搜索" class="layui-btn layui-btn-normal"/>
-    </div>
+    </div>-->
     <div class="clear"></div>
 </div>
 
@@ -78,116 +78,22 @@
         </div>
     </div>
     <!-- 客户来访渠道end-->
-    <!--客户规模统计-->
+    <!-- 客户成交渠道-->
     <div class="layui-col-xs4 w_ehr">
         <div class="w_echars_list">
             <div class="ehr_head">
                 <div class="ehr_tit">
-                    客户规模统计
+                    客户成交
                 </div>
-                <div class="ehr_inp ">
-                    <select name="label" lay-verify="required" lay-search lay-filter="echars">
-                        <option value="1">在租</option>
-                        <option value="2">意向</option>
-                        <option value="3">全部</option>
-                    </select>
-                </div>
-                <div class="clear"></div>
             </div>
             <div class="chear_cont">
                 <div class="ehr_list1">
-                    <div id="myChart" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-                <div class="ehr_list2">
-                    <div id="myChart6" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-                <div class="ehr_list3">
                     <div id="myChart3" style="width: 100%;height:230px; text-align: right; "></div>
                 </div>
             </div>
         </div>
     </div>
-    <!--客户规模统计end-->
-    <!-- 客户注册资金统计-->
-    <div class="layui-col-xs4 w_ehr">
-        <div class="w_echars_list">
-            <div class="ehr_head">
-                <div class="ehr_tit">
-                    客户注册资金统计
-                </div>
-                <div class="ehr_inp ">
-                    <select name="label" lay-verify="required" lay-search lay-filter="echars2">
-                        <option value="1">在租</option>
-                        <option value="2">意向</option>
-                        <option value="3">全部</option>
-                    </select>
-                </div>
-                <div class="clear"></div>
-            </div>
-            <div class="chear_cont">
-                <div class="ehr_list1">
-                    <div id="myChart5" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- 客户注册资金统计end-->
-    <!-- 客户来访趋势-->
-    <div class="layui-col-xs8 w_ehr">
-        <div class="w_echars_list">
-            <div class="ehr_head">
-                <div class="ehr_tit">
-                    客户来访趋势
-                </div>
-                <div class="ehr_inp ">
-                    <div class="w_jctab wehr_tabs">
-                        <ul>
-                            <li class="ehr_active">按类别</li>
-                            <li>按来源</li>
-                            <li>按性质</li>
-                            <li>按流失原因</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="clear"></div>
-            </div>
-            <div class="chear_cont">
-                <div class="ehr_listtab">
-                    <div id="myChart7" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-                <div class="ehr_listtab">
-                    <div id="myChart8" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-                <div class="ehr_listtab">
-                    <div id="myChart9" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-                <div class="ehr_listtab">
-                    <div id="myChart10" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- 客户来访趋势end-->
-
-    <!-- 客户来访渠道-->
-    <div class="layui-col-xs4 w_ehr">
-        <div class="w_echars_list">
-            <div class="ehr_head">
-                <div class="ehr_tit">
-                    成交渠道
-                </div>
-
-                <div class="clear"></div>
-            </div>
-            <div class="chear_cont">
-                <div class="ehr_list1">
-                    <div id="myChart11" style="width: 100%;height:230px; text-align: right; "></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- 客户来访渠道end-->
-
+    <!-- 客户成交渠道end-->
     <!-- 中介成交 TOP 5-->
     <div class="layui-col-xs4 w_ehr">
         <div class="w_echars_list">
@@ -196,7 +102,7 @@
                     中介成交 TOP 5
                 </div>
                 <div class="ehr_inp " style="width: 100px;margin-left: 10px;">
-                    <select name="label" lay-verify="required" lay-search lay-filter="">
+                    <select name="label" lay-verify="required" lay-search lay-filter="top5">
                         <option value="1">金额</option>
                         <option value="2">数量</option>
                         <option value="3">面积</option>
@@ -215,38 +121,69 @@
             </div>
             <div class="chear_cont">
                 <div class="ehr_listtab2">
-                    <div id="myChart12" style="width: 100%;height:230px; text-align: right; "></div>
+                    <div id="myChart4" style="width: 100%;height:230px; text-align: right; "></div>
                 </div>
                 <div class="ehr_listtab2">
-                    <div id="myChart13" style="width: 100%;height:230px; text-align: right; "></div>
+                    <div id="myChart5" style="width: 100%;height:230px; text-align: right; "></div>
                 </div>
             </div>
         </div>
     </div>
     <!-- 中介成交 TOP 5end-->
-
-    <!--流失原因-->
+    <!-- 客户来访趋势-->
+    <div class="layui-col-xs8 w_ehr">
+        <div class="w_echars_list">
+            <div class="ehr_head">
+                <div class="ehr_tit">
+                    客户来访趋势
+                </div>
+                <div class="ehr_inp ">
+                    <div class="w_jctab wehr_tabs">
+                        <ul>
+                            <li class="ehr_active">周</li>
+                            <li>月</li>
+                            <li>季</li>
+                            <li>年</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="chear_cont">
+                <div class="ehr_listtab">
+                    <div id="myChart6" style="width: 100%;height:230px; text-align: right; "></div>
+                </div>
+                <div class="ehr_listtab">
+                    <div id="myChart7" style="width: 100%;height:230px; text-align: right; "></div>
+                </div>
+                <div class="ehr_listtab">
+                    <div id="myChart8" style="width: 100%;height:230px; text-align: right; "></div>
+                </div>
+                <div class="ehr_listtab">
+                    <div id="myChart9" style="width: 100%;height:230px; text-align: right; "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 客户来访趋势end-->
+    <!-- 流失原因-->
     <div class="layui-col-xs4 w_ehr">
         <div class="w_echars_list">
             <div class="ehr_head">
                 <div class="ehr_tit">
                     流失原因
                 </div>
+
                 <div class="clear"></div>
             </div>
-            <div class="chear_cont w_lose">
-                <span>爆炸</span>
-                <span>雪灾</span>
-                <span>城市安全</span>
-                <span>死亡</span>
-                <span>车祸</span>
-                <span>交通安全</span>
-                <span>冬季安全</span>
-
+            <div class="chear_cont">
+                <div class="ehr_list1">
+                    <div id="myChart10" style="width: 100%;height:230px; text-align: right; "></div>
+                </div>
             </div>
         </div>
     </div>
-    <!--流失原因end-->
+    <!-- 流失原因end-->
 </div>
 <script th:replace="common/common-js::js"></script>
 <script th:src="@{/layuiadmin/js/echarts.min.js}" type="text/javascript" charset="utf-8"></script>
@@ -265,6 +202,7 @@
         //客户行业统计
         var industryNameArray = [];
         var industryArray = [];
+        var myChart1 = echarts.init(document.getElementById('myChart1'));
         queryIndustryList('1');
         form.on('select(myChart1)', function (data) {
             industryNameArray = [];
@@ -292,7 +230,6 @@
             });
         }
         function loadMyChart1(){
-            var myChart1 = echarts.init(document.getElementById('myChart1'));
             option = {
                 tooltip: {
                     trigger: 'item',
@@ -337,10 +274,10 @@
         }
         //客户行业统计end
 
-
         //客户来访渠道
         var sourceNameArray = [];
         var sourceArray = [];
+        var myChart2 = echarts.init(document.getElementById('myChart2'));
         querySourceList('1');
         form.on('select(myChart2)', function (data) {
             sourceNameArray = [];
@@ -368,7 +305,6 @@
             });
         }
         function loadMyChart2(){
-            var myChart2 = echarts.init(document.getElementById('myChart2'));
             option = {
                 tooltip: {
                     trigger: 'item',
@@ -413,536 +349,298 @@
         }
         //客户来访渠道end
 
+        //成交渠道
+        var bargainNameArray = [];
+        var bargainArray = [];
+        var myChart3 = echarts.init(document.getElementById('myChart3'));
+        queryBargainList('1');
+        function queryBargainList(type){
+            $.ajax({
+                url: URL + "queryBargainList",
+                type: "POST",
+                data:{type:type},
+                dataType: "json",
+                success: function (data) {
+                    var list = data.list;
+                    $.each(list, function(i,item){
+                        bargainNameArray.push(item.name);
+                        var obj = {};
+                        obj.value = item.num;
+                        obj.name = item.name;
+                        bargainArray.push(obj)
+                    });
+                    loadMyChart3();
+                }
+            });
+        }
+        function loadMyChart3(){
+            option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    padding: [20, 40, 0, 0],
+                    data: bargainNameArray
+                },
+                series: [
+                    {
+                        name: '成交渠道',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        center: ['30%', '50%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '16',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data: bargainArray
+                    }
+                ]
+            };
+            myChart3.setOption(option);
+        }
+        //成交渠道end
+
+        //中介成交 TOP 5
+        var model = '房源';
+        var topType = '1';
+        var topNameArray = [];
+        var topArray = [];
+        var myChart4 = echarts.init(document.getElementById('myChart4'));
+        $('.wehr_tabs2 li').click(function () {
+            topNameArray = [];
+            topArray = [];
+            $(this).addClass('ehr_active').siblings().removeClass('ehr_active')
+            myChart4.resize();
+            model = $(this).text();
+            top5(topType);
+        })
+
+        top5('1');
+        form.on('select(top5)', function (data) {
+            topNameArray = [];
+            topArray = [];
+            topType = data.value;
+            top5(topType);
+        });
+        function top5(topType){
+            $.ajax({
+                url: URL + "queryTop5List",
+                type: "POST",
+                data:{
+                    model:model,
+                    type:topType
+                },
+                dataType: "json",
+                success: function (data) {
+                    var list = data.list;
+                    $.each(list, function(i,item){
+                        topNameArray.push(item.name);
+                        var obj = {};
+                        obj.value = item.total;
+                        obj.name = item.name;
+                        topArray.push(obj)
+                    });
+                    loadMyChart4();
+                }
+            });
+        }
+
+        function loadMyChart4(){
+            option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    padding: [20, 40, 0, 0],
+                    data: topNameArray
+                },
+                calculable: true,
+                series: [
+                    {
+                        name: '中介',
+                        type: 'funnel',
+                        width: '40%',
+                        height: '45%',
+                        left: '10%',
+                        top: '20%',
+                        data: topArray
+                    },
+                ]
+            };
+            myChart4.setOption(option);
+        }
+        //中介成交 TOP 5end
+
+        //周期
+        var tendencyNameArray = [];
+        var tendencyNumArray = [];
+        tendency('1');
+        $('.wehr_tabs li').click(function () {
+            tendencyNameArray = [];
+            tendencyNumArray = [];
+            $(this).addClass('ehr_active').siblings().removeClass('ehr_active');
+            myChart6.resize();
+            var tendencyType = $(this).text();
+            tendency(tendencyType);
+        })
+        function tendency(tendencyType){
+            $.ajax({
+                url: URL + "queryTendencyList",
+                type: "POST",
+                data:{
+                    type:tendencyType
+                },
+                dataType: "json",
+                success: function (data) {
+                    var list = data.list;
+                    $.each(list, function(i,item){
+                        tendencyNameArray.push(item.name);
+                        tendencyNumArray.push(item.num);
+                    });
+                    loadMyChart6();
+                }
+            });
+        }
+        var myChart6 = echarts.init(document.getElementById('myChart6'));
+        function loadMyChart6(){
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                color: ['#9fdabf'],
+                legend: {
+                    data: ['人数']
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: tendencyNameArray
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '客户人数',
+                        type: 'line',
+                        smooth: true,
+                        stack: '总量',
+                        areaStyle: {},
+                        data: tendencyNumArray
+                    }
+                ]
+            };
+            myChart6.setOption(option);
+        }
+
+        window.onresize = function() {
+            myChart1.resize();
+            myChart2.resize();
+            myChart3.resize();
+            myChart4.resize();
+            myChart6.resize();
+            myChart10.resize();
+        }
+
+        // 流失原因
+        var reasonNameArray = [];
+        var reasonNumArray = [];
+        var myChart10 = echarts.init(document.getElementById('myChart10'));
+        queryReasonList();
+        function queryReasonList(){
+            $.ajax({
+                url: URL + "queryReasonList",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    var list = data.list;
+                    $.each(list, function(i,item){
+                        reasonNameArray.push(item.name);
+                        var obj = {};
+                        obj.value = item.num;
+                        obj.name = item.name;
+                        reasonNumArray.push(obj)
+                    });
+                    loadMyChart10();
+                }
+            });
+        }
+        function loadMyChart10(){
+            option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    padding: [20,40,0,0],
+                    data:reasonNameArray
+                },
+                series: [
+                    {
+                        name:'成交渠道',
+                        type:'pie',
+                        radius: ['50%', '70%'],
+                        center: ['30%', '50%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '16',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:reasonNumArray
+                    }
+                ]
+            };
+            myChart10.setOption(option);
+        }
+
     });
-
-
-
-    //客户规模统计
-    var myChart = echarts.init(document.getElementById('myChart'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['特大型', '大型', '中型', '小型', '微型']
-        },
-        series: [
-            {
-                name: '客户规模统计',
-                type: 'pie',
-                radius: ['50%', '70%'],
-                center: ['30%', '50%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '16',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 335, name: '特大型'},
-                    {value: 310, name: '大型'},
-                    {value: 234, name: '中型'},
-                    {value: 135, name: '小型'},
-                    {value: 1548, name: '微型'}
-                ]
-            }
-        ]
-    };
-    myChart.setOption(option);
-
-    var myChart6 = echarts.init(document.getElementById('myChart2'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['特大型', '大型', '中型', '小型', '微型']
-        },
-        series: [
-            {
-                name: '客户规模统计',
-                type: 'pie',
-                radius: ['50%', '70%'],
-                center: ['30%', '50%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '16',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 1548, name: '特大型'},
-                    {value: 12, name: '大型'},
-                    {value: 200, name: '中型'},
-                    {value: 366, name: '小型'},
-                    {value: 1000, name: '微型'}
-                ]
-            }
-        ]
-    };
-    myChart6.setOption(option);
-
-
-    var myChart3 = echarts.init(document.getElementById('myChart3'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['特大型', '大型', '中型', '小型', '微型']
-        },
-        series: [
-            {
-                name: '客户规模统计',
-                type: 'pie',
-                radius: ['50%', '70%'],
-                center: ['30%', '50%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '16',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 122, name: '特大型'},
-                    {value: 366, name: '大型'},
-                    {value: 522, name: '中型'},
-                    {value: 177, name: '小型'},
-                    {value: 1100, name: '微型'}
-                ]
-            }
-        ]
-    };
-    myChart3.setOption(option);
-    //客户规模统计end
-
-    //客户注册资金统计
-    var myChart5 = echarts.init(document.getElementById('myChart5'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['100万以下', '100-1000万', '1000-2000万', '2000-5000万', '5000万以上']
-        },
-        series: [
-            {
-                name: '客户注册资金统计',
-                type: 'pie',
-                radius: ['50%', '70%'],
-                center: ['30%', '50%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '16',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 127, name: '100万以下'},
-                    {value: 36, name: '100-1000万'},
-                    {value: 12, name: '1000-2000万'},
-                    {value: 8, name: '2000-5000万'},
-                    {value: 4, name: '5000万以上'},
-                ]
-            }
-        ]
-    };
-    myChart5.setOption(option);
-    //客户注册资金统计end
-
-    var myChart7 = echarts.init(document.getElementById('myChart7'));
-    option = {
-
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985'
-                }
-            }
-        },
-        color: ['#9fdabf'],
-        legend: {
-            data: ['人数']
-        },
-
-
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['8.23', '8.24', '8.25', '8.26', '8.27', '8.28']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '客户人数',
-                type: 'line',
-                smooth: true,
-                stack: '总量',
-                areaStyle: {},
-                data: [120, 132, 101, 134, 90, 230, 210]
-            }
-        ]
-    };
-    myChart7.setOption(option);
-
-    var myChart8 = echarts.init(document.getElementById('myChart8'));
-    option = {
-
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985'
-                }
-            }
-        },
-        color: ['#e98f6f'],
-        legend: {
-            data: ['人数']
-        },
-
-
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['8.23', '8.24', '8.25', '8.26', '8.27', '8.28']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '客户人数',
-                type: 'line',
-                smooth: true,
-                stack: '总量',
-                areaStyle: {},
-                data: [20, 80, 120, 147, 21, 10, 210]
-            }
-        ]
-    };
-    myChart8.setOption(option);
-
-    var myChart9 = echarts.init(document.getElementById('myChart9'));
-    option = {
-
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985'
-                }
-            }
-        },
-        color: ['#6ab0b8'],
-        legend: {
-            data: ['人数']
-        },
-
-
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['8.23', '8.24', '8.25', '8.26', '8.27', '8.28']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '客户人数',
-                type: 'line',
-                smooth: true,
-                stack: '总量',
-                areaStyle: {},
-                data: [122, 9, 74, 85, 2, 120, 210]
-            }
-        ]
-    };
-    myChart9.setOption(option);
-
-    var myChart10 = echarts.init(document.getElementById('myChart10'));
-    option = {
-
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985'
-                }
-            }
-        },
-        color: ['#f99e57'],
-        legend: {
-            data: ['人数']
-        },
-
-
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['8.23', '8.24', '8.25', '8.26', '8.27', '8.28']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: '客户人数',
-                type: 'line',
-                smooth: true,
-                stack: '总量',
-                areaStyle: {},
-                data: [30, 27, 99, 147, 50, 230, 210]
-            }
-        ]
-    };
-    myChart10.setOption(option);
-    //客户类别
-    $('.wehr_tabs li').click(function () {
-        $(this).addClass('ehr_active').siblings().removeClass('ehr_active')
-        $('.chear_cont .ehr_listtab:eq(' + $(this).index() + ')').show().siblings().hide()
-        myChart7.resize();
-        myChart8.resize();
-        myChart9.resize();
-        myChart10.resize();
-
-    })
-
-    //成交渠道
-    var myChart11 = echarts.init(document.getElementById('myChart11'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['上门拜访', '客户介绍', '中介机构', '渠道拓展', '广告宣传']
-        },
-        series: [
-            {
-                name: '成交渠道',
-                type: 'pie',
-                radius: ['50%', '70%'],
-                center: ['30%', '50%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '16',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 127, name: '上门拜访'},
-                    {value: 36, name: '客户介绍'},
-                    {value: 12, name: '中介机构'},
-                    {value: 8, name: '渠道拓展'},
-                    {value: 4, name: '广告宣传'},
-                ]
-            }
-        ]
-    };
-    myChart11.setOption(option);
-    //成交渠道end
-
-    //中介成交 TOP 5
-    var myChart12 = echarts.init(document.getElementById('myChart12'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['看房团', '安居客', '搜房网', '链家', '我爱我家']
-        },
-        calculable: true,
-        series: [
-            {
-                name: '中介',
-                type: 'funnel',
-                width: '40%',
-                height: '45%',
-                left: '10%',
-                top: '20%',
-                data: [
-                    {value: 60, name: '我爱我家'},
-                    {value: 30, name: '链家'},
-                    {value: 10, name: '搜房网'},
-                    {value: 80, name: '安居客'},
-                    {value: 100, name: '看房团'}
-                ]
-            },
-        ]
-    };
-    myChart12.setOption(option);
-
-
-    var myChart13 = echarts.init(document.getElementById('myChart13'));
-    option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-            padding: [20, 40, 0, 0],
-            data: ['看房团', '安居客', '搜房网', '链家', '我爱我家']
-        },
-        calculable: true,
-        series: [
-            {
-                name: '中介',
-                type: 'funnel',
-                width: '40%',
-                height: '45%',
-                left: '10%',
-                top: '20%',
-                data: [
-                    {value: 30, name: '我爱我家'},
-                    {value: 60, name: '链家'},
-                    {value: 120, name: '搜房网'},
-                    {value: 80, name: '安居客'},
-                    {value: 180, name: '看房团'}
-                ]
-            },
-        ]
-    };
-    myChart13.setOption(option);
-
-
-    $('.wehr_tabs2 li').click(function () {
-        $(this).addClass('ehr_active').siblings().removeClass('ehr_active')
-        $('.chear_cont .ehr_listtab2:eq(' + $(this).index() + ')').show().siblings().hide()
-        myChart12.resize();
-        myChart13.resize();
-
-    })
-    //中介成交 TOP 5end
-    window.onresize = function () {
-        myChart.resize();
-        myChart1.resize();
-        myChart2.resize();
-        myChart3.resize();
-        myChart5.resize();
-        myChart6.resize();
-        myChart7.resize();
-        myChart8.resize();
-        myChart9.resize();
-        myChart10.resize();
-        myChart11.resize();
-        myChart12.resize();
-        myChart13.resize();
-    }
 
 </script>
 </body>

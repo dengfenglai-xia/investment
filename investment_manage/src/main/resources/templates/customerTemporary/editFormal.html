@@ -14,8 +14,7 @@
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label "><b class="w_sur">*</b>客户类型：</label>
                     <div class="layui-input-block">
-                        <input type="radio" name="customerType" value="1" title="公司" lay-filter="customerType-select" th:attr ="checked=${customerTemporary.customerType =='1'?true:false}"
-                               >
+                        <input type="radio" name="customerType" value="1" title="公司" lay-filter="customerType-select" th:attr ="checked=${customerTemporary.customerType =='1'?true:false}" >
                         <input type="radio" name="customerType" value="2" title="个人" th:attr ="checked=${customerTemporary.customerType =='2'?true:false}"  lay-filter="customerType-select">
                     </div>
                 </div>
@@ -52,7 +51,7 @@
                 <div class="layui-col-xs12 l_po">
                     <label class="layui-form-label w_label ">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
                     <div class="layui-input-block">
-                        <textarea class="w_tzteaxer" name="remarks" autocomplete="off"  th:text="${customerTemporary.remarks}" placeholder="请输入备注..."></textarea>
+                        <textarea class="w_tzteaxer" name="remarks" id="remarks" autocomplete="off"  th:text="${customerTemporary.remarks}" placeholder="请输入备注..."></textarea>
                     </div>
                 </div>
                 <div class="clear"></div>
@@ -218,10 +217,16 @@
     <div class="layui-col-md4 layui-col-xs6 l_po">
         <label class="layui-form-label w_label "><b class="w_sur">*</b>客户状态：</label>
         <div class="layui-input-block">
-            <select name="state" lay-verify="required" lay-search>
+            <select name="state" id="state1" lay-verify="required" lay-search lay-filter="state-select">
                 <option value="">请选择客户状态</option>
                 <option th:each="map:${customerStateMap}" th:value="${map.key}" th:text="${map.value}" th:selected="${customerTemporary.state == map.key}"></option>
             </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po reasonIn" style="display: none">
+        <label class="layui-form-label w_label ">流失原因：</label>
+        <div class="layui-input-block">
+            <input type="text" name="reason" id="reason1" placeholder="请输入流失原因" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-col-md4 layui-col-xs6 l_po">
@@ -262,10 +267,16 @@
     <div class="layui-col-md4 layui-col-xs6 l_po">
         <label class="layui-form-label w_label "><b class="w_sur">*</b>客户状态：</label>
         <div class="layui-input-block">
-            <select name="state" lay-verify="required" lay-search>
+            <select name="state" id="state2"  lay-verify="required" lay-search lay-filter="state-select">
                 <option value="">请选择客户状态</option>
                 <option th:each="map:${customerStateMap}" th:value="${map.key}" th:text="${map.value}" th:selected="${customerTemporary.state == map.key}"></option>
             </select>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-col-xs6 l_po reasonIn" style="display: none">
+        <label class="layui-form-label w_label ">流失原因：</label>
+        <div class="layui-input-block">
+            <input type="text" name="reason" id="reason2" placeholder="请输入流失原因" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-col-md4 layui-col-xs6 l_po">
@@ -337,6 +348,14 @@
             table = layui.table,
             laydate = layui.laydate;
 
+        form.on('select(state-select)', function (data) {
+            var val = data.value;
+            if(val == '5'){
+                $('.reasonIn').css('display',"");
+            }else{
+                $('.reasonIn').css("display","none");
+            }
+        });
         var company_part = $('#company_part').html();
         var personal_part = $('#personal_part').html();
         var customerType = [[${customerTemporary.customerType}]];
@@ -465,7 +484,6 @@
             active[type] ? active[type].call(this) : '';
         });
 
-
         $('body').on('click', '.add-room', function () {
             var checkStatus = table.checkStatus('roomList');
             var data = checkStatus.data;
@@ -533,7 +551,25 @@
                 form.render('select');
             }
         });
+
         form.on('submit(commit)', function () {
+            var state = '';
+            var reason = '';
+            if (customerType == '1'){
+                state = '';
+                reason = '';
+                state = $('#state1').val();
+                reason = $('#reason1').val();
+            } else{
+                state = '';
+                reason = '';
+                state = $('#state2').val();
+                reason = $('#reason2').val();
+            }
+            if(state == '5' && reason == ''){
+                layer.msg("请填写流失原因");
+                return;
+            }
             var formData = $("#form").serializeObject();
             for(var i=0;i<roomArr.length;i++){
                 var item = roomArr[i];

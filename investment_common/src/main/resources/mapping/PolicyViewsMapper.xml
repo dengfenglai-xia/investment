@@ -40,7 +40,6 @@
 		LIMIT 0, 6
 	</select>
 
-
 	<select id="querySourceList1" resultType="policy">
 		SELECT
 			*
@@ -78,4 +77,94 @@
 			) temp
 		ORDER BY num DESC
 	</select>
+
+    <select id="queryBargainList" resultType="policy">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					channel_source name,
+					count(industry) num
+				FROM
+					customer
+				WHERE
+				    channel_source != ''
+				GROUP BY
+					channel_source
+			) temp
+		ORDER BY num DESC
+	</select>
+
+    <select id="queryTop5List1" resultType="policy">
+         SELECT
+            channel_name name,
+            <if test="type != null and type == '1'.toString()"  >
+                ifnull(room_amt, 0) total
+            </if>
+            <if test="type != null and type == '2'.toString()"  >
+                ifnull(room_order_num, 0) total
+            </if>
+            <if test="type != null and type == '3'.toString()"  >
+                ifnull(total_area, 0) total
+            </if>
+        from
+            channel
+        WHERE
+            del_flag = '0'
+        ORDER BY total DESC
+        LIMIT 0, 5
+	</select>
+
+    <select id="queryTop5List2" resultType="policy">
+         SELECT
+            channel_name name,
+            <if test="type != null and type == '1'.toString()"  >
+                ifnull(workplace_amt, 0) total
+            </if>
+            <if test="type != null and type == '2'.toString()"  >
+                ifnull(workplace_order_num, 0) total
+            </if>
+            <if test="type != null and type == '3'.toString()"  >
+                0 total
+            </if>
+        FROM
+            channel
+        WHERE
+            del_flag = '0'
+        ORDER BY total DESC
+        LIMIT 0, 5
+	</select>
+
+    <select id="queryTendencyList" resultType="policy">
+        SELECT
+        count(*) num,
+        date_format(create_time, '%Y-%m-%d') name
+        FROM
+        customer_temporary
+        where date_format(create_time, '%Y-%m') = #{month}
+        GROUP BY
+        date_format(create_time, '%Y-%m-%d')
+        order by create_time
+    </select>
+
+    <select id="queryReasonList" resultType="policy">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					reason name,
+					count(industry) num
+				FROM
+					customer_temporary
+				WHERE
+					reason != ''
+				GROUP BY
+					reason
+			) temp
+		ORDER BY num DESC
+		LIMIT 0, 6
+	</select>
+
 </mapper>

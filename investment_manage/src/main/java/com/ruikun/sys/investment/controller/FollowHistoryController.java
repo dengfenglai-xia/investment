@@ -5,8 +5,10 @@ import com.ruikun.sys.investment.constants.Constants;
 import com.ruikun.sys.investment.entity.BasicData;
 import com.ruikun.sys.investment.entity.Dept;
 import com.ruikun.sys.investment.entity.FollowHistory;
+import com.ruikun.sys.investment.entity.FollowNotice;
 import com.ruikun.sys.investment.service.BasicDataService;
 import com.ruikun.sys.investment.service.FollowHistoryService;
+import com.ruikun.sys.investment.service.FollowNoticeService;
 import com.ruikun.sys.investment.utils.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +27,8 @@ public class FollowHistoryController {
     private FollowHistoryService followHistoryService;
     @Autowired
     private BasicDataService basicDataService;
+    @Autowired
+    private FollowNoticeService followNoticeService;
 
     /**
      * 添加跟进历史
@@ -37,6 +42,13 @@ public class FollowHistoryController {
             followHistory.setCreateUserId(userId);
             followHistory.setUpdateUserId(userId);
             followHistoryService.insertFollowHistory(followHistory);
+            FollowNotice followNotice = new FollowNotice();
+            followNotice.setFollowPlanTime(followHistory.getFollowTime());
+            followNotice.setNoticeContent(followHistory.getFollowContent());
+            followNotice.setCreateTime(new Date());
+            followNotice.setCreateUserId(userId);
+            followNotice.setUpdateUserId(userId);
+            followNoticeService.insertFollowNotice(followNotice);
             map.put(Constants.MSG, "添加成功");
             map.put(Constants.SUCCESS, true);
         } catch (Exception e) {

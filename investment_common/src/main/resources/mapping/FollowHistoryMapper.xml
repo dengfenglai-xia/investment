@@ -27,6 +27,7 @@
         <if test="temporaryId != null">
             and temporary_id = #{temporaryId}
         </if>
+        order by follow_time desc
     </select>
 
     <insert id="insertFollowHistory">

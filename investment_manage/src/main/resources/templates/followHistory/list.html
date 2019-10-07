@@ -30,14 +30,14 @@
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label">跟进时间：</label>
                     <div class="layui-input-block">
-                        <input type="text" name="followTime" autocomplete="off" class="layui-input l_time test-laydate-item" placeholder="请选择跟进时间" >
+                        <input type="text" style="width: 180px;" name="followTime" autocomplete="off" class="layui-input l_time test-laydate-item" placeholder="请选择跟进时间" >
                     </div>
                 </div>
-                <div class="layui-col-md4 layui-col-xs6 l_po">
+                <div class="layui-col-md4 layui-col-xs6 l_po" style="margin-left: 30px;">
                     <label class="layui-form-label w_label ">跟进方式：</label>
                     <div class="layui-input-block">
                         <select name="followWay"  lay-verify="required" lay-search>
-                            <option value="">请选择跟进方式</option>
+                            <option value="">选择跟进方式</option>
                             <option th:each="obj:${typeList}" th:value="${obj.bdName}" th:text="${obj.bdName}"></option>
                         </select>
                     </div>
@@ -101,10 +101,9 @@
         <li class="layui-timeline-item">
             <i class="layui-icon layui-timeline-axis"></i>
             <div class="layui-timeline-content layui-text">
-                <h3 class="layui-timeline-title">{{obj.followTime}}</h3>
+                <h3 class="layui-timeline-title">{{obj.followTime}}&nbsp;&nbsp;&nbsp;<span style="color: #01a1eb;font-size: 15px;">{{obj.followWay}}</span></h3>
                 <p>
                     <span class="timelin_text">{{obj.followContent}}</span>
-                    <span class="timelin_tip">{{obj.followWay}}</span>
                 </p>
             </div>
         </li>

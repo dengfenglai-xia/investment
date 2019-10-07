@@ -82,12 +82,9 @@
 
     <select id="queryAuditOperDetailByPrimarykey" resultType="auditOper">
         select
-        <include refid="Base_Column_List"/>,
-        m.id matter_id
+        <include refid="Base_Column_List"/>
         from audit_oper a
-        left join matter m on a.id = m.link_id
-        where
-        a.id = #{id}
+        where a.id = #{id}
     </select>
 
     <select id="queryAuditOperDetail" resultType="auditOper">

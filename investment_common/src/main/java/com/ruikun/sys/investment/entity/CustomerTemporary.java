@@ -46,6 +46,8 @@ public class CustomerTemporary extends BaseEntity{
      */
     private String state;
 
+    private String reason;
+
     /**
      * 联系人
      */

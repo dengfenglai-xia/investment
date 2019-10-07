@@ -10,4 +10,6 @@ public class Policy {
     private String type;
 
     private int num;
+
+    private double total;
 }
