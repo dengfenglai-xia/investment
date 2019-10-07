@@ -216,6 +216,15 @@ public class CustomerController {
     public Map deleteCustomer(Customer customer) {
         Map map = Maps.newHashMap();
         try {
+            Contract contract = new Contract();
+            contract.setStateOne(Constants.CONTRACT_STATE_FORMAL);
+            contract.setCustomerId(customer.getCustomerId());
+            List<Contract> list = contractService.queryContractList(contract);
+            if(list.size() > 0){
+                map.put(Constants.SUCCESS, false);
+                map.put(Constants.MSG, "当前客户下存在进行中合同，暂不能删除");
+                return map;
+            }
             Integer userId = CacheUtils.getUser().getUserId();
             customer.setUpdateUserId(userId);
             customer.setDelFlag(Constants.DEL_FLAG_DEL);

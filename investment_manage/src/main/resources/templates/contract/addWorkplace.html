@@ -229,12 +229,11 @@
                 </div>
                 <div class="clear split-line"></div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
-                    <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                    <label class="layui-form-label w_label ">滞纳金比例：</label>
                     <div class="layui-input-block">
                         <div class="day_left">
                             <input type="text" id="feeLateRatio0" name="rentList[0].feeLateRatio"
-                                   oninput="onlyNumber(this)"
-                                   lay-verify="required|number" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
+                                   oninput="onlyNumber(this)" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
                                    class="layui-input">
                         </div>
                         <div class="day_right">
@@ -708,12 +707,11 @@
                 </div>
             </div>
             <div class="layui-col-md4 layui-col-xs6 l_po">
-                <label class="layui-form-label w_label "><b class="w_sur">*</b>滞纳金比例：</label>
+                <label class="layui-form-label w_label ">滞纳金比例：</label>
                 <div class="layui-input-block">
                     <div class="day_left">
                         <input type="text" id="feeLateRatio{{count}}" name="rentList[{{count}}].feeLateRatio"
-                               oninput="onlyNumber(this)"
-                               lay-verify="required|number" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
+                               oninput="onlyNumber(this)" autocomplete="off" placeholder="请输入滞纳金比例" th:value="0"
                                class="layui-input">
                     </div>
                     <div class="day_right">

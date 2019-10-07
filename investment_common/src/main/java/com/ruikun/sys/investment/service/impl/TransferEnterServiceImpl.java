@@ -48,7 +48,7 @@ public class TransferEnterServiceImpl implements TransferEnterService {
             transferOut.setEnterId(transferId);
             List<TransferOut> transferOutList = transferOutMapper.queryTransferOutList(transferOut);
             for (TransferOut out : transferOutList) {
-                transferList.add("由 " + out.getBuildingName()+" " + out.getCustomerName() +" 转出 " + out.getRoomNos() +"房间 " + out.getCostName() +" " +out.getTransferAmt()+"元");
+                transferList.add("由 " + out.getBuildingName()+" " + out.getCustomerName() + out.getRoomNos() +"房间" +" 转出 "  + out.getCostName() +" " +out.getTransferAmt()+"元");
             }
         }
         return transferList;

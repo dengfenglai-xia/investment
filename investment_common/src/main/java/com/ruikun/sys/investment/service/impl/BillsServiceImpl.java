@@ -935,7 +935,7 @@ public class BillsServiceImpl implements BillsService {
         settel.setCreateUserId(userId);
         settel.setUpdateTime(date);
         settel.setUpdateUserId(userId);
-        settel.setRemarks("转入"+bills.getTransferAmt()+"元");
+        settel.setRemarks("转入"+transferAmt+"元");
         settleList.add(settel);
 
         /* 更新收款账单信息 */
