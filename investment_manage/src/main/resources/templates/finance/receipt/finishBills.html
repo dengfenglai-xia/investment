@@ -47,7 +47,7 @@
                     </div>
                     <div class="layui-col-sm2 w_bor">
                         <div class="information_list_zd">合同编号：</div>
-                        <div class="information_list_zd"><a class="w_fs_18 w_fc_2" style="cursor:pointer;" th:text="${obj.contractCode}"></a></div>
+                        <div class="information_list_zd"><a class="w_fs_18 w_fc_2 detail" th:contractType="${obj.contractType}" th:contractCode="${obj.contractCode}" th:version="${obj.version}" style="cursor:pointer;" th:text="${obj.contractCode}"></a></div>
                     </div>
                 </div>
             </div>
@@ -177,5 +177,40 @@
     </form>
 </div>
 <script th:replace="common/common-js::js"></script>
+<script>
+    layui.config({
+        base: URL + 'layuiadmin/'
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'contlist', 'table', 'laydate', 'form'], function () {
+        var table = layui.table;
+        var laydate = layui.laydate,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate;
+
+        $('body').on('click', '.detail', function () {
+            var contractCode = $(this).attr("contractCode");
+            var version = $(this).attr("version");
+            var contractType = $(this).attr("contractType");
+            if (contractType == '房源合同') {
+                layer.open({
+                    type: 2,
+                    title: '<b>合同详情</b>',
+                    content: URL + 'queryContractDetail/' + contractCode + '/' + version + '/5',
+                    area: ['95%', '95%']
+                });
+            } else {
+                layer.open({
+                    type: 2,
+                    maxmin: true,
+                    title: '<b>协议详情</b>',
+                    content: URL + 'queryAgreementDetail?contractCode=' + contractCode + '&version=' + version,
+                    area: ['95%', '95%']
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

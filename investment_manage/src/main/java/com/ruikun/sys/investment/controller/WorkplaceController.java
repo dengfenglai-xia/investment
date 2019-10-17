@@ -4,10 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.ruikun.sys.investment.constants.Constants;
 import com.ruikun.sys.investment.entity.*;
-import com.ruikun.sys.investment.service.BuildingService;
-import com.ruikun.sys.investment.service.DocsService;
-import com.ruikun.sys.investment.service.ProjectService;
-import com.ruikun.sys.investment.service.WorkplaceService;
+import com.ruikun.sys.investment.service.*;
 import com.ruikun.sys.investment.utils.CacheUtils;
 import com.ruikun.sys.investment.utils.PagingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +32,13 @@ public class WorkplaceController {
     @Autowired
     private WorkplaceService workplaceService;
     @Autowired
+    private ContractWorkplaceService contractWorkplaceService;
+    @Autowired
     private DocsService docsService;
     @Autowired
     private BuildingService buildingService;
+    @Autowired
+    private FloorService floorService;
 
     /**
      * @Description: 跳转到工位列表页面
@@ -113,8 +114,10 @@ public class WorkplaceController {
         Workplace workplace = workplaceService.queryWorkplaceDetailByPrimarykey(placeId);
         //查询项目文档
         List<Docs> docsList = docsService.queryDocsList(new Docs(placeId, Constants.DOC_TYPE_WORKPLACE));
+        List<Contract> contractList = contractWorkplaceService.queryWorkplaceContractList(placeId);
         model.addAttribute("docsList", docsList);
         model.addAttribute("workplace", workplace);
+        model.addAttribute("contractList", contractList);
         model.addAttribute("RENTOUT_STATE_MAP", Constants.RENTOUT_STATE_MAP);
         model.addAttribute("WHETHER_OPEN_MAP", Constants.WHETHER_OPEN_MAP);
         return "workplace/detail";
@@ -167,7 +170,18 @@ public class WorkplaceController {
      */
     @RequestMapping("toEditorWorkplace/{placeId}")
     public String toEditorRoom(@PathVariable("placeId") Integer placeId, Model model) {
+        User user = CacheUtils.getUser();
         Workplace workplace = workplaceService.queryWorkplaceDetailByPrimarykey(placeId);
+        Building building = new Building();
+        building.setProjectId(workplace.getProjectId());
+        building.setCompanyCode(user.getCompanyCode());
+        List<Building> buildingList = buildingService.queryBuildingBaseList(building);
+        Integer buildingId = buildingList.get(0).getBuildingId();
+        Floor floor = new Floor();
+        floor.setBuildingId(buildingId);
+        List<Floor> floorList = floorService.queryFloorList(floor);
+        model.addAttribute("buildingList", buildingList);
+        model.addAttribute("floorList", floorList);
         model.addAttribute("workplace", workplace);
         return "workplace/editor";
     }

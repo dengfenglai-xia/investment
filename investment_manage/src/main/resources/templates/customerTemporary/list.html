@@ -245,7 +245,7 @@
         table.render({
             elem: '#dataList',
             toolbar: '#toolbar',
-            defaultToolbar: ['filter'],
+            defaultToolbar: ['filter','exports'],
             url: URL + 'customerTemporary/queryCustomerBaseList',
             request: {
                 pageName: 'pageNum',
@@ -350,8 +350,7 @@
                     content: URL + 'customerTemporary/toCustomerDetail/' + id,
                     area: ['100%', '100%']
                 });
-            }
-            ;
+            };
 
             if (obj.event === 'follow') {
                 layer.open({

@@ -262,6 +262,7 @@ public class RoomController {
         Room room = roomService.queryRoomDetailByPrimarykey(roomId);
         Building building = new Building();
         building.setCompanyCode(user.getCompanyCode());
+        building.setProjectId(room.getProjectId());
         List<Building> buildingList = buildingService.queryBuildingBaseList(building);
         Integer buildingId = buildingList.get(0).getBuildingId();
         Floor floor = new Floor();

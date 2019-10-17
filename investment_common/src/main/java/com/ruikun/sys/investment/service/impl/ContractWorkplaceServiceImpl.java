@@ -2,6 +2,8 @@ package com.ruikun.sys.investment.service.impl;
 
 import java.util.List;
 import java.util.Date;
+
+import com.ruikun.sys.investment.entity.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruikun.sys.investment.constants.Constants;
@@ -41,8 +43,13 @@ public class ContractWorkplaceServiceImpl implements ContractWorkplaceService {
 	public ContractWorkplace queryContractWorkplaceDetail(ContractWorkplace contractWorkplace){
 		return contractWorkplaceMapper.queryContractWorkplaceDetail(contractWorkplace);
 	}
-	
-	/**
+
+	 @Override
+	 public List<Contract> queryWorkplaceContractList(Integer placeId) {
+		 return contractWorkplaceMapper.queryWorkplaceContractList(placeId);
+	 }
+
+	 /**
 	 * @Description: 新增合同-工位信息
 	 * @author: xiachunyu
 	 * @date: 2019-08-04

@@ -34,7 +34,9 @@ public interface ContractWorkplaceMapper {
 	 * @date: 2019-08-04
 	 */
 	public ContractWorkplace queryContractWorkplaceDetail(ContractWorkplace contractWorkplace);
-	
+
+	public List<Contract> queryWorkplaceContractList(Integer placeId);
+
 	/**
 	 * @Description: 新增合同-工位信息
 	 * @author: xiachunyu

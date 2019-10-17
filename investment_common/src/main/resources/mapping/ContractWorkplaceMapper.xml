@@ -94,6 +94,25 @@
         c.id = #{id}
     </select>
 
+    <select id="queryWorkplaceContractList" resultType="contract">
+        SELECT
+            c.contract_type,
+            c.contract_code,
+            c.version,
+            c.follow_person,
+            c.sign_date,
+            c.start_date,
+            c.end_date,
+            c.state_one,
+            c.state_two,
+            cu.customer_name
+        FROM
+            contract_workplace cw
+            LEFT JOIN contract c ON cw.contract_code = c.contract_code AND cw.version = c.version
+            LEFT JOIN customer cu ON cu.customer_id = c.customer_id
+        WHERE cw.place_id = #{placeId} and c.state_one = '1'
+    </select>
+
     <insert id="insertContractWorkplace">
         insert into contract_workplace
         <trim prefix="(" suffix=")" suffixOverrides=",">

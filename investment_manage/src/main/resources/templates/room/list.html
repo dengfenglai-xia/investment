@@ -7,51 +7,38 @@
     <div class="layui-tab-item layui-show part_list" style="margin-top: 10px;">
         <div class="layui-card l_shadow" style="margin-bottom: 15px;">
             <div class="layui-row ">
-                <div class="information">
-                    <div class="layui-col-sm3 w_bor">
+                <div class="information" style="margin-top: 10px;">
+                    <!--<div class="layui-col-sm3 w_bor">
                         <div class="information_list w_fw">管理面积</div>
-                        <div class="information_list w_fwbt"
-                             th:text="${#numbers.formatDecimal(obj.totalArea, 1, 2)} + ' ㎡'"></div>
-                        <div class="information_list" th:text="'房源数量：' + ${obj.totalNum} + ' 间'"></div>
+                        <div class="information_list w_fwbt_1" th:text="${#numbers.formatDecimal(obj.totalArea, 1, 2)} + ' ㎡'"></div>
+                    </div>-->
+                    <div class="layui-col-sm3 w_bor">
+                        <div class="information_list w_fw">可招商面积<span th:text="'（' + ${obj.enableNum} + ' 间）'"></span></div>
+                        <div class="information_list w_fwbt_1" th:text="${#numbers.formatDecimal(obj.enableArea, 1, 2)} + ' ㎡'" ></div>
                     </div>
                     <div class="layui-col-sm3 w_bor">
-                        <div class="information_list w_fw">可招商面积</div>
-                        <div class="information_list w_fwbt"
-                             th:text="${#numbers.formatDecimal(obj.enableArea, 1, 2)} + ' ㎡'"></div>
-                        <div class="information_list" th:text="'房源数量：' + ${obj.enableNum} + ' 间'"></div>
+                        <div class="information_list w_fw">在租面积<span th:text="'（' + ${obj.rentNum} + ' 间）'"></span></div>
+                        <div class="information_list w_fwbt_1" th:text="${#numbers.formatDecimal(obj.rentArea, 1, 2)} + ' ㎡'" ></div>
                     </div>
-                    <div class="layui-col-sm3 w_bor">
-                        <div class="information_list w_fw">在租面积</div>
-                        <div class="information_list w_fwbt"
-                             th:text="${#numbers.formatDecimal(obj.rentArea, 1, 2)} + ' ㎡'"></div>
-                        <div class="information_list" th:text="'房源数量：' + ${obj.rentNum} + ' 间'"></div>
-                    </div>
-                    <div class="layui-col-sm3 w_bor">
+                    <!--<div class="layui-col-sm3 w_bor">
                         <div class="information_list w_fw">空置面积</div>
-                        <div class="information_list w_fwbt"
-                             th:text="${#numbers.formatDecimal(obj.vacantArea, 1, 2)} + ' ㎡'"></div>
-                        <div class="information_list" th:text="'房源数量：' + ${obj.vacantNum} + ' 间'"></div>
-                    </div>
+                        <div class="information_list w_fwbt_1" th:text="${#numbers.formatDecimal(obj.vacantArea, 1, 2)} + ' ㎡'"></div>
+                    </div>-->
                     <div class="layui-col-sm3 w_bor">
                         <div class="information_list w_fw">在租均价</div>
-                        <div class="information_list w_fwbt" th:text="${obj.avgPrice} + ' 元·㎡·天'"></div>
-                        <div class="information_list">- -</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.avgPrice} + ' 元㎡·天'"></div>
                     </div>
                     <div class="layui-col-sm3 w_bor">
                         <div class="information_list w_fw">出租率</div>
-                        <div class="information_list w_fwbt"
-                             th:text="${#numbers.formatDecimal(obj.rentRate, 1, 2)} + ' %'"></div>
-                        <div class="information_list">- -</div>
+                        <div class="information_list w_fwbt_1" th:text="${#numbers.formatDecimal(obj.rentRate, 1, 2)} + ' %'"></div>
                     </div>
                     <div class="layui-col-sm3 w_bor">
                         <div class="information_list w_fw">签约合同</div>
-                        <div class="information_list w_fwbt" th:text="${obj.contractNum} + ' 份'"></div>
-                        <div class="information_list">- -</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.contractNum} + ' 份'"></div>
                     </div>
                     <div class="layui-col-sm3 w_bor">
                         <div class="information_list w_fw">签约企业</div>
-                        <div class="information_list w_fwbt" th:text="${obj.customerNum} + ' 家'"></div>
-                        <div class="information_list">- -</div>
+                        <div class="information_list w_fwbt_1" th:text="${obj.customerNum} + ' 家'"></div>
                     </div>
                 </div>
             </div>
@@ -154,7 +141,7 @@
         table.render({
             elem: '#dataList',
             toolbar: '#toolbar',
-            defaultToolbar: ['filter'],
+            defaultToolbar: ['filter','exports'],
             url: URL + 'room/queryRoomList',
             where: {
                 state: $("input[name='state']:checked").val()

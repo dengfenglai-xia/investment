@@ -21,25 +21,33 @@
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label "><b class="w_sur">*</b>楼宇名称：</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="${workplace.buildingName}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                        <select id="buildingId" name="buildingId" lay-verify="required" lay-search  lay-filter="building_select">
+                            <option value="">请选择楼宇</option>
+                            <option th:each="obj:${buildingList}" th:selected="${obj.buildingId eq workplace.buildingId}"
+                                    th:value="${obj.buildingId}" th:text="${obj.buildingName}"></option>
+                        </select>
                     </div>
                 </div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label "><b class="w_sur">*</b>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="${workplace.floorNo}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                        <select id="floorId" name="floorId" lay-verify="required" lay-search>
+                            <option value="">请选择楼层</option>
+                            <option th:each="obj:${floorList}" th:selected="${obj.floorId eq workplace.floorId}"
+                                    th:value="${obj.floorId}" th:text="${obj.floorNo}"></option>
+                        </select>
                     </div>
                 </div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label "><b class="w_sur">*</b>房&nbsp;&nbsp;间&nbsp;&nbsp;号：</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="${workplace.roomNo}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                        <input type="text" th:value="${workplace.roomNo}" name="roomNo" lay-verify="required"  autocomplete="off" class="layui-input ">
                     </div>
                 </div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
                     <label class="layui-form-label w_label "><b class="w_sur">*</b>工&nbsp;&nbsp;位&nbsp;&nbsp;号：</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="${workplace.placeNo}"  autocomplete="off" class="layui-input layui-disabled" readonly>
+                        <input type="text" th:value="${workplace.placeNo}" name="placeNo"   autocomplete="off" lay-verify="required"  class="layui-input">
                     </div>
                 </div>
                 <div class="layui-col-md4 layui-col-xs6 l_po">
@@ -73,6 +81,16 @@
 </div>
 <script th:replace="common/common-js::js"></script>
 <script th:src="@{/js/template.js}"></script>
+<script id="floor-templete" type="text/html">
+    {{if list.length>0}}
+    <option value="">请选择楼层</option>
+    {{each list as obj index}}
+    <option value="{{obj.floorId}}">{{obj.floorNo}}</option>
+    {{/each}}
+    {{else}}
+    <option value="">暂无楼层信息</option>
+    {{/if}}
+</script>
 <script>
     layui.config({
         base: URL + 'layuiadmin/'
@@ -104,6 +122,28 @@
                     }
                 }
             });
+        });
+
+        form.on('select(building_select)', function (data) {
+            var id = data.value;
+            if (id != '') {
+                $.ajax({
+                    url: URL + "floor/queryFloorBaseList",
+                    type: "POST",
+                    data: {
+                        buildingId: id
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var html = template('floor-templete', data);
+                        $('#floorId').html(html);
+                        form.render('select');
+                    }
+                });
+            } else {
+                $('#floorId').html('<option value="">请选择楼层</option>');
+                form.render('select');
+            }
         });
 
         //取消按钮

@@ -38,7 +38,7 @@ public interface WorkplaceService {
 	 * @date: 2019-06-04
 	 */
 	public Workplace queryWorkplaceDetail(Workplace workplace);
-	
+
 	/**
 	 * @Description: 新增工位表信息
 	 * @author: xiachunyu

@@ -48,11 +48,10 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="layui-card l_shadow" style="display: none;">
+                    <div class="layui-card l_shadow" th:if="${workplace.whetherOpen eq '1'}" >
                         <div class="mytitle">
                             合同信息
-                            <input type="button" value="新建合同" class="w_record btn" />
+                            <input type="button" value="新建合同" class="w_record btn add" />
                         </div>
                         <div class="w_part">
                             <div class="layui-col-xs12">
@@ -62,34 +61,37 @@
                                         <th>序号</th>
                                         <th>合同编号</th>
                                         <th>客户名称</th>
-                                        <th>签订人</th>
+                                        <th>跟进人</th>
                                         <th>签订时间</th>
                                         <th>开始时间</th>
                                         <th>结束时间</th>
-                                        <th>租金单价（元/㎡/天）</th>
                                         <th>合同状态</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>
-                                            <a href="#" class="tab_hous">201811130045</a>
-                                        </td>
-                                        <td>杭州友米金融服务外包有限公司</td>
-                                        <td>张力</td>
-                                        <td>2018-11-13</td>
-                                        <td>2018-11-13</td>
-                                        <td>2018-11-13</td>
-                                        <td>3.52</td>
-                                        <td>执行中</td>
+                                    <tr th:if="${contractList.size() == 0}">
+                                        <td th:colspan="8">无数据</td>
+                                    </tr>
+                                    <tr th:if="${contractList.size() > 0}" th:each="obj:${contractList}">
+                                        <td th:text="${objStat.count}"></td>
+                                        <td><a class="tab_hous show" th:contractType="${obj.contractType}"  th:contractCode="${obj.contractCode}" th:version="${obj.version}" style="cursor:pointer" th:text="${obj.contractCode}"></a></td>
+                                        <td th:text="${obj.customerName}"></td>
+                                        <td th:text="${obj.followPerson}"></td>
+                                        <td th:text="${obj.signDate}"></td>
+                                        <td th:text="${obj.startDate}"></td>
+                                        <td th:text="${obj.endDate}"></td>
+                                        <td th:if="${obj.stateTwo eq '1' }">待执行</td>
+                                        <td th:if="${obj.stateTwo eq '2' }">执行中</td>
+                                        <td th:if="${obj.stateTwo eq '3' }">已变更</td>
+                                        <td th:if="${obj.stateTwo eq '4' }">已退租</td>
+                                        <td th:if="${obj.stateTwo eq '5' }">已续租</td>
+                                        <td th:if="${obj.stateTwo eq '6' }">已到期</td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                     <div class="layui-card l_shadow">
                         <div class="mytitle">相关文件</div>
                         <div class="w_part">
@@ -210,6 +212,17 @@
                 var tds = tr.children();
                 tds.eq(4).html('<span style="color: #FF5722;">上传失败</span>');
             }
+        });
+
+        $('.add').on('click', function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+            parent.layer.open({
+                type: 2,
+                title: '<b>新建工位合同</b>',
+                content: URL + 'toAddWorkplaceContract',
+                area: ['100%', '100%']
+            });
         });
 
         //下载

@@ -156,7 +156,7 @@
                                     </tr>
                                     <tr th:if="${customerList.size() > 0}" th:each="obj:${customerList}">
                                         <td th:text="${objStat.count}"></td>
-                                        <td th:text="${obj.customerName}"></td>
+                                        <td><a class="tab_hous temporary" th:customerId="${obj.temporaryId}"  style="cursor:pointer" th:text="${obj.customerName}"></a></td>
                                         <td th:text="${MAP_CUSTOMER_STATE[obj.state]}"></td>
                                         <td th:text="${obj.followUserName}"></td>
                                         <td th:text="${obj.firstMeetTime}"></td>
@@ -206,6 +206,11 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="w_del_btnbox">
+                        <a class="ml_10 editor" th:roomId="${room.roomId}">
+                            <input type="button" value="编辑" class="layui-btn layui-btn-primary"/>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -331,6 +336,28 @@
                 title: '<b>新增临时客户</b>',
                 content: URL + 'customerTemporary/toAddCustomer?roomId=[[${room.roomId}]]',
                 area: ['100%', '100%']
+            });
+        });
+
+        $('body').on('click', '.temporary', function () {
+            var id = $(this).attr("customerId");
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>临时客户详情</b>',
+                content: URL + 'customerTemporary/toCustomerDetail/' + id,
+                area: ['98%', '98%']
+            });
+        });
+
+        $('body').on('click', '.editor', function () {
+            var id = $(this).attr("roomId");
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: '<b>编辑房源</b>',
+                content: URL + 'room/toEditorRoom/' + id,
+                area: ['98%', '98%']
             });
         });
 

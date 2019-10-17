@@ -316,7 +316,8 @@
                     if (data.success) {
                         layer.msg(data.msg);
                         setTimeout(function () {
-                            parent.table.reload('dataList');
+                            // parent.table.reload('dataList');
+                            parent.location.reload();
                             var index = parent.layer.getFrameIndex(window.name);
                             parent.layer.close(index);
                         }, 1000);
