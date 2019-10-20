@@ -108,13 +108,15 @@ public class SettelServiceImpl implements SettelService {
             sms.setFeeType(feeType);
             for (SettelReport item : settelList) {
                 String billType = item.getBillType();
+                BigDecimal amount = null;
                 if(Constants.BILL_TYPE_RECEIVABLES.equals(billType)){
                     sms.setBillType("收入");
+                    amount = item.getAmount();
                 }else{
                     sms.setBillType("支出");
+                    amount = new BigDecimal("0").subtract(item.getAmount());
                 }
                 String month = item.getMonth();
-                BigDecimal amount = item.getAmount();
                 if (feeType.equals(item.getFeeType())) {
                     switch (month) {
                         case "01":

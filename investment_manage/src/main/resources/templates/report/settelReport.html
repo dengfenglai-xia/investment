@@ -19,18 +19,6 @@
             </div>
             <div class="w_searlist">
                 <div class="layui-form">
-                    <label class="layui-form-label layui-form-label-left " style="text-align: left;">收支类型</label>
-                    <div class="layui-input-inline">
-                        <select id="billType" lay-search>
-                            <option value="" selected>全部</option>
-                            <option value="1">收入</option>
-                            <option value="2">支出</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="w_searlist">
-                <div class="layui-form">
                     <label class="layui-form-label layui-form-label-left " style="text-align: left;">项目名称 </label>
                     <div class="layui-input-inline">
                         <select name="label" id="projectId" lay-verify="required" lay-filter="project_select">
@@ -66,6 +54,14 @@
                 <a class="layui-btn layui-btn-primary reset"><i class="layui-icon">&#xe669;</i>重置</a>
             </div>
             <div class="clear"></div>
+        </div>
+        <div class="w_htstate layui-form l_shadow">
+            <div class="htstate_left">
+                收支类型:&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="billType" value="" title="全部" lay-filter="billType-select" checked="">
+                <input type="radio" name="billType" value="1" title="收入" lay-filter="billType-select">
+                <input type="radio" name="billType" value="2" title="支出" lay-filter="billType-select">
+            </div>
         </div>
         <div class="tab_boxs l_shadow">
             <div class="layui-row">
@@ -229,7 +225,27 @@
             table.reload('dataList', {
                 where: {
                     feeType:feeType,
-                    billType: $("#billType").val(),
+                    billType: $("input[name='billType']:checked").val(),
+                    year: year,
+                    projectId: $("#projectId").val(),
+                    buildingId: $("#buildingId").val(),
+                    customerName: $("#customerName").val()
+                }
+            });
+        });
+
+        form.on('radio(billType-select)', function (data) {
+            var billType = data.value;
+            var feeType = getCheckVal();
+            var year = $("#year").val();
+            if(feeType == ''){
+                layer.msg("费用类别不能为空");
+                return;
+            }
+            table.reload('dataList', {
+                where: {
+                    feeType:feeType,
+                    billType: billType,
                     year: year,
                     projectId: $("#projectId").val(),
                     buildingId: $("#buildingId").val(),

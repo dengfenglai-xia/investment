@@ -11,28 +11,28 @@ public class SettelMonthStatistics {
 
     private String billType;
 
-    private BigDecimal janAmt;
+    private BigDecimal janAmt = new BigDecimal("0");
 
-    private BigDecimal febAmt;
+    private BigDecimal febAmt = new BigDecimal("0");
 
-    private BigDecimal marAmt;
+    private BigDecimal marAmt = new BigDecimal("0");
 
-    private BigDecimal aprAmt;
+    private BigDecimal aprAmt = new BigDecimal("0");
 
-    private BigDecimal mayAmt;
+    private BigDecimal mayAmt = new BigDecimal("0");
 
-    private BigDecimal junAmt;
+    private BigDecimal junAmt = new BigDecimal("0");
 
-    private BigDecimal julAmt;
+    private BigDecimal julAmt = new BigDecimal("0");
 
-    private BigDecimal augAmt;
+    private BigDecimal augAmt = new BigDecimal("0");
 
-    private BigDecimal sepAmt;
+    private BigDecimal sepAmt = new BigDecimal("0");
 
-    private BigDecimal octAmt;
+    private BigDecimal octAmt = new BigDecimal("0");
 
-    private BigDecimal novAmt;
+    private BigDecimal novAmt = new BigDecimal("0");
 
-    private BigDecimal decAmt;
+    private BigDecimal decAmt = new BigDecimal("0");
 
 }
